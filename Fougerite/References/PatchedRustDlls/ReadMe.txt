@@ -1,0 +1,1 @@
+Place the patched dlls here. The Fougerite project (Fougerite.dll) can be only compiled using these files.
