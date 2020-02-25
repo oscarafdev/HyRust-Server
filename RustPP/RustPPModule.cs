@@ -4,6 +4,7 @@
     using Fougerite.Events;
     using Rust;
     using RustPP.Commands;
+    using RustPP.Components.AuthComponent;
     using System;
     using System.Collections;
     using System.IO;
@@ -79,7 +80,7 @@
                 StarterCDMsg = Core.config.GetSetting("Settings", "startercdmsg");
             }
             TimedEvents.startEvents();
-
+            AuthComponent.Init();
             Fougerite.Hooks.OnDoorUse += DoorUse;
             Fougerite.Hooks.OnEntityHurt += EntityHurt;
             Fougerite.Hooks.OnPlayerConnected += PlayerConnect;

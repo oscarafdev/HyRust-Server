@@ -59,6 +59,7 @@ namespace Fougerite
         internal static readonly Thread CurrentThread = Thread.CurrentThread;
         private static readonly FileSystemWatcher IgnoredWatcher = new FileSystemWatcher(Path.Combine(Util.GetRootFolder(), "Save"), "IgnoredPlugins.txt");
         private static GameObject _timergo;
+        private static GameObject _camera;
 
         public static void AttachBootstrap()
         {
@@ -258,7 +259,10 @@ namespace Fougerite
             Logger.Init();
             _timergo = new GameObject();
             _timergo.AddComponent<CTimerHandler>();
+            
+           
             UnityEngine.Object.DontDestroyOnLoad(_timergo);
+            
             CTimer.StartWatching();
 
             Rust.Steam.Server.SetModded();
@@ -275,6 +279,9 @@ namespace Fougerite
                 Fougerite.ShutdownCatcher.Hook();
             }
             SQLiteConnector.GetInstance.Setup();
+            _camera = new GameObject();
+            _camera.AddComponent<CameraHandler>();
+            DontDestroyOnLoad(_camera);
         }
     }
 }

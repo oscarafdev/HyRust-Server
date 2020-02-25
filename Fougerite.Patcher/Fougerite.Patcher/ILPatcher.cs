@@ -70,13 +70,19 @@ namespace Fougerite.Patcher
             AssemblyDefinition ulink = AssemblyDefinition.ReadAssembly("uLink.dll");
             TypeDefinition type = ulink.MainModule.GetType("uLink.InternalHelper");
             TypeDefinition Class5 = ulink.MainModule.GetType("Class5");
+            TypeDefinition Class18 = ulink.MainModule.GetType("Class18");
+            TypeDefinition Class62 = ulink.MainModule.GetType("Class62");
             TypeDefinition Class56 = ulink.MainModule.GetType("Class56");
             TypeDefinition Class52 = ulink.MainModule.GetType("Class52");
+            TypeDefinition Class46 = ulink.MainModule.GetType("Class46");
             TypeDefinition Class48 = ulink.MainModule.GetType("Class48");
             TypeDefinition Struct10 = ulink.MainModule.GetType("Struct10");
             TypeDefinition Struct6 = ulink.MainModule.GetType("Struct6");
             //TypeDefinition Class46 = ulink.MainModule.GetType("Class46");
             TypeDefinition Class45 = ulink.MainModule.GetType("Class45");
+            TypeDefinition Class11 = ulink.MainModule.GetType("Class11");
+            TypeDefinition Class7 = ulink.MainModule.GetType("Class7");
+            TypeDefinition Class1 = ulink.MainModule.GetType("Class1");
             //TypeDefinition Class1 = ulink.MainModule.GetType("Class1");
             //MethodDefinition method_61 = Class1.GetMethod("method_61");
             MethodDefinition method_36 = Class56.GetMethod("method_36");
@@ -95,9 +101,52 @@ namespace Fougerite.Patcher
             MethodDefinition method_277 = Class48.GetMethod("method_277");
             MethodDefinition method_270 = Class48.GetMethod("method_270");
             MethodDefinition method_4 = Class45.GetMethod("method_4");
+            MethodDefinition method_273 = Class48.GetMethod("method_273");
+            MethodDefinition method_261 = Class48.GetMethod("method_261");
 
+            MethodDefinition vmethod_35 = Class48.GetMethod("vmethod_35");
+            vmethod_35.SetPublic(true);
+            MethodDefinition method_281 = Class48.GetMethod("method_281");
+            method_281.SetPublic(true);
+            MethodDefinition method_73 = Class46.GetMethod("method_73");
+            method_73.SetPublic(true);
+            MethodDefinition method_338 = Class48.GetMethod("method_338");
+            method_338.SetPublic(true);
+            MethodDefinition method_235 = Class48.GetMethod("method_235");
+            method_235.SetPublic(true);
+
+            method_273.SetPublic(true);
+
+            MethodDefinition method_259 = Class48.GetMethod("method_259");
+            MethodDefinition method_335 = Class48.GetMethod("method_335");
+            MethodDefinition method_336 = Class48.GetMethod("method_336");
+            MethodDefinition method_337 = Class48.GetMethod("method_337");
+            MethodDefinition vmethod_25 = Class48.GetMethod("vmethod_25");
+            MethodDefinition method_262 = Class48.GetMethod("method_262");
+            MethodDefinition method_260 = Class48.GetMethod("method_260");
+            MethodDefinition method_263 = Class48.GetMethod("method_263");
+            MethodDefinition method_264 = Class48.GetMethod("method_264");
+
+            method_260.SetPublic(true);
+            method_261.SetPublic(true);
+            method_262.SetPublic(true);
+            method_263.SetPublic(true);
+            method_264.SetPublic(true);
+            method_259.SetPublic(true);
+            method_335.SetPublic(true);
+            method_336.SetPublic(true);
+            method_337.SetPublic(true);
+            vmethod_25.SetPublic(true);
+
+            Class11.IsPublic = true;
+            Class7.IsPublic = true;
             Struct6.IsPublic = true;
             Struct10.IsPublic = true;
+            Class18.IsPublic = true;
+            Class62.IsPublic = true;
+            Class46.IsPublic = true;
+            Class1.IsPublic = true;
+            Class52.IsPublic = true;
             MethodDefinition structmethod_0 = Struct10.GetMethod("method_0");
             MethodDefinition RPCCatch = hooksClass.GetMethod("RPCCatch");
             int si = structmethod_0.Body.Instructions.Count - 46;
@@ -105,9 +154,125 @@ namespace Fougerite.Patcher
             siiLProcessor.InsertBefore(structmethod_0.Body.Instructions[si],
                 Instruction.Create(OpCodes.Callvirt, ulink.MainModule.Import(RPCCatch)));
             siiLProcessor.InsertBefore(structmethod_0.Body.Instructions[si], Instruction.Create(OpCodes.Ldarg_2));
+            ulink.MainModule.GetType("Enum4").IsPublic = true;
+            ulink.MainModule.GetType("Enum8").IsPublic = true;
+            ulink.MainModule.GetType("Struct15").IsPublic = true;
+
+            foreach (var x in Class5.Fields)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class56.Fields)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class46.Fields)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class62.Methods)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class62.Fields)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class18.Methods)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class18.Fields)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class48.Fields)
+            {
+                x.SetPublic(true);
+            }
+
+            foreach (var x in Class5.NestedTypes)
+            {
+                x.IsPublic = true;
+            }
+
+            MethodDefinition uLinkAuthorizationCheck = hooksClass.GetMethod("uLinkAuthorizationCheck");
+            ILProcessor iLProcessor273 = method_273.Body.GetILProcessor();
+            iLProcessor273.Body.Instructions.Clear();
+            iLProcessor273.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor273.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor273.Body.Instructions.Add(Instruction.Create(OpCodes.Callvirt, ulink.MainModule.Import(uLinkAuthorizationCheck)));
+            iLProcessor273.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+
+            ILProcessor iLProcessor261 = method_261.Body.GetILProcessor();
+            Instruction il = null;
+            foreach (var x in iLProcessor261.Body.Instructions)
+            {
+                if (x.ToString().Contains("::Error<System.String"))
+                {
+                    il = x;
+                }
+            }
+
+            if (il != null)
+            {
+                iLProcessor261.Body.Instructions.Remove(il);
+            }
+
+            /*MethodDefinition uLinkMessageCheck = hooksClass.GetMethod("uLinkMessageCheck");
+            ILProcessor iLProcessor261 = method_261.Body.GetILProcessor();
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Ret));
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Brtrue_S, iLProcessor261.Body.Instructions[1]));
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Call, ulink.MainModule.Import(uLinkMessageCheck)));
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_3));
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor261.InsertBefore(iLProcessor261.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));*/
+
+            /*MethodDefinition uLinkMessageCheck = hooksClass.GetMethod("uLinkMessageCheck");
+            ILProcessor iLProcessorv25 = vmethod_25.Body.GetILProcessor();
+            iLProcessorv25.Body.Instructions.Clear();
+            iLProcessorv25.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessorv25.Body.Instructions.Add(Instruction.Create(OpCodes.Callvirt, ulink.MainModule.Import(uLinkMessageCheck)));
+            iLProcessorv25.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));*/
+
+            /*MethodDefinition uLinkMessageCheck = hooksClass.GetMethod("uLinkMessageCheck");
+            ILProcessor iLProcessor261 = method_261.Body.GetILProcessor();
+            iLProcessor261.Body.Instructions.Clear();
+            iLProcessor261.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+            iLProcessor261.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
+            iLProcessor261.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_2));
+            iLProcessor261.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_3));
+            iLProcessor261.Body.Instructions.Add(Instruction.Create(OpCodes.Callvirt, ulink.MainModule.Import(uLinkMessageCheck)));
+            iLProcessor261.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));*/
+
+
+            MethodDefinition method_17 = Class5.GetMethod("method_17");
+            MethodDefinition InternalRPCCheck = hooksClass.GetMethod("InternalRPCCheck");
+            ILProcessor iLProcessor17 = method_17.Body.GetILProcessor();
+            /*ILProcessor iLProcessor17 = method_17.Body.GetILProcessor();
+            int Position = iLProcessor17.Body.Instructions.Count - 67;
+            iLProcessor17.InsertBefore(iLProcessor17.Body.Instructions[Position],
+                Instruction.Create(OpCodes.Callvirt, ulink.MainModule.Import(InternalRPCCheck)));
+            iLProcessor17.InsertBefore(iLProcessor17.Body.Instructions[Position], Instruction.Create(OpCodes.Ldarg_0));*/
+
+            iLProcessor17.InsertBefore(iLProcessor17.Body.Instructions[0], Instruction.Create(OpCodes.Ret));
+            iLProcessor17.InsertBefore(iLProcessor17.Body.Instructions[0], Instruction.Create(OpCodes.Brtrue_S, iLProcessor17.Body.Instructions[1]));
+            iLProcessor17.InsertBefore(iLProcessor17.Body.Instructions[0], Instruction.Create(OpCodes.Call, ulink.MainModule.Import(InternalRPCCheck)));
+            iLProcessor17.InsertBefore(iLProcessor17.Body.Instructions[0], Instruction.Create(OpCodes.Ldarg_0));
+
+
+
 
             //MethodDefinition method_124 = Class46.GetMethod("method_124");
-            
+
             //TODO: Removing most of the try catches from ulink for now.
             MethodDefinition update = type.GetMethod("LateUpdate");
             TypeDefinition logger = fougeriteAssembly.MainModule.GetType("Fougerite.Logger");
