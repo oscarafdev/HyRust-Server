@@ -24,7 +24,7 @@
             FriendsCommand command2 = (FriendsCommand)ChatCommand.GetCommand("friends");
             if (command.GetSharedDoors().Count != 0)
             {
-                Logger.Log("Saving shared doors.");
+                Logger.Log("Guardando puertas");
                 ObjectToFile<Hashtable>(command.GetSharedDoors(), RustPPModule.GetAbsoluteFilePath("doorsSave.rpp"));
                 SerializableDictionary<ulong, List<ulong>> doorsSave = new SerializableDictionary<ulong, List<ulong>>();
                 foreach (DictionaryEntry entry in command.GetSharedDoors())

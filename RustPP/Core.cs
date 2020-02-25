@@ -145,6 +145,7 @@ namespace RustPP
         private static void InitializeCommands()
         {
             ChatCommand.AddCommand("/about", new AboutCommand());
+            ChatCommand.AddCommand("/g", new ShoutCommand());
             ChatCommand.AddCommand("/prueba", new PruebaCommand());
             ChatCommand.AddCommand("/addfriend", new AddFriendCommand());
             AddAdminCommand command = new AddAdminCommand();
