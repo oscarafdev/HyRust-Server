@@ -141,6 +141,10 @@ namespace Fougerite
         {
             get { return this._np; }
         }
+        public NetUser NetUser
+        {
+            get { return ourPlayer.netUser; }
+        }
 
         /// <summary>
         /// Returns the time when this player connected in DateTime.UtcNow.Ticks.

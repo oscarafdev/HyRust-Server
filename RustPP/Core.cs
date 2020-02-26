@@ -13,6 +13,7 @@ namespace RustPP
     using System.IO;
     using MySql.Data.MySqlClient;
     using uLink;
+    using RustPP.Components.AuthComponent;
 
     public class Core
     {
@@ -45,7 +46,6 @@ namespace RustPP
         public static void Init()
         {
             InitializeCommands();
-            InitDatabase();
             ShareCommand command = ChatCommand.GetCommand("share") as ShareCommand;
             FriendsCommand command2 = ChatCommand.GetCommand("friends") as FriendsCommand;
             bool success = false;
@@ -143,21 +143,13 @@ namespace RustPP
             }
             ChatCommand.CallCommand(cmd, ref arg, ref chatArgs);
         }
-        private static void InitDatabase()
-        {
-            MySQLConnector connector = new MySQLConnector();
-            connector.Connect(Configs.MySqlConfig.host, Configs.MySqlConfig.database, Configs.MySqlConfig.user, Configs.MySqlConfig.password);
-            if(connector.OpenConnection() == true)
-            {
-                Logger.LogError("Conectado a Mysql correctamente");
-            } else
-            {
-                Logger.LogError("Fallo al conectar a la base de datos");
-            }
-            
-        }
+
         private static void InitializeCommands()
         {
+            // AuthComponent
+            ChatCommand.AddCommand("/login", new LoginCommand());
+            ChatCommand.AddCommand("/registro", new RegisterCommand());
+
             ChatCommand.AddCommand("/about", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
             ChatCommand.AddCommand("/prueba", new PruebaCommand());
