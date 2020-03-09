@@ -14,6 +14,7 @@ namespace RustPP
     using MySql.Data.MySqlClient;
     using uLink;
     using RustPP.Components.AuthComponent;
+    using RustPP.Commands.Chat;
 
     public class Core
     {
@@ -149,97 +150,123 @@ namespace RustPP
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
             ChatCommand.AddCommand("/registro", new RegisterCommand());
-
-            ChatCommand.AddCommand("/about", new AboutCommand());
+            ChatCommand.AddCommand("/cuenta", new AccountCommand()); // Logged
+            ChatCommand.AddCommand("/creditos", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
-            ChatCommand.AddCommand("/prueba", new PruebaCommand());
-            ChatCommand.AddCommand("/addfriend", new AddFriendCommand());
-            AddAdminCommand command = new AddAdminCommand();
-            command.AdminFlags = "CanAddAdmin";
-            ChatCommand.AddCommand("/addadmin", command);
-            AddFlagCommand command2 = new AddFlagCommand();
-            command2.AdminFlags = "CanAddFlags";
-            ChatCommand.AddCommand("/addflag", command2);
-            AnnounceCommand command3 = new AnnounceCommand();
-            command3.AdminFlags = "CanAnnounce";
-            ChatCommand.AddCommand("/announce", command3);
-            BanCommand command4 = new BanCommand();
-            command4.AdminFlags = "CanBan";
-            ChatCommand.AddCommand("/ban", command4);
-            ChatCommand.AddCommand("/friends", new FriendsCommand());
-            GetFlagsCommand command5 = new GetFlagsCommand();
-            command5.AdminFlags = "CanGetFlags";
-            ChatCommand.AddCommand("/getflags", command5);
-            GiveItemCommand command6 = new GiveItemCommand();
-            command6.AdminFlags = "CanGiveItem";
-            ChatCommand.AddCommand("/give", command6);
-            GodModeCommand command7 = new GodModeCommand();
-            command7.AdminFlags = "CanGodMode";
-            ChatCommand.AddCommand("/god", command7);
-            ChatCommand.AddCommand("/help", new HelpCommand());
+            ChatCommand.AddCommand("/duda", new DudaCommand());
+            ChatCommand.AddCommand("/agregar", new AddFriendCommand());
+            ChatCommand.AddCommand("/r", new ReplyCommand());
+            ChatCommand.AddCommand("/reglas", new RulesCommand());
+            ChatCommand.AddCommand("/amigos", new FriendsCommand());
+            ChatCommand.AddCommand("/ayuda", new HelpCommand());
             ChatCommand.AddCommand("/history", new HistoryCommand());
-            SpawnItemCommand command8 = new SpawnItemCommand();
-            command8.AdminFlags = "CanSpawnItem";
-            ChatCommand.AddCommand("/i", command8);
-            InstaKOCommand command9 = new InstaKOCommand();
-            command9.AdminFlags = "CanInstaKO";
-            ChatCommand.AddCommand("/instako", command9);
-            KickCommand command10 = new KickCommand();
-            command10.AdminFlags = "CanKick";
-            ChatCommand.AddCommand("/kick", command10);
-            KillCommand command11 = new KillCommand();
-            command11.AdminFlags = "CanKill";
-            ChatCommand.AddCommand("/kill", command11);
-            LoadoutCommand command12 = new LoadoutCommand();
-            command12.AdminFlags = "CanLoadout";
-            ChatCommand.AddCommand("/loadout", command12);
             ChatCommand.AddCommand("/motd", new MOTDCommand());
-            MuteCommand command13 = new MuteCommand();
-            command13.AdminFlags = "CanMute";
-            ChatCommand.AddCommand("/mute", command13);
             ChatCommand.AddCommand("/location", new LocationCommand());
             ChatCommand.AddCommand("/ping", new PingCommand());
             ChatCommand.AddCommand("/players", new PlayersCommand());
-            ChatCommand.AddCommand("/pm", new PrivateMessagesCommand());
+            ChatCommand.AddCommand("/w", new PrivateMessagesCommand());
+            ChatCommand.AddCommand("/share", new ShareCommand());
+            ChatCommand.AddCommand("/starter", new StarterCommand());
+            ChatCommand.AddCommand("/unfriend", new UnfriendCommand());
+            ChatCommand.AddCommand("/unshare", new UnshareCommand());
+
+            /* Dar Admin */
+            AddAdminCommand command = new AddAdminCommand();
+            command.AdminFlags = "CanAddAdmin";
+            ChatCommand.AddCommand("/addadmin", command);
+            /* Dar Flag */
+            AddFlagCommand command2 = new AddFlagCommand();
+            command2.AdminFlags = "CanAddFlags";
+            ChatCommand.AddCommand("/addflag", command2);
+            /* Anuncio */
+            AnnounceCommand command3 = new AnnounceCommand();
+            command3.AdminFlags = "CanAnnounce";
+            ChatCommand.AddCommand("/announce", command3);
+            /* Ban */
+            BanCommand command4 = new BanCommand();
+            command4.AdminFlags = "CanBan";
+            ChatCommand.AddCommand("/ban", command4);
+            /* Obtener Flags */
+            GetFlagsCommand command5 = new GetFlagsCommand();
+            command5.AdminFlags = "CanGetFlags";
+            ChatCommand.AddCommand("/getflags", command5);
+            /* Dar Items */
+            GiveItemCommand command6 = new GiveItemCommand();
+            command6.AdminFlags = "CanGiveItem";
+            ChatCommand.AddCommand("/give", command6);
+            /* Dar Flag */
+            GodModeCommand command7 = new GodModeCommand();
+            command7.AdminFlags = "CanGodMode";
+            ChatCommand.AddCommand("/god", command7);
+            
+            SpawnItemCommand command8 = new SpawnItemCommand();
+            command8.AdminFlags = "CanSpawnItem";
+            ChatCommand.AddCommand("/i", command8);
+
+            InstaKOCommand command9 = new InstaKOCommand();
+            command9.AdminFlags = "CanInstaKO";
+            ChatCommand.AddCommand("/instako", command9);
+
+            KickCommand command10 = new KickCommand();
+            command10.AdminFlags = "CanKick";
+            ChatCommand.AddCommand("/kick", command10);
+
+            KillCommand command11 = new KillCommand();
+            command11.AdminFlags = "CanKill";
+            ChatCommand.AddCommand("/kill", command11);
+
+            LoadoutCommand command12 = new LoadoutCommand();
+            command12.AdminFlags = "CanLoadout";
+            ChatCommand.AddCommand("/loadout", command12);
+            
+            MuteCommand command13 = new MuteCommand();
+            command13.AdminFlags = "CanMute";
+            ChatCommand.AddCommand("/mute", command13);
+            
             ReloadCommand command14 = new ReloadCommand();
             command14.AdminFlags = "CanReload";
             ChatCommand.AddCommand("/reload", command14);
+
             RemoveAdminCommand command15 = new RemoveAdminCommand();
             command15.AdminFlags = "CanDeleteAdmin";
             ChatCommand.AddCommand("/unadmin", command15);
-            ChatCommand.AddCommand("/r", new ReplyCommand());
-            ChatCommand.AddCommand("/rules", new RulesCommand());
+            
             SaveAllCommand command16 = new SaveAllCommand();
             command16.AdminFlags = "CanSaveAll";
             ChatCommand.AddCommand("/saveall", command16);
+
             MasterAdminCommand command17 = new MasterAdminCommand();
             command17.AdminFlags = "RCON";
             ChatCommand.AddCommand("/setmasteradmin", command17);
-            ChatCommand.AddCommand("/share", new ShareCommand());
-            ChatCommand.AddCommand("/starter", new StarterCommand());
+
             TeleportHereCommand command18 = new TeleportHereCommand();
             command18.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/tphere", command18);
+            ChatCommand.AddCommand("/traer", command18);
+
             TeleportToCommand command19 = new TeleportToCommand();
             command19.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/tpto", command19);
+            ChatCommand.AddCommand("/ir", command19);
+
             UnbanCommand command20 = new UnbanCommand();
             command20.AdminFlags = "CanUnban";
             ChatCommand.AddCommand("/unban", command20);
-            ChatCommand.AddCommand("/unfriend", new UnfriendCommand());
+
             RemoveFlagsCommand command21 = new RemoveFlagsCommand();
             command21.AdminFlags = "CanUnflag";
             ChatCommand.AddCommand("/unflag", command21);
+
             UnmuteCommand command22 = new UnmuteCommand();
             command22.AdminFlags = "CanUnmute";
             ChatCommand.AddCommand("/unmute", command22);
-            ChatCommand.AddCommand("/unshare", new UnshareCommand());
+            
             WhiteListAddCommand command23 = new WhiteListAddCommand();
             command23.AdminFlags = "CanWhiteList";
             ChatCommand.AddCommand("/addwl", command23);
+
             ShutDownCommand command24 = new ShutDownCommand();
             command24.AdminFlags = "CanShutdown";
             ChatCommand.AddCommand("/shutdown", command24);
+
             InstaKOAllCommand command25 = new InstaKOAllCommand();
             command25.AdminFlags = "CanInstaKOAll";
             ChatCommand.AddCommand("/instakoall", command25);

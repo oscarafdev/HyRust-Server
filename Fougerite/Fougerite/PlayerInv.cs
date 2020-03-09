@@ -16,6 +16,7 @@ namespace Fougerite
             this.player = player;
             this._inv = player.PlayerClient.controllable.GetComponent<Inventory>();
             this.InitItems();
+
         }
 
         /// <summary>

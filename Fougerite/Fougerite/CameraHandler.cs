@@ -10,13 +10,23 @@ namespace Fougerite
     {
         void Start()
         {
-            //Logger.LogError("START COMPONENT");
-
+            CTimer.SetTimer(() => ExecutePlayerUpdate(), 500, 1);
+        }
+        void ExecutePlayerUpdate()
+        {
+            foreach (Fougerite.Player player in Server.GetServer().Players)
+            {
+                if (player.IsOnline)
+                {
+                    Hooks.PlayerUpdate(player);
+                }
+            }
+            CTimer.SetTimer(() => ExecutePlayerUpdate(), 500, 1);
         }
 
         void Update()
         {
-            //Logger.LogDebug("UPDATE COMPONENT");
+            
         }
     }
 }

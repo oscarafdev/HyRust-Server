@@ -99,6 +99,10 @@ namespace Fougerite
         /// </summary>
         public static event ConnectionHandlerDelegate OnPlayerConnected;
         /// <summary>
+        /// This delegate runs when a player is updated.
+        /// </summary>
+        public static event UpdateHandlerDelegate OnPlayerUpdate;
+        /// <summary>
         /// This delegate runs when a player disconnected from the server.
         /// </summary>
         public static event DisconnectionHandlerDelegate OnPlayerDisconnected;
@@ -1152,41 +1156,37 @@ namespace Fougerite
             sw.Stop();
             if (sw.Elapsed.TotalSeconds > 0) Logger.LogSpeed("FallDamageEvent Speed: " + Math.Round(sw.Elapsed.TotalSeconds) + " secs");
         }
-
+        public static InventoryItem GetCurrentEquippedItem(Controller controller)
+        {
+            Inventory component = controller.GetComponent<Inventory>();
+            if (((component != null) && (component.activeItem != null)) && (component.activeItem.datablock != null))
+            {
+                return (InventoryItem)component.activeItem;
+            }
+            return null;
+        }
         public static void NPCHurt(ref DamageEvent e)
         {
-            /*Stopwatch sw = null;
-            if (Logger.showSpeed)
+            Player player = Server.GetServer().FindByPlayerClient(e.attacker.client);
+            float distance = Vector3.Distance(e.victim.character.origin, player.Location);
+            Logger.LogError($"Disparo {distance} m");
+            Controllable controllable = player.PlayerClient.controllable;
+            HumanController localController = controllable.character.controller as HumanController;
+            InventoryItem currentEquippedItem = GetCurrentEquippedItem(localController);
+            if ((currentEquippedItem != null) && !(currentEquippedItem is MeleeWeaponItem<MeleeWeaponDataBlock>))
             {
-                sw = new Stopwatch();
-                sw.Start();
-            }
-            HurtEvent he = new HurtEvent(ref e);
-            var npc = he.Victim as NPC;
-            if (npc != null && npc.Health > 0f)
-            {
-                NPC victim = he.Victim as NPC;
-                victim.Health += he.DamageAmount;
-                try
+                BulletWeaponItem<BulletWeaponDataBlock> item2 = currentEquippedItem as BulletWeaponItem<BulletWeaponDataBlock>;
+                if (item2 != null)
                 {
-                    if (OnNPCHurt != null)
-                        OnNPCHurt(he);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError("NPCHurtEvent Error: " + ex.ToString());
-                }
-                if (((he.Victim as NPC).Health - he.DamageAmount) <= 0f)
-                    (he.Victim as NPC).Kill();
-                else
-                {
-                    NPC npc2 = he.Victim as NPC;
-                    npc2.Health -= he.DamageAmount;
+
+                    Logger.LogError($"Bullet range: {item2.datablock.bulletRange} - {e.attacker.character.name}");
+                    if (distance > item2.datablock.bulletRange)
+                    {
+                        player.SendClientMessage("Você está usando hacks - Estás usando hacks");
+                    }
                 }
             }
-            if (sw == null) return;
-            sw.Stop();
-            if (sw.Elapsed.TotalSeconds > 0) Logger.LogSpeed("NPCHurtEvent Speed: " + Math.Round(sw.Elapsed.TotalSeconds) + " secs");*/
+
         }
 
         public static void NPCKilled(ref DamageEvent e)
@@ -1325,6 +1325,20 @@ namespace Fougerite
             return connected;
         }
 
+        public static void PlayerUpdate(Fougerite.Player player)
+        {
+            try
+            {
+                if (OnPlayerUpdate != null)
+                {
+                    OnPlayerUpdate(player);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("PlayerUpdatedEvent Error " + ex.ToString());
+            }
+        }
         public static void PlayerDisconnect(uLink.NetworkPlayer nplayer)
         {
             Stopwatch sw = null;
@@ -1386,7 +1400,6 @@ namespace Fougerite
             }
             
             Fougerite.Player player = Fougerite.Player.FindByNetworkPlayer(rec.networkView.owner);
-            Logger.LogError($"{player.Name} obtuvo {rg}({rg.ResourceItemDataBlock.GetItemDescription()}) x {amount}");
             GatherEvent ge = new GatherEvent(rt, rg, amount);
             try
             {
@@ -1420,7 +1433,6 @@ namespace Fougerite
             }
             db.itemDescriptionOverride = "Un tipo de recurso";
             Fougerite.Player player = Fougerite.Player.FindByNetworkPlayer(rec.inventory.networkView.owner);
-            Logger.LogError($"{player.Name} obtuvo {db}({db.GetItemDescription()}) x {amount}");
             GatherEvent ge = new GatherEvent(rt, db, amount);
             ge.Item = "Wood";
             try
@@ -3749,6 +3761,9 @@ namespace Fougerite
             OnPlayerConnected = delegate (Fougerite.Player param0)
             {
             };
+            OnPlayerUpdate = delegate (Fougerite.Player param0)
+            {
+            };
             OnPlayerDisconnected = delegate (Fougerite.Player param0)
             {
             };
@@ -4801,6 +4816,7 @@ namespace Fougerite
         public delegate void CommandHandlerDelegate(Fougerite.Player player, string cmd, string[] args);
         public delegate void CommandRawHandlerDelegate(ref ConsoleSystem.Arg arg);
         public delegate void ConnectionHandlerDelegate(Fougerite.Player player);
+        public delegate void UpdateHandlerDelegate(Fougerite.Player player);
         public delegate void ConsoleHandlerDelegate(ref ConsoleSystem.Arg arg, bool external);
         public delegate void DisconnectionHandlerDelegate(Fougerite.Player player);
         public delegate void DoorOpenHandlerDelegate(Fougerite.Player player, DoorEvent de);

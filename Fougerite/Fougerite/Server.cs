@@ -231,6 +231,17 @@ namespace Fougerite
             }
         }
 
+        public void SendMessageForAll(string arg)
+        {
+            foreach (Fougerite.Player player in this.Players)
+            {
+                if (player.IsOnline)
+                {
+                    player.SendClientMessage(arg);
+                }
+            }
+        }
+
         /// <summary>
         /// Sends a message to everyone on the server with a different name.
         /// </summary>

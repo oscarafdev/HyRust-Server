@@ -7,12 +7,16 @@
     public class ReplyCommand : ChatCommand
     {
         private Hashtable replies = new Hashtable();
-        string green = "[color #009900]";
-        string teal = "[color #00FFFF]";
 
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             Fougerite.Player sender = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(sender))
+            {
+                char ch = '☢';
+                sender.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
             if (ChatArguments.Length >= 1)
             {
                 if (this.replies.ContainsKey(sender.Name))
@@ -21,19 +25,19 @@
                     Fougerite.Player recipient = Fougerite.Server.GetServer().FindPlayer(replyTo);
                     if (recipient == null)
                     {
-                        sender.MessageFrom(Core.Name, "Couldn't find player " + replyTo);
+                        sender.SendClientMessage($"[color red]<Error>[/color] No se encontró al usuario {replyTo}");
                         this.replies.Remove(sender.Name);
                         return;
                     }
                     string message = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' }).Replace('"', 'ˮ');
                     if (message == string.Empty)
                     {
-                        sender.MessageFrom(Core.Name, "Reply Command Usage: /r message");
+                        sender.SendClientMessage("[color red]<Sintaxis>[/color] /r <Mensaje>");
                         return;
                     }
 
-                    recipient.MessageFrom("PrivateMessage", green + "(" + sender.Name + " -> You):  " + teal + message);
-                    sender.MessageFrom("PrivateMessage", green + "(You -> " + recipient.Name + "):  " + teal + message);
+                    recipient.SendClientMessage($"[color #e8c92d]((MP de {sender.Name}: {message}))");
+                    sender.SendClientMessage($"[color #e8c92d]((MP para {recipient.Name}: {message}))");
                     if (this.replies.ContainsKey(replyTo))
                     {
                         this.replies[replyTo] = sender.Name;
@@ -45,12 +49,12 @@
                 }
                 else
                 {
-                    sender.MessageFrom(Core.Name, "There's nobody to answer.");
+                    sender.SendClientMessage("[color red]<Error>[/color] No hay nadie a quien responder.");
                 }
             }
             else
             {
-                sender.MessageFrom(Core.Name, "Reply Command Usage:  /r message");
+                sender.SendClientMessage("[color red]<Sintaxis>[/color] /r <Mensaje>");
             }
         }
 

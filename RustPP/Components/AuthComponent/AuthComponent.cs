@@ -5,34 +5,104 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using System.IO;
+using Newtonsoft.Json.Converters;
+using RustPP.Data.Entities;
+using UnityEngine;
 
 namespace RustPP.Components.AuthComponent
 {
     class AuthComponent
     {
+        public readonly System.Random Randomizer = new System.Random();
+        public readonly Dictionary<int, string> RewardList = new Dictionary<int, string>()
+        {
+            {1, "Armor Part 1"},
+            {2, "Armor Part 2"},
+            {3, "Armor Part 3"},
+            {4, "Armor Part 4"},
+            {5, "Armor Part 5"},
+            {6, "Armor Part 6"},
+            {7, "Armor Part 7"},
+            {8, "Weapon Part 1"},
+            {9, "Weapon Part 2"},
+            {10, "Weapon Part 3"},
+            {11, "Weapon Part 4"},
+            {12, "Weapon Part 5"},
+            {13, "Weapon Part 6"},
+            {14, "Weapon Part 7"}
+        };
         public static void Init()
         {
+
             Fougerite.Hooks.OnPlayerGathering += OnPlayerGathering;
+            Fougerite.Hooks.OnPlayerKilled += OnPlayerKilled;
             Fougerite.Hooks.OnPlayerConnected += OnPlayerConnect;
             Fougerite.Hooks.OnPlayerDisconnected += OnPlayerDisconnected;
             Fougerite.Hooks.OnPlayerSpawned += OnPlayerSpawned;
+            Fougerite.Hooks.OnPlayerMove += OnPlayerMove;
         }
+        static void OnPlayerMove(HumanController hc, Vector3 origin, int encoded, ushort stateFlags, uLink.NetworkMessageInfo info, Util.PlayerActions action)
+        {
+
+            /*Fougerite.Player player = Fougerite.Server.GetServer().FindByNetworkPlayer(info.sender);
+            if(action != Util.PlayerActions.Standing)
+            {
+                player.SendClientMessage($"[color yellow][Debug][/color] {action}");
+            }*/
+            
+        }
+        static void OnPlayerKilled(DeathEvent de)
+        {
+            if(de.AttackerIsPlayer && de.Attacker != null && de.VictimIsPlayer && de.Victim != null)
+            {
+                Fougerite.Player attacker = (Fougerite.Player) de.Attacker;
+                Fougerite.Player victim = (Fougerite.Player) de.Victim;
+                if(attacker != null && victim !=null)
+                {
+                    User userAttacker = Data.Globals.usersOnline.Find(x => x.Name == attacker.Name);
+                    User userVictim = Data.Globals.usersOnline.Find(x => x.Name == victim.Name);
+                    if (userAttacker != null && userVictim != null)
+                    {
+                        if(userAttacker.LastKilled != userVictim.Name)
+                        {
+                            userAttacker.GiveExp(1 * userVictim.Level);
+                            int expLost = (userVictim.Exp * 30) / 100;
+                            victim.SendClientMessage($"Te mataron, perdiste {expLost} Exp");
+                            userVictim.TakeExp(expLost);
+                            userAttacker.Kills += 1;
+                            userVictim.Deaths += 1;
+                            userAttacker.LastKilled = userVictim.Name;
+                            userAttacker.Save();
+                            userVictim.Save();
+                        }
+                        
+                    }
+                }
+            }
+        }
+
         static void OnPlayerSpawned(Fougerite.Player player, SpawnEvent se)
         {
-            player.Character.AttentionMessage("HOLA, ESTO ES UNA PRUEBA");
-            player.Character.SendMessage("HOLA, ESTO ES UNA PRUEBA");
-            player.Character.ObliviousMessage("HOLA, ESTO ES UNA PRUEBA");
+            if (!UserIsLogged(player))
+            {
+                if (CheckIfUserIsRegistered(player))
+                {
+                    player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para ingresar utiliza [color blue]/login <Contraseña>");
+                }
+                else
+                {
+                    player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para registrarte utiliza [color blue]/registro <Contraseña> <Confirmar Contraseña>");
+                }
+                Character character = player.PlayerClient.controllable.GetComponent<Character>();
+                character.lockMovement = false;
+                character.lockLook = false;
+            }
         }
         static void OnPlayerConnect(Fougerite.Player player)
         {
-            if (CheckIfUserIsRegistered(player))
-            {
-                player.SendClientMessage($"Bienvenido a [color orange]Rainbow Rust[color white], para ingresar utiliza [color blue]/login <Contraseña>");
-            }
-            else
-            {
-                player.SendClientMessage($"Bienvenido a [color orange]Rainbow Rust[color white], para registrarte utiliza [color blue]/registro <Contraseña> <Confirmar Contraseña>");
-            }
+            
         }
         public static bool CheckIfUserIsRegistered(Fougerite.Player player)
         {
@@ -106,12 +176,30 @@ namespace RustPP.Components.AuthComponent
                 {
                     reader.Read();
                     Fougerite.Player newplayer = Fougerite.Player.Search(reader.GetString("steamId"));
-                    player.OnConnect(newplayer.NetUser);
-                    Data.Entities.User newUser = new Data.Entities.User { Name = reader.GetString("username") };
+
+                    User newUser = new User
+                    {
+                        Name = player.Name,
+                        Level = reader.GetInt32("level"),
+                        Exp = reader.GetInt32("exp"),
+                        Kills = reader.GetInt32("kills"),
+                        Deaths = reader.GetInt32("deaths"),
+                        Cash = reader.GetInt32("cash"),
+                        LastKilled = reader.GetString("lastKilled"),
+                        MinerLevel = reader.GetInt32("minerLevel"),
+                        MinerExp = reader.GetInt32("minerExp"),
+                        LumberjackLevel = reader.GetInt32("lumberjackLevel"),
+                        LumberjackExp = reader.GetInt32("lumberjackExp"),
+                        WoodFarmed = reader.GetInt32("woodFarmed"),
+                        MetalFarmed = reader.GetInt32("metalFarmed"),
+                        SulfureFarmed = reader.GetInt32("sulfureFarmed"),
+                        Player = player
+                    };
                     Data.Globals.usersOnline.Add(newUser);
-                    connection.Close();
-                    player.SendClientMessage($"¡Bienvenido! [color green]{player.Name}[color white] - Nivel [color green]4");
+                    player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
                     player.SendClientMessage($"Si tienes dudas utiliza [color blue]/ayuda[color white] o escribe tu duda por el canal [color blue]/duda");
+                    connection.Close();
+                    LoadPlayer(player);
 
                 }
                 else
@@ -122,6 +210,13 @@ namespace RustPP.Components.AuthComponent
                 }
             }
         }
+        public static void LoadPlayer(Fougerite.Player player)
+        {
+
+            Character character = player.PlayerClient.controllable.GetComponent<Character>();
+            character.lockMovement = false;
+            character.lockLook = false;
+        }
         public static bool UserIsLogged(Fougerite.Player player)
         {
             if (Data.Globals.usersOnline.Count(x => x.Name == player.Name) >= 1)
@@ -131,8 +226,6 @@ namespace RustPP.Components.AuthComponent
             else {
                 return false;
             }
-
-
         }
         public static void RegisterPlayer(Fougerite.Player player, string password, string confirmpassword)
         {
@@ -163,9 +256,10 @@ namespace RustPP.Components.AuthComponent
                         command.Parameters.AddWithValue("@ip", player.IP);
                         command.Parameters.AddWithValue("@steamid", player.UID);
                         MySqlDataReader reader = command.ExecuteReader();
-                        player.SendClientMessage("Te registraste correctamente");
-                        Data.Entities.User newUser = new Data.Entities.User { Name = player.Name };
-                        Data.Globals.usersOnline.Add(newUser);
+                        player.SendClientMessage("¡Bienvenido a HyAxe Rust! Este servidor es algo diferente a los demás.");
+                        player.SendClientMessage("Para informarte utiliza el comando [color orange]/ayuda[color white] o [color orange]/duda[color]");
+                        LoginPlayer(player, player.Name, password);
+
 
                     }
                 }
@@ -183,7 +277,54 @@ namespace RustPP.Components.AuthComponent
         }
         static void OnPlayerGathering(Fougerite.Player player, GatherEvent ge)
         {
+            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+            if(!UserIsLogged(player))
+            {
+                char ch = '☢';
+                player.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                ge.Quantity = 0;
+                return;
+            }
             
+            if (ge.Item == "Wood")
+            {
+                ge.Quantity = 5*user.LumberjackLevel;
+                AddWoodExp(player, ge.Quantity);
+            }
+            if(ge.Item == "Metal Ore")
+            {
+
+            }
+            if (ge.Item == "Sulfur Ore")
+            {
+
+            }
+            player.SendClientMessage($"{ge.Item} x {ge.Quantity}");
+        }
+
+        static void AddWoodExp(Fougerite.Player player, int quantity)
+        {
+            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+            if(user != null)
+            {
+                user.WoodFarmed += quantity;
+
+                user.LumberjackExp += 1;
+                if(user.LumberjackExp >= user.LumberjackLevel * 100)
+                {
+                    char cha = '♜';
+                    user.LumberjackLevel += 1;
+                    user.LumberjackExp -= user.LumberjackLevel * 100;
+                    player.Notice(cha.ToString(), $"Subiste a nivel {user.LumberjackLevel} (Leñador)", 3f);
+                } else
+                {
+                    char ch = '♜';
+                    player.Notice(ch.ToString(), $"+ 1 Exp (Leñador)", 3f);
+                    player.InventoryNotice($"+ {quantity} Madera (Leñador)");
+                }
+                user.Save();
+                
+            }
         }
     }
 }

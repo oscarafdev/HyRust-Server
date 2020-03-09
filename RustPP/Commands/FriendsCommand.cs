@@ -32,7 +32,7 @@ namespace RustPP.Commands
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (!friendsLists.ContainsKey(Arguments.argUser.userID))
             {
-                pl.MessageFrom(Core.Name, "You currently have no friend.");
+                pl.SendClientMessage("Usted no tiene amigos. (Pvta ke sad)");
             }
             else
             {

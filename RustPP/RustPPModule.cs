@@ -129,7 +129,7 @@
         void ChatReceived(ref ConsoleSystem.Arg arg)
         {
             Fougerite.Player pl = Fougerite.Server.Cache[arg.argUser.userID];
-            var command = ChatCommand.GetCommand("tpto") as TeleportToCommand;
+            var command = ChatCommand.GetCommand("ir") as TeleportToCommand;
             if (command.GetTPWaitList().Contains(pl.UID))
             {
                 command.PartialNameTP(ref arg, arg.GetInt(0));
@@ -226,7 +226,7 @@
             if (Core.IsEnabled() && Core.muteList.Contains(p.UID))
             {
                 text.NewText = "";
-                p.MessageFrom(Core.Name, "You are muted.");
+                p.MessageFrom(Core.Name, "Estás Muteado.");
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿namespace RustPP.Commands
 {
     using Fougerite;
+    using RustPP.Data;
     using System;
     using System.Collections.Generic;
 
@@ -9,22 +10,28 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
 
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Teleport Usage:  /tphere playerName");
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /traer <NombreJugador>");
                 return;
             }
 
-            if (playerName.Equals("all", StringComparison.OrdinalIgnoreCase))
+            if (playerName.Equals("todos", StringComparison.OrdinalIgnoreCase))
             {
                 foreach (Fougerite.Player client in Fougerite.Server.GetServer().Players)
                 {
                     Arguments.Args = new string[] { client.Name, pl.Name };
                     teleport.toplayer(ref Arguments);
                 }
-                pl.MessageFrom(Core.Name, "You have teleported all players to your location");
+                pl.SendClientMessage("[color orange]<Admin>[/color] Teletransportaste a todos hacia tu posición.");
                 return;
             }
 
@@ -38,7 +45,7 @@
                     {
                         Arguments.Args = new string[] { client.Name, pl.Name };
                         teleport.toplayer(ref Arguments);
-                        pl.MessageFrom(Core.Name, "You have teleported " + client.Name + " to your location");
+                        pl.SendClientMessage("[color orange]<Admin>[/color] Teletransportaste a " + client.Name + " hacia tu posición.");
                         return;
                     }
                     list.Add(client.Name);
@@ -46,18 +53,18 @@
             }
             if (list.Count > 1)
             {
-                pl.MessageFrom(Core.Name, ((list.Count - 1)).ToString() + " Player" + (((list.Count - 1) > 1) ? "s" : "") + " were found: ");
+                pl.SendClientMessage("[color orange]<Admin>[/color] Se encontraron " + ((list.Count - 1)).ToString() + " Jugador" + (((list.Count - 1) > 1) ? "es" : "") + ": ");
                 for (int j = 1; j < list.Count; j++)
                 {
-                    pl.MessageFrom(Core.Name, j + " - " + list[j]);
+                    pl.SendClientMessage(j + " - " + list[j]);
                 }
-                pl.MessageFrom(Core.Name, "0 - Cancel");
-                pl.MessageFrom(Core.Name, "Please enter the number matching the player you were looking for.");
-                TeleportToCommand command = ChatCommand.GetCommand("tpto") as TeleportToCommand;
+                pl.SendClientMessage("0 - Cancelar");
+                pl.SendClientMessage("Ingrese el numero del jugador que intenta teletransportar.");
+                TeleportToCommand command = ChatCommand.GetCommand("ir") as TeleportToCommand;
                 command.GetTPWaitList().Add(pl.UID, list);
             } else
             {
-                pl.MessageFrom(Core.Name, "No player found with the name: " + playerName);
+                pl.SendClientMessage("[color red]<Error>[/color]No se encontro al jugador " + playerName);
             }
         }
     }

@@ -39,7 +39,7 @@
                                 }
                                 else
                                 {
-                                    pl.MessageFrom(RustPP.Core.Name, "You need RCON access to be able to use this command.");
+                                    pl.SendClientMessage("[color orange]<Permisos>[/color]Necesitas acceso RCON para utilizar este comando.");
                                 }
                             }
                             else if (Administrator.IsAdmin(arg.argUser.userID))

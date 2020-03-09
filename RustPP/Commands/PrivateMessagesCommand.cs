@@ -17,14 +17,14 @@
             Fougerite.Player sender = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (ChatArguments.Length < 2)
             {
-                sender.MessageFrom(Core.Name, "Private Message Usage:  /pm playerName message");
+                sender.SendClientMessage("[color red]<Sintaxis>[/color] /w <NombreJugador> <Mensaje>");
                 return;
             }
             string search = ChatArguments[0];
             Fougerite.Player recipient = Fougerite.Player.FindByName(search);
             if (recipient == null)
             {
-                sender.MessageFrom(Core.Name, "Couldn't find player " + search);
+                sender.SendClientMessage($"[color red]<Error>[/color] No se encontró al usuario {search}");
                 return;
             }
             List<string> wth = ChatArguments.ToList();
@@ -36,19 +36,18 @@
             }
             catch
             {
-                sender.MessageFrom(Core.Name, "Something went wrong. Try again.");
+                sender.SendClientMessage("[color red]<Error>[/color] Algo salio mal, intentalo nuevamente más tarde");
                 return;
             }
             if (message == string.Empty)
             {
-                sender.MessageFrom(Core.Name, "Private Message Usage: /pm playerName message");
+                sender.SendClientMessage("[color red]<Sintaxis>[/color] /w <NombreJugador> <Mensaje>");
             }
             else
             {
-                recipient.MessageFrom("PrivateMessage", green + "(" + sender.Name + " -> You):  " + teal + message);
-                sender.MessageFrom("PrivateMessage", green + "(You -> " + recipient.Name + "):  " + teal + message);
-                //Util.say(recipient.netPlayer, string.Format("\"PM from {0}\"", Arguments.argUser.displayName.Replace('"', 'ˮ')), string.Format("\"{0}\"", message));
-                //Util.say(Arguments.argUser.networkPlayer,string.Format("\"PM to {0}\"", recipient.netUser.displayName.Replace('"', 'ˮ')),string.Format("\"{0}\"", message));
+                recipient.SendClientMessage($"[color #e8c92d]((MP de {sender.Name}: {message}))");
+                sender.SendClientMessage($"[color #e8c92d]((MP para {recipient.Name}: {message}))");
+                
                 Hashtable replies = (ChatCommand.GetCommand("r") as ReplyCommand).GetReplies();
                 if (replies.ContainsKey(recipient.Name))
                     replies[recipient.Name] = sender.Name;
