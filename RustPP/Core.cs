@@ -193,7 +193,7 @@ namespace RustPP
             /* Dar Items */
             GiveItemCommand command6 = new GiveItemCommand();
             command6.AdminFlags = "CanGiveItem";
-            ChatCommand.AddCommand("/give", command6);
+            ChatCommand.AddCommand("/dar", command6);
             /* Dar Flag */
             GodModeCommand command7 = new GodModeCommand();
             command7.AdminFlags = "CanGodMode";

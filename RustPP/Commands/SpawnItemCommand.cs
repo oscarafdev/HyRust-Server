@@ -11,7 +11,7 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
-            if (pl.CommandCancelList.Contains("give"))
+            if (pl.CommandCancelList.Contains("dar"))
             {
                 return;
             }

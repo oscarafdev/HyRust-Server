@@ -1,4 +1,5 @@
-﻿using RustPP.Data.Entities;
+﻿using Fougerite;
+using RustPP.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,18 @@ namespace RustPP.Data
             {
                 return false;
             }
+        }
+        public static void SendAdminMessageForAll(string message)
+        {
+            foreach(User user in Data.Globals.usersOnline)
+            {
+                if(user.AdminLevel >= 1)
+                {
+                    user.Player.SendClientMessage($"[color orange] {message}");
+                }
+                
+            }
+            Logger.LogDebug(message);
         }
     }
 }
