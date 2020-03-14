@@ -68,7 +68,8 @@ namespace RustPP.Data.Entities
                     "lumberjackExp = @lumberjackExp," +
                     "woodFarmed = @woodFarmed," +
                     "sulfureFarmed = @sulfureFarmed," +
-                    "metalFarmed = @metalFarmed" +
+                    "metalFarmed = @metalFarmed," +
+                    "adminLevel = @adminLevel" +
                     " WHERE username = @username";
                 command.Parameters.AddWithValue("@playerLevel", this.Level);
                 command.Parameters.AddWithValue("@playerExp", this.Exp);
@@ -83,6 +84,7 @@ namespace RustPP.Data.Entities
                 command.Parameters.AddWithValue("@woodFarmed", this.WoodFarmed);
                 command.Parameters.AddWithValue("@metalFarmed", this.MetalFarmed);
                 command.Parameters.AddWithValue("@sulfureFarmed", this.SulfureFarmed);
+                command.Parameters.AddWithValue("@adminLevel", this.AdminLevel);
                 command.Parameters.AddWithValue("@username", this.Name);
                 MySqlDataReader reader = command.ExecuteReader();
 

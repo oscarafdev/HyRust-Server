@@ -15,6 +15,7 @@ namespace RustPP
     using uLink;
     using RustPP.Components.AuthComponent;
     using RustPP.Commands.Chat;
+    using RustPP.Components.AdminComponent.Commands;
 
     public class Core
     {
@@ -48,7 +49,7 @@ namespace RustPP
         {
             InitializeCommands();
             ShareCommand command = ChatCommand.GetCommand("share") as ShareCommand;
-            FriendsCommand command2 = ChatCommand.GetCommand("friends") as FriendsCommand;
+            FriendsCommand command2 = ChatCommand.GetCommand("amigos") as FriendsCommand;
             bool success = false;
             if (File.Exists(RustPPModule.GetAbsoluteFilePath("doorsSave.xml")))
             {
@@ -147,6 +148,11 @@ namespace RustPP
 
         private static void InitializeCommands()
         {
+            // AdminComponent
+            ChatCommand.AddCommand("/daradmin", new DarAdminCommand());
+            ChatCommand.AddCommand("/adminkit", new AdminKitCommand());
+            ChatCommand.AddCommand("/traer", new TeleportHereCommand());
+            ChatCommand.AddCommand("/ir", new TeleportToCommand());
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
             ChatCommand.AddCommand("/registro", new RegisterCommand());
@@ -239,13 +245,8 @@ namespace RustPP
             command17.AdminFlags = "RCON";
             ChatCommand.AddCommand("/setmasteradmin", command17);
 
-            TeleportHereCommand command18 = new TeleportHereCommand();
-            command18.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/traer", command18);
 
-            TeleportToCommand command19 = new TeleportToCommand();
-            command19.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/ir", command19);
+            
 
             UnbanCommand command20 = new UnbanCommand();
             command20.AdminFlags = "CanUnban";

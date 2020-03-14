@@ -193,10 +193,15 @@ namespace RustPP.Components.AuthComponent
                         WoodFarmed = reader.GetInt32("woodFarmed"),
                         MetalFarmed = reader.GetInt32("metalFarmed"),
                         SulfureFarmed = reader.GetInt32("sulfureFarmed"),
+                        AdminLevel = reader.GetInt32("adminLevel"),
                         Player = player
                     };
                     Data.Globals.usersOnline.Add(newUser);
                     player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
+                    if (newUser.AdminLevel >= 1)
+                    {
+                        player.SendClientMessage($"[color orange]- Admin :[/color] {newUser.AdminLevel}");
+                    }
                     player.SendClientMessage($"Si tienes dudas utiliza [color blue]/ayuda[color white] o escribe tu duda por el canal [color blue]/duda");
                     connection.Close();
                     LoadPlayer(player);

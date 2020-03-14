@@ -33,5 +33,9 @@ namespace RustPP.Data
             }
             Logger.LogDebug(message);
         }
+        public static Entities.User GetInternalUser(Fougerite.Player player)
+        {
+            return Data.Globals.usersOnline.FindLast(x => x.Name == player.Name);
+        }
     }
 }
