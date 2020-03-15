@@ -9,6 +9,7 @@ namespace Fougerite
         private PlayerItem[] _barItems;
         private Inventory _inv;
         private PlayerItem[] _items;
+        private PlayerItem[] _allItems;
         private Fougerite.Player player;
 
         public PlayerInv(Fougerite.Player player)
@@ -253,11 +254,13 @@ namespace Fougerite
 
         private void InitItems()
         {
+            this.AllItems = new PlayerItem[40];
             this.Items = new PlayerItem[30];
             this.ArmorItems = new PlayerItem[4];
             this.BarItems = new PlayerItem[6];
             for (int i = 0; i < this._inv.slotCount; i++)
             {
+                this.AllItems[i] = new PlayerItem(ref this._inv, i);
                 if (i < 30)
                 {
                     this.Items[i] = new PlayerItem(ref this._inv, i);
@@ -565,6 +568,18 @@ namespace Fougerite
             set
             {
                 this._items = value;
+            }
+        }
+
+        public PlayerItem[] AllItems
+        {
+            get
+            {
+                return this._allItems;
+            }
+            set
+            {
+                this._allItems = value;
             }
         }
     }

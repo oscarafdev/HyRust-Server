@@ -153,10 +153,14 @@ namespace RustPP
             ChatCommand.AddCommand("/adminkit", new AdminKitCommand());
             ChatCommand.AddCommand("/traer", new TeleportHereCommand());
             ChatCommand.AddCommand("/ir", new TeleportToCommand());
+            ChatCommand.AddCommand("/a", new AdminChatCommand());
+            ChatCommand.AddCommand("/saveloc", new SaveLocationCommand());
+            ChatCommand.AddCommand("/limpiarinv", new ClearInvCommand());
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
             ChatCommand.AddCommand("/registro", new RegisterCommand());
             ChatCommand.AddCommand("/cuenta", new AccountCommand()); // Logged
+            ChatCommand.AddCommand("/farm", new FarmCommand()); // Logged
             ChatCommand.AddCommand("/creditos", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
             ChatCommand.AddCommand("/duda", new DudaCommand());

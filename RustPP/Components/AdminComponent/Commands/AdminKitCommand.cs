@@ -54,7 +54,7 @@ namespace RustPP.Components.AdminComponent.Commands
             pl.Inventory.AddItem("9mm Pistol", 1);
             pl.Inventory.AddItem("556 Ammo", 500);
             pl.Inventory.AddItem("9mm Ammo", 500);
-            pl.Inventory.AddItem("Holo Sight", 2);
+            pl.Inventory.AddItem("Holo signt", 2);
             pl.Inventory.AddItem("Silencer", 3);
             pl.Inventory.AddItem("Shotgun Shells", 250);
             pl.SendClientMessage("[color e8c92d]QUE EMPIEZE EL BARDOOOOOOOOOOOOOOOOOOOOO");

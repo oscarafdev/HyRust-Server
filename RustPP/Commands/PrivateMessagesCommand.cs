@@ -9,8 +9,6 @@
 
     public class PrivateMessagesCommand : ChatCommand
     {
-        string green = "[color #009900]";
-        string teal = "[color #00FFFF]";
 
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {

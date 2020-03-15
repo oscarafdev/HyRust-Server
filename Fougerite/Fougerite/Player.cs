@@ -1611,12 +1611,7 @@ namespace Fougerite
         {
             get
             {
-                if (this.IsOnline)
-                {
                     return this.ourPlayer;
-                }
-
-                return null;
             }
         }
 

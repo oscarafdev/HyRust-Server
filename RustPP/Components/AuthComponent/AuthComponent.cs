@@ -10,6 +10,7 @@ using System.IO;
 using Newtonsoft.Json.Converters;
 using RustPP.Data.Entities;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 namespace RustPP.Components.AuthComponent
 {
@@ -42,16 +43,109 @@ namespace RustPP.Components.AuthComponent
             Fougerite.Hooks.OnPlayerDisconnected += OnPlayerDisconnected;
             Fougerite.Hooks.OnPlayerSpawned += OnPlayerSpawned;
             Fougerite.Hooks.OnPlayerMove += OnPlayerMove;
+            Fougerite.Hooks.OnNPCKilled += OnNPCKilled;
+            Fougerite.Hooks.OnEntityHurt += OnEntityHurt;
+            Fougerite.Hooks.OnPlayerHurt += OnPlayerHurt;
         }
         static void OnPlayerMove(HumanController hc, Vector3 origin, int encoded, ushort stateFlags, uLink.NetworkMessageInfo info, Util.PlayerActions action)
         {
 
-            /*Fougerite.Player player = Fougerite.Server.GetServer().FindByNetworkPlayer(info.sender);
-            if(action != Util.PlayerActions.Standing)
-            {
-                player.SendClientMessage($"[color yellow][Debug][/color] {action}");
-            }*/
             
+            
+        }
+        static void OnPlayerHurt(HurtEvent he)
+        {
+            if (he.AttackerIsPlayer && he.Attacker != null)
+            {
+                Fougerite.Player player = (Fougerite.Player)he.Attacker;
+                User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+                if (!UserIsLogged(player))
+                {
+                    char ch = '☢';
+                    player.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                    he.DamageAmount = 0;
+                    return;
+                }
+                if (he.VictimIsPlayer && he.Victim != null)
+                {
+                    Fougerite.Player victim = (Fougerite.Player)he.Victim;
+                    User victimPlayer = Data.Globals.usersOnline.Find(x => x.Name == victim.Name);
+                    if (!UserIsLogged(victim))
+                    {
+                        char ch = '☢';
+                        player.Notice(ch.ToString(), $"Este usuario no esta logueado, no puedes hacerle daño", 4f);
+                        he.DamageAmount = 0;
+                        return;
+                    }
+                }
+            }
+            if (he.AttackerIsNPC && he.Attacker != null && he.VictimIsPlayer && he.Victim != null)
+            {
+                Fougerite.Player player = (Fougerite.Player)he.Victim;
+                User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+                if (!UserIsLogged(player))
+                {
+                    he.DamageAmount = 0;
+                    return;
+                }
+            }
+        }
+        static void OnEntityHurt(HurtEvent he)
+        {
+            if(he.AttackerIsPlayer && he.Attacker != null)
+            {
+                Fougerite.Player player = (Fougerite.Player)he.Attacker;
+                User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+                if (!UserIsLogged(player))
+                {
+                    char ch = '☢';
+                    player.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                    he.DamageAmount = 0;
+                    return;
+                }
+                if(he.VictimIsPlayer && he.Victim != null)
+                {
+                    Fougerite.Player victim = (Fougerite.Player)he.Victim;
+                    User victimPlayer = Data.Globals.usersOnline.Find(x => x.Name == victim.Name);
+                    if (!UserIsLogged(victim))
+                    {
+                        char ch = '☢';
+                        player.Notice(ch.ToString(), $"Este usuario no esta logueado, no puedes hacerle daño", 4f);
+                        he.DamageAmount = 0;
+                        return;
+                    }
+                }
+            }
+            if(he.AttackerIsNPC && he.Attacker != null && he.VictimIsPlayer && he.Victim != null)
+            {
+                Fougerite.Player player = (Fougerite.Player)he.Attacker;
+                User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+                if (!UserIsLogged(player))
+                {
+                    
+                    he.DamageAmount = 0;
+                    return;
+                }
+            }
+        }
+        static void OnNPCKilled(DeathEvent de)
+        {
+            if(de.AttackerIsPlayer && de.Attacker != null)
+            {
+                Fougerite.Player player = (Fougerite.Player)de.Attacker;
+                User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+                if (!UserIsLogged(player))
+                {
+                    char ch = '☢';
+                    player.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                    de.DamageAmount = 0;
+                    return;
+                }
+                user.AddFarmExp(1);
+
+            }
+            
+
         }
         static void OnPlayerKilled(DeathEvent de)
         {
@@ -74,8 +168,6 @@ namespace RustPP.Components.AuthComponent
                             userAttacker.Kills += 1;
                             userVictim.Deaths += 1;
                             userAttacker.LastKilled = userVictim.Name;
-                            userAttacker.Save();
-                            userVictim.Save();
                         }
                         
                     }
@@ -85,20 +177,70 @@ namespace RustPP.Components.AuthComponent
 
         static void OnPlayerSpawned(Fougerite.Player player, SpawnEvent se)
         {
+            if (!Regex.IsMatch(player.Name, @"^[a-zA-Z0-9]*$"))
+            {
+                char ch = '☢';
+                player.Notice(ch.ToString(), $"No se permiten carácteres especiales en el nombre (Permitido: [a-z] [0-9])", 4f);
+                player.Disconnect();
+            }
+
             if (!UserIsLogged(player))
             {
+                //player.Inventory.ClearAll();
                 if (CheckIfUserIsRegistered(player))
                 {
+                    FreezePlayer(player);
                     player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para ingresar utiliza [color blue]/login <Contraseña>");
                 }
                 else
                 {
+                    FreezePlayer(player);
                     player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para registrarte utiliza [color blue]/registro <Contraseña> <Confirmar Contraseña>");
                 }
-                Character character = player.PlayerClient.controllable.GetComponent<Character>();
-                character.lockMovement = false;
-                character.lockLook = false;
+                
+
             }
+        }
+        static void LoadInventory(Fougerite.Player player)
+        {
+            JsonAPI json = JsonAPI.GetInstance;
+            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+            if(user != null)
+            {
+                List<UserInventoryItem> playerItems = json.DeSerializeJsonToObject<List<UserInventoryItem>>(user.InternalInventory);
+                foreach(UserInventoryItem item in playerItems)
+                {
+                    if(item.Name != "" && item.Quantity != -1)
+                    {
+                        player.Inventory.AddItemTo(item.Name, item.Slot, item.Quantity);
+                    }
+                }
+            }
+            
+        }
+        static void FreezePlayer(Fougerite.Player player)
+        {
+            player.SendCommand("input.bind Up 7 None");
+            player.SendCommand("input.bind Down 7 None");
+            player.SendCommand("input.bind Left 7 None");
+            player.SendCommand("input.bind Right 7 None");
+            player.SendCommand("input.bind Sprint 7 None");
+            player.SendCommand("input.bind Duck 7 None");
+            player.SendCommand("input.bind Jump 7 None");
+            player.SendCommand("input.bind Fire 7 None");
+            player.SendCommand("input.bind AtlFire 7 None");
+        }
+        static void UnFreezePlayer(Fougerite.Player player)
+        {
+            player.SendCommand("input.bind Up W UpArrow");
+            player.SendCommand("input.bind Down S DownArrow");
+            player.SendCommand("input.bind Left A LeftArrow");
+            player.SendCommand("input.bind Right D RightArrow");
+            player.SendCommand("input.bind Sprint LeftShift RightShift");
+            player.SendCommand("input.bind Duck LeftControl RightControl");
+            player.SendCommand("input.bind Jump Space None");
+            player.SendCommand("input.bind Fire Mouse0 None");
+            player.SendCommand("input.bind AtlFire Mouse1 None");
         }
         static void OnPlayerConnect(Fougerite.Player player)
         {
@@ -193,16 +335,20 @@ namespace RustPP.Components.AuthComponent
                         WoodFarmed = reader.GetInt32("woodFarmed"),
                         MetalFarmed = reader.GetInt32("metalFarmed"),
                         SulfureFarmed = reader.GetInt32("sulfureFarmed"),
+                        HunterLevel = reader.GetInt32("hunterLevel"),
+                        HunterExp = reader.GetInt32("hunterExp"),
                         AdminLevel = reader.GetInt32("adminLevel"),
+                        BannedPlayer = reader.GetInt32("banned"),
+                        InternalInventory = reader.GetString("inventoryItems"),
                         Player = player
                     };
                     Data.Globals.usersOnline.Add(newUser);
                     player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
+                    player.SendClientMessage($"Si tienes dudas utiliza [color blue]/ayuda[color white] o escribe tu duda por el canal [color blue]/duda");
                     if (newUser.AdminLevel >= 1)
                     {
-                        player.SendClientMessage($"[color orange]- Admin :[/color] {newUser.AdminLevel}");
+                        player.SendClientMessage($"[color orange]Eres administrador nivel[/color] {newUser.AdminLevel}");
                     }
-                    player.SendClientMessage($"Si tienes dudas utiliza [color blue]/ayuda[color white] o escribe tu duda por el canal [color blue]/duda");
                     connection.Close();
                     LoadPlayer(player);
 
@@ -217,10 +363,19 @@ namespace RustPP.Components.AuthComponent
         }
         public static void LoadPlayer(Fougerite.Player player)
         {
-
-            Character character = player.PlayerClient.controllable.GetComponent<Character>();
-            character.lockMovement = false;
-            character.lockLook = false;
+            //LoadInventory(player);
+            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+            if(user != null)
+            {
+                if(user.BannedPlayer == 1)
+                {
+                    char ch = '☢';
+                    player.Notice(ch.ToString(), $"Esta cuenta esta baneada, pide un desbaneo en la web www.hyaxe.com.", 4f);
+                    player.Disconnect();
+                }
+            }
+            UnFreezePlayer(player);
+            
         }
         public static bool UserIsLogged(Fougerite.Player player)
         {
@@ -278,7 +433,35 @@ namespace RustPP.Components.AuthComponent
 
         static void OnPlayerDisconnected(Fougerite.Player player)
         {
-            Data.Globals.usersOnline.RemoveAll(x => x.Name == player.Name);
+            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+            if(user != null)
+            {
+                /*List<UserInventoryItem> playerItems = new List<UserInventoryItem>();
+                PlayerInv inventario = new PlayerInv(player);
+                foreach (PlayerItem item in inventario.AllItems)
+                {
+                    IInventoryItem itemdata = item.RInventoryItem;
+                    ItemDataBlock datablock = itemdata.datablock;
+                    UserInventoryItem newItem = new UserInventoryItem
+                    {
+                        Slot = item.Slot,
+                        Name = item.Name,
+                        Quantity = item.Quantity,
+                        Condition = itemdata.condition,
+                    };
+                    if(datablock.category == ItemDataBlock.ItemCategory.Weapons)
+                    {
+                        newItem.WeaponBullets = itemdata.uses;
+                    }
+                    playerItems.Add(newItem);
+                }
+                JsonAPI json = JsonAPI.GetInstance;
+                Logger.LogError(json.SerializeObjectToJson(playerItems));
+                user.InternalInventory = json.SerializeObjectToJson(playerItems);*/
+
+                user.Save();
+                Data.Globals.usersOnline.RemoveAll(x => x.Name == player.Name);
+            }
         }
         static void OnPlayerGathering(Fougerite.Player player, GatherEvent ge)
         {
@@ -290,46 +473,25 @@ namespace RustPP.Components.AuthComponent
                 ge.Quantity = 0;
                 return;
             }
-            
+            int quantity = ge.Quantity;
             if (ge.Item == "Wood")
             {
-                ge.Quantity = 5*user.LumberjackLevel;
-                AddWoodExp(player, ge.Quantity);
+                ge.Quantity = quantity* user.LumberjackLevel;
+                user.AddWoodExp(ge.Quantity);
             }
             if(ge.Item == "Metal Ore")
             {
-
+                ge.Quantity = quantity* user.MinerLevel;
+                user.AddMetalExp(ge.Quantity);
             }
             if (ge.Item == "Sulfur Ore")
             {
-
+                ge.Quantity = quantity* user.MinerLevel;
+                user.AddSulfureExp(ge.Quantity);
             }
             player.SendClientMessage($"{ge.Item} x {ge.Quantity}");
         }
 
-        static void AddWoodExp(Fougerite.Player player, int quantity)
-        {
-            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
-            if(user != null)
-            {
-                user.WoodFarmed += quantity;
-
-                user.LumberjackExp += 1;
-                if(user.LumberjackExp >= user.LumberjackLevel * 100)
-                {
-                    char cha = '♜';
-                    user.LumberjackLevel += 1;
-                    user.LumberjackExp -= user.LumberjackLevel * 100;
-                    player.Notice(cha.ToString(), $"Subiste a nivel {user.LumberjackLevel} (Leñador)", 3f);
-                } else
-                {
-                    char ch = '♜';
-                    player.Notice(ch.ToString(), $"+ 1 Exp (Leñador)", 3f);
-                    player.InventoryNotice($"+ {quantity} Madera (Leñador)");
-                }
-                user.Save();
-                
-            }
-        }
+        
     }
 }

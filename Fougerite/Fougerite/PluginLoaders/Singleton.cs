@@ -20,7 +20,7 @@ namespace Fougerite.PluginLoaders
             }
             else
             {
-                Logger.LogWarning(Instance.GetType() + " is disabled in the Fougerite.cfg, and will not load any plugins.");
+                Logger.LogWarning(Instance.GetType() + " esta deshabilitado en Fougerite.cfg y no se cargaron plugins.");
             }
 
         }
