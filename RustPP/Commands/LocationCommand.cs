@@ -9,6 +9,13 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
             string targetName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (targetName.Equals(string.Empty) || targetName.Equals(Arguments.argUser.displayName))
             {
@@ -16,18 +23,18 @@
                 if (GetLocationString(ref Arguments.argUser, pl, out reply))
                 {
                     Arguments.ReplyWith(reply);
-                    pl.MessageFrom(Core.Name, reply);
+                    pl.SendClientMessage(reply);
                 }
                 return;
             }
-            if (!Administrator.IsAdmin(pl.UID))
+            if (user.AdminLevel <= 1)
             {
-                pl.MessageFrom(Core.Name, "Only Administrators can get the locations of other players.");
+                pl.SendClientMessage("[color red]<Error>[/color] Solo los administradores pueden saber la ubicación de otro usuario.");
                 return;
             }
             foreach (Fougerite.Player client in Fougerite.Server.GetServer().Players)
             {
-                if (targetName.Equals("all", StringComparison.OrdinalIgnoreCase) ||
+                if (targetName.Equals("todos", StringComparison.OrdinalIgnoreCase) ||
                     targetName.Equals(client.Name, StringComparison.OrdinalIgnoreCase) ||
                     targetName.ToUpperInvariant().Contains(client.Name.ToUpperInvariant()))
                 {
@@ -35,7 +42,7 @@
                     if (GetLocationString(ref Arguments.argUser, client, out reply))
                     {
                         Arguments.ReplyWith(reply);
-                        pl.MessageFrom(Core.Name, reply);
+                        pl.SendClientMessage(reply);
                     }
                 }
             }
@@ -47,8 +54,8 @@
             try
             {
                 string[] v3 = location.Location.ToString("F").Trim(new char[] { '(', ')', ' ' }).Split(new char[] { ',' });
-                reply = string.Format("{3} Location: X:{0} Y:{1} Z:{2}", v3[0], v3[1], v3[2],
-                    (location.PlayerClient.netUser == source ? "Your" : string.Format("{0}'s", location.Name)));
+                reply = string.Format("{3}: X:{0} Y:{1} Z:{2}", v3[0], v3[1], v3[2],
+                    (location.PlayerClient.netUser == source ? "Tu ubicación" : string.Format("Ubicación de {0}", location.Name)));
                 flag = true;
             } catch (Exception)
             {

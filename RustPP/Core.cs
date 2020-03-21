@@ -169,9 +169,9 @@ namespace RustPP
             ChatCommand.AddCommand("/reglas", new RulesCommand());
             ChatCommand.AddCommand("/amigos", new FriendsCommand());
             ChatCommand.AddCommand("/ayuda", new HelpCommand());
-            ChatCommand.AddCommand("/history", new HistoryCommand());
+            ChatCommand.AddCommand("/historial", new HistoryCommand());
             ChatCommand.AddCommand("/motd", new MOTDCommand());
-            ChatCommand.AddCommand("/location", new LocationCommand());
+            ChatCommand.AddCommand("/ubicacion", new LocationCommand());
             ChatCommand.AddCommand("/ping", new PingCommand());
             ChatCommand.AddCommand("/players", new PlayersCommand());
             ChatCommand.AddCommand("/w", new PrivateMessagesCommand());

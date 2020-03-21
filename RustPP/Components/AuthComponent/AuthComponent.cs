@@ -152,11 +152,12 @@ namespace RustPP.Components.AuthComponent
                     de.DamageAmount = 0;
                     return;
                 }
+                System.Random random = new System.Random();
+                int randomNumber = random.Next(0, 30);
+                user.Cash += randomNumber * user.HunterLevel;
+                player.SendClientMessage($"[color yellow]<!>[/color] Recibiste ${randomNumber * user.HunterLevel} por tu habilidad como Cazador.");
                 user.AddFarmExp(1);
-
             }
-            
-
         }
         static void OnPlayerKilled(DeathEvent de)
         {
