@@ -113,10 +113,10 @@ namespace RustPP.Data.Entities
                 //this.MetalFarmed += quantity;
 
                 this.HunterExp += 1;
-                if (this.HunterExp >= this.HunterLevel * 100)
+                if (this.HunterExp >= this.HunterLevel * 30)
                 {
                     char cha = '♜';
-                    this.HunterExp -= this.HunterLevel * 100;
+                    this.HunterExp -= this.HunterLevel * 30;
                     this.HunterLevel += 1;
                     this.Player.Notice(cha.ToString(), $"Subiste a nivel {this.HunterLevel} (Cazador)", 3f);
                     this.Player.SendClientMessage($"¡Felicidades! Subiste a nivel {this.HunterLevel} ([color orange]Cazador[/color])");

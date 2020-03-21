@@ -11,6 +11,7 @@ using Newtonsoft.Json.Converters;
 using RustPP.Data.Entities;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using RustPP.Commands;
 
 namespace RustPP.Components.AuthComponent
 {
@@ -46,6 +47,16 @@ namespace RustPP.Components.AuthComponent
             Fougerite.Hooks.OnNPCKilled += OnNPCKilled;
             Fougerite.Hooks.OnEntityHurt += OnEntityHurt;
             Fougerite.Hooks.OnPlayerHurt += OnPlayerHurt;
+            Fougerite.Hooks.OnChat += OnChat;
+        }
+        static void OnChat(Fougerite.Player player, ref ChatString text)
+        {
+            if (!UserIsLogged(player))
+            {
+                char ch = '☢';
+                player.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
         }
         static void OnPlayerMove(HumanController hc, Vector3 origin, int encoded, ushort stateFlags, uLink.NetworkMessageInfo info, Util.PlayerActions action)
         {
@@ -186,7 +197,7 @@ namespace RustPP.Components.AuthComponent
 
             if (!UserIsLogged(player))
             {
-                //player.Inventory.ClearAll();
+                player.Inventory.ClearAll();
                 if (CheckIfUserIsRegistered(player))
                 {
                     FreezePlayer(player);
@@ -207,12 +218,52 @@ namespace RustPP.Components.AuthComponent
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
             if(user != null)
             {
+                
+                
                 List<UserInventoryItem> playerItems = json.DeSerializeJsonToObject<List<UserInventoryItem>>(user.InternalInventory);
                 foreach(UserInventoryItem item in playerItems)
                 {
                     if(item.Name != "" && item.Quantity != -1)
                     {
                         player.Inventory.AddItemTo(item.Name, item.Slot, item.Quantity);
+                        Inventory inventory = player.PlayerClient.controllable.GetComponent<Inventory>();
+                        PlayerItem playerItem = new PlayerItem(ref inventory, item.Slot);
+                        IInventoryItem dataItem = playerItem.RInventoryItem as IInventoryItem;
+                        dataItem.SetCondition(item.Condition);
+                        if (playerItem != null)
+                        {
+                            if (playerItem.isWeapon)
+                            {
+                                dataItem.SetUses(item.WeaponBullets);
+                                playerItem.heldItem.SetTotalModSlotCount(item.WeaponSlots);
+                                if (item.WeaponSlot1 != null)
+                                {
+                                    playerItem.addWeaponMod(item.WeaponSlot1);
+                                }
+
+                                if (item.WeaponSlot2 != null && item.WeaponSlot2 != "null")
+                                {
+
+                                    playerItem.addWeaponMod(item.WeaponSlot2);
+                                }
+                                if (item.WeaponSlot3 != null && item.WeaponSlot3 != "null")
+                                {
+                                    playerItem.addWeaponMod(item.WeaponSlot3);
+                                }
+                                if (item.WeaponSlot4 != null && item.WeaponSlot4 != "null")
+                                {
+                                    playerItem.addWeaponMod(item.WeaponSlot4);
+                                }
+                                if (item.WeaponSlot5 != null && item.WeaponSlot5 != "null")
+                                {
+                                    playerItem.addWeaponMod(item.WeaponSlot5);
+                                }
+                            }
+                        } else
+                        {
+                            Logger.LogError("LoadInventory - playerItem is Null");
+                        }
+
                     }
                 }
             }
@@ -363,9 +414,10 @@ namespace RustPP.Components.AuthComponent
         }
         public static void LoadPlayer(Fougerite.Player player)
         {
-            //LoadInventory(player);
+            
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
-            if(user != null)
+            
+            if (user != null)
             {
                 if(user.BannedPlayer == 1)
                 {
@@ -373,6 +425,14 @@ namespace RustPP.Components.AuthComponent
                     player.Notice(ch.ToString(), $"Esta cuenta esta baneada, pide un desbaneo en la web www.hyaxe.com.", 4f);
                     player.Disconnect();
                 }
+                LoadInventory(player);
+                ShareCommand command = ChatCommand.GetCommand("share") as ShareCommand;
+                command.AddDoors(user.SteamID, player);
+
+            }
+            else
+            {
+                player.SendClientMessage("[color red] Ocurrió un error al cargar la cuenta, comunicate con un administrador. Código #0102");
             }
             UnFreezePlayer(player);
             
@@ -436,36 +496,69 @@ namespace RustPP.Components.AuthComponent
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
             if(user != null)
             {
-                /*List<UserInventoryItem> playerItems = new List<UserInventoryItem>();
+                UnshareCommand command = ChatCommand.GetCommand("unshare") as UnshareCommand;
+                command.DeleteDoors(user.SteamID, player);
+                List<UserInventoryItem> playerItems = new List<UserInventoryItem>();
                 PlayerInv inventario = new PlayerInv(player);
                 foreach (PlayerItem item in inventario.AllItems)
                 {
-                    IInventoryItem itemdata = item.RInventoryItem;
-                    ItemDataBlock datablock = itemdata.datablock;
-                    UserInventoryItem newItem = new UserInventoryItem
+                    if (item.Name != "" && item.Quantity != -1)
                     {
-                        Slot = item.Slot,
-                        Name = item.Name,
-                        Quantity = item.Quantity,
-                        Condition = itemdata.condition,
-                    };
-                    if(datablock.category == ItemDataBlock.ItemCategory.Weapons)
-                    {
-                        newItem.WeaponBullets = itemdata.uses;
+                        IInventoryItem itemdata = item.RInventoryItem;
+
+                        ItemDataBlock datablock = itemdata.datablock;
+                        UserInventoryItem newItem = new UserInventoryItem
+                        {
+                            Slot = item.Slot,
+                            Name = item.Name,
+                            Quantity = item.Quantity,
+                            Condition = itemdata.condition,
+                        };
+                        if(item.isWeapon)
+                        {
+                            newItem.WeaponBullets = itemdata.uses;
+                            ItemModDataBlock mod1 = item.getModSlot(0);
+                            ItemModDataBlock mod2 = item.getModSlot(1);
+                            ItemModDataBlock mod3 = item.getModSlot(2);
+                            ItemModDataBlock mod4 = item.getModSlot(3);
+                            ItemModDataBlock mod5 = item.getModSlot(4);
+                            newItem.WeaponSlots = item.getModSlotsCount;
+                            if(mod1 != null)
+                            {
+                                newItem.WeaponSlot1 = mod1.name;
+                            }
+                            if (mod2 != null)
+                            {
+                                newItem.WeaponSlot2 = mod2.name;
+                            }
+                            if (mod3 != null)
+                            {
+                                newItem.WeaponSlot3 = mod3.name;
+                            }
+                            if (mod4 != null)
+                            {
+                                newItem.WeaponSlot4 = mod4.name;
+                            }
+                            if (mod5 != null)
+                            {
+                                newItem.WeaponSlot5 = mod5.name;
+                            }
+                        }
+                        playerItems.Add(newItem);
                     }
-                    playerItems.Add(newItem);
+                    
                 }
                 JsonAPI json = JsonAPI.GetInstance;
-                Logger.LogError(json.SerializeObjectToJson(playerItems));
-                user.InternalInventory = json.SerializeObjectToJson(playerItems);*/
-
+                //Logger.LogError(json.SerializeObjectToJson(playerItems));
+                user.InternalInventory = json.SerializeObjectToJson(playerItems);
+                
                 user.Save();
                 Data.Globals.usersOnline.RemoveAll(x => x.Name == player.Name);
             }
         }
         static void OnPlayerGathering(Fougerite.Player player, GatherEvent ge)
         {
-            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
+            
             if(!UserIsLogged(player))
             {
                 char ch = '☢';
@@ -473,23 +566,24 @@ namespace RustPP.Components.AuthComponent
                 ge.Quantity = 0;
                 return;
             }
+            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
             int quantity = ge.Quantity;
             if (ge.Item == "Wood")
             {
-                ge.Quantity = quantity* user.LumberjackLevel;
+                ge.Quantity = (quantity* user.LumberjackLevel) /2;
                 user.AddWoodExp(ge.Quantity);
             }
             if(ge.Item == "Metal Ore")
             {
-                ge.Quantity = quantity* user.MinerLevel;
+                ge.Quantity = (quantity* user.MinerLevel) /2;
                 user.AddMetalExp(ge.Quantity);
             }
             if (ge.Item == "Sulfur Ore")
             {
-                ge.Quantity = quantity* user.MinerLevel;
+                ge.Quantity = (quantity* user.MinerLevel) /2;
                 user.AddSulfureExp(ge.Quantity);
             }
-            player.SendClientMessage($"{ge.Item} x {ge.Quantity}");
+            //player.SendClientMessage($"{ge.Item} x {ge.Quantity}");
         }
 
         

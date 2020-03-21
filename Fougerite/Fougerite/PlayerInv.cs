@@ -98,6 +98,27 @@ namespace Fougerite
             }
         }
 
+        public IInventoryItem AddIItemTo(string name, int slot, int amount)
+        {
+            ItemDataBlock byName = DatablockDictionary.GetByName(name);
+            if (byName != null)
+            {
+                Inventory.Slot.Kind belt = Inventory.Slot.Kind.Default;
+                if ((slot > 0x1d) && (slot < 0x24))
+                {
+                    belt = Inventory.Slot.Kind.Belt;
+                }
+                else if ((slot >= 0x24) && (slot < 40))
+                {
+                    belt = Inventory.Slot.Kind.Armor;
+                }
+                return this._inv.AddItemSomehow(byName, new Inventory.Slot.Kind?(belt), slot, amount);
+            } else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Clears the inventory.
         /// </summary>
@@ -192,6 +213,17 @@ namespace Fougerite
             return this.HasItem(name, 1);
         }
 
+        public PlayerItem GetItem(int slot)
+        {
+            foreach (PlayerItem item in this.Items)
+            {
+                if (item.Slot == slot)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
         /// <summary>
         /// Checks if the player has a specific amount of item.
         /// </summary>

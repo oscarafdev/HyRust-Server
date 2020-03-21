@@ -87,5 +87,12 @@ namespace RustPP.Commands
             if (client != null)
                 client.MessageFrom(Core.Name, string.Format("{0} is no longer sharing his doors with you.", unsharing.Name));
         }
+        public void DeleteDoors(ulong UID, Fougerite.Player player)
+        {
+            ShareCommand command = (ShareCommand)ChatCommand.GetCommand("share");
+
+            ((ArrayList)command.GetSharedDoors()[UID]).Remove(player.UID);
+
+        }
     }
 }

@@ -13,9 +13,10 @@ namespace RustPP.Data.Entities
         public float Condition { get; set; }
         public int WeaponSlots { get; set; }
         public int WeaponBullets { get; set; }
-        public int WeaponSlot1 { get; set; }
-        public int WeaponSlot2 { get; set; }
-        public int WeaponSlot3 { get; set; }
-        public int WeaponSlot4 { get; set; }
+        public string WeaponSlot1 { get; set; }
+        public string WeaponSlot2 { get; set; }
+        public string WeaponSlot3 { get; set; }
+        public string WeaponSlot4 { get; set; }
+        public string WeaponSlot5 { get; set; }
     }
 }
