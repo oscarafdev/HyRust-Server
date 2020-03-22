@@ -54,7 +54,7 @@ namespace Fougerite
             }
         }
 
-        public void BanPlayer(Fougerite.Player player, string Banner = "Console", string reason = "Te han baneado.", Fougerite.Player Sender = null, bool AnnounceToServer = false)
+        public void BanPlayer(Fougerite.Player player, string Banner = "Console", string reason = "You were banned.", Fougerite.Player Sender = null, bool AnnounceToServer = false)
         {
             bool cancel = Hooks.OnBanEventHandler(new BanEvent(player, Banner, reason, Sender));
             if (cancel) { return;}
@@ -64,28 +64,28 @@ namespace Fougerite
             
             if (player.IsOnline && !player.IsDisconnecting)
             {
-                player.SendClientMessage(red + " " + reason);
-                player.SendClientMessage(red + " Baneado por: " + Banner);
+                player.Message(red + " " + reason);
+                player.Message(red + " Banned by: " + Banner);
                 player.Disconnect();
             }
             if (Sender != null)
             {
-                Sender.SendClientMessage("Baneaste a " + player.Name);
-                Sender.SendClientMessage("IP: " + player.IP);
-                Sender.SendClientMessage("ID: " + player.SteamID);
+                Sender.Message("You banned " + player.Name);
+                Sender.Message("Player's IP: " + player.IP);
+                Sender.Message("Player's ID: " + player.SteamID);
             }
             if (!AnnounceToServer)
             {
                 foreach (Fougerite.Player pl in Players.Where(pl => pl.Admin || pl.Moderator))
                 {
-                    pl.SendClientMessage(red + player.Name + white + " fue baneado por: " + green + Banner);
-                    pl.SendClientMessage(red + " Motivo: " + reason);
+                    pl.Message(red + player.Name + white + " was banned by: " + green + Banner);
+                    pl.Message(red + " Reason: " + reason);
                 }
             }
             else
             {
-                Broadcast(red + player.Name + white + " fue baneado por: " + green + Banner);
-                Broadcast(red + " Motivo: " + reason);
+                Broadcast(red + player.Name + white + " was banned by: " + green + Banner);
+                Broadcast(red + " Reason: " + reason);
             }
             BanPlayerIPandID(player.IP, player.SteamID, player.Name, reason, Banner);
         }
@@ -130,7 +130,7 @@ namespace Fougerite
             return (DataStore.GetInstance().Get("Ips", ip) != null);
         }
 
-        public bool UnbanByName(string name, string UnBanner = "Consola", Fougerite.Player Sender = null)
+        public bool UnbanByName(string name, string UnBanner = "Console", Fougerite.Player Sender = null)
         {
             var ids = FindIDsOfName(name);
             var ips = FindIPsOfName(name);
@@ -144,8 +144,8 @@ namespace Fougerite
             }
             foreach (Fougerite.Player pl in Players.Where(pl => pl.Admin || pl.Moderator))
             {
-                pl.Message(red + name + white + " fue desbaneado por: "
-                           + green + UnBanner + white + " Busquedas similares: " + ids.Count);
+                pl.Message(red + name + white + " was unbanned by: "
+                           + green + UnBanner + white + " Different matches: " + ids.Count);
             }
             if (ips.Count > 0)
             {
@@ -226,7 +226,7 @@ namespace Fougerite
             {
                 if (player.IsOnline)
                 {
-                    player.SendClientMessage(arg);
+                    player.Message(arg);
                 }
             }
         }

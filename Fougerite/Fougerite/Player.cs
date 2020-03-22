@@ -495,17 +495,6 @@ namespace Fougerite
         /// <param name="arg"></param>
         public void Message(string arg)
         {
-            SendClientMessage(arg);
-        }
-
-        /// <summary>
-        /// Sends a message to the player with the specified name "sender".
-        /// </summary>
-        /// <param name="playername"></param>
-        /// <param name="arg"></param>
-        
-        public void MessageFrom(string playername, string arg)
-        {
             if (this.IsOnline)
             {
                 if (string.IsNullOrEmpty(arg) || arg.Length == 0)
@@ -523,13 +512,16 @@ namespace Fougerite
                 {
                     if (Bootstrap.RustChat)
                     {
-                        this.SendCommand("chat.add " + "\\n\\n " +
-                                        Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + arg));
+                        this.SendCommand("chat.add " +
+                                         Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer()
+                                             .server_message_name) + " " + Facepunch.Utility.String.QuoteSafe(arg));
                     }
 
                     if (Bootstrap.RPCChat)
                     {
-                        string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + arg);
+                        string text =
+                            Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer().server_message_name) + " " +
+                            Facepunch.Utility.String.QuoteSafe(arg);
                         uLink.NetworkView.Get(this.PlayerClient.networkView)
                             .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
                     }
@@ -553,12 +545,17 @@ namespace Fougerite
                         {
                             if (Bootstrap.RustChat)
                             {
-                                this.SendCommand("chat.add " + "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<"+ playername+"> " +lastcolor + x));
+                                this.SendCommand("chat.add " +
+                                                 Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer()
+                                                     .server_message_name) + " " +
+                                                 Facepunch.Utility.String.QuoteSafe(lastcolor + x));
                             }
 
                             if (Bootstrap.RPCChat)
                             {
-                                string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + lastcolor + x);
+                                string text =
+                                    Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer()
+                                        .server_message_name) + " " + Facepunch.Utility.String.QuoteSafe(lastcolor + x);
                                 uLink.NetworkView.Get(this.PlayerClient.networkView)
                                     .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
                             }
@@ -567,12 +564,17 @@ namespace Fougerite
                         {
                             if (Bootstrap.RustChat)
                             {
-                                this.SendCommand("chat.add " + "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + x));
+                                this.SendCommand("chat.add " +
+                                                 Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer()
+                                                     .server_message_name) + " " +
+                                                 Facepunch.Utility.String.QuoteSafe(x));
                             }
 
                             if (Bootstrap.RPCChat)
                             {
-                                string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + x);
+                                string text =
+                                    Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer()
+                                        .server_message_name) + " " + Facepunch.Utility.String.QuoteSafe(x);
                                 uLink.NetworkView.Get(this.PlayerClient.networkView)
                                     .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
                             }
@@ -581,7 +583,98 @@ namespace Fougerite
                         i++;
                     }
 
+                    //foreach (var x in Util.GetUtil().SplitInParts(arg, 100))
+                    //    this.SendCommand("chat.add " + lastcolor + Facepunch.Utility.String.QuoteSafe(Fougerite.Server.GetServer().server_message_name) + " " + Facepunch.Utility.String.QuoteSafe(x));
+                }
+            }
+        }
 
+        /// <summary>
+        /// Sends a message to the player with the specified name "sender".
+        /// </summary>
+        /// <param name="playername"></param>
+        /// <param name="arg"></param>
+        public void MessageFrom(string playername, string arg)
+        {
+            if (this.IsOnline)
+            {
+                if (string.IsNullOrEmpty(arg) || arg.Length == 0)
+                {
+                    return;
+                }
+
+                string s = Regex.Replace(arg, @"\[/?color\b.*?\]", string.Empty);
+                if (string.IsNullOrEmpty(s) || s.Length == 0)
+                {
+                    return;
+                }
+
+                if (s.Length <= 100)
+                {
+                    if (Bootstrap.RustChat)
+                    {
+                        this.SendCommand("chat.add " + Facepunch.Utility.String.QuoteSafe(playername) + " " +
+                                         Facepunch.Utility.String.QuoteSafe(arg));
+                    }
+
+                    if (Bootstrap.RPCChat)
+                    {
+                        string text = Facepunch.Utility.String.QuoteSafe(playername) + " " +
+                                      Facepunch.Utility.String.QuoteSafe(arg);
+                        uLink.NetworkView.Get(this.PlayerClient.networkView)
+                            .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
+                    }
+                }
+                else
+                {
+                    var arr = Regex.Matches(arg, @"\[/?color\b.*?\]")
+                        .Cast<Match>()
+                        .Select(m => m.Value)
+                        .ToArray();
+                    string lastcolor = "";
+                    if (arr.Length > 0)
+                    {
+                        lastcolor = arr[arr.Length - 1];
+                    }
+
+                    int i = 0;
+                    foreach (var x in Util.GetUtil().SplitInParts(arg, 100))
+                    {
+                        if (i == 1)
+                        {
+                            if (Bootstrap.RustChat)
+                            {
+                                this.SendCommand("chat.add " + Facepunch.Utility.String.QuoteSafe(playername) + " " +
+                                                 Facepunch.Utility.String.QuoteSafe(lastcolor + x));
+                            }
+
+                            if (Bootstrap.RPCChat)
+                            {
+                                string text = Facepunch.Utility.String.QuoteSafe(playername) + " " +
+                                              Facepunch.Utility.String.QuoteSafe(lastcolor + x);
+                                uLink.NetworkView.Get(this.PlayerClient.networkView)
+                                    .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
+                            }
+                        }
+                        else
+                        {
+                            if (Bootstrap.RustChat)
+                            {
+                                this.SendCommand("chat.add " + Facepunch.Utility.String.QuoteSafe(playername) + " " +
+                                                 Facepunch.Utility.String.QuoteSafe(x));
+                            }
+
+                            if (Bootstrap.RPCChat)
+                            {
+                                string text = Facepunch.Utility.String.QuoteSafe(playername) + " " +
+                                              Facepunch.Utility.String.QuoteSafe(x);
+                                uLink.NetworkView.Get(this.PlayerClient.networkView)
+                                    .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
+                            }
+                        }
+
+                        i++;
+                    }
                 }
             }
         }

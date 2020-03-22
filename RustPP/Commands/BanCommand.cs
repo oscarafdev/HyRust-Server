@@ -19,12 +19,6 @@
                 pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
                 return;
             }
-            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
-            if (user.AdminLevel < 3 && user.Name != "ForwardKing")
-            {
-                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
-                return;
-            }
             string queryName = Arguments.ArgsStr.Trim(new char[] { ' ', '"' });
             if (queryName == string.Empty)
             {
@@ -75,12 +69,7 @@
                 return;
             }
             var bannedPlayer = Fougerite.Server.Cache[ban.UserID];
-            if (!RustPP.Data.Globals.UserIsLogged(bannedPlayer))
-            {
-                myAdmin.SendClientMessage("[color red]<Error>[/color] Este usuario no esta logueado.");
-                return;
-            }
-            if (!RustPP.Data.Globals.UserIsLogged(bannedPlayer) && !Administrator.GetAdmin(myAdmin.UID).HasPermission("RCON"))
+            if(!RustPP.Data.Globals.UserIsLogged(bannedPlayer) && !Administrator.GetAdmin(myAdmin.UID).HasPermission("RCON"))
             {
                 myAdmin.SendClientMessage(ban.DisplayName + " no esta conectado, por lo que no se lo puede banear.");
                 return; 

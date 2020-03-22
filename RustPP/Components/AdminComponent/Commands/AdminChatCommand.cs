@@ -25,11 +25,7 @@ namespace RustPP.Components.AdminComponent.Commands
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
-            if (user.AdminLevel < 1 && user.Name != "ForwardKing")
-            {
-                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
-                return;
-            }
+            
             string strText = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             string rem = Regex.Replace(strText, @"\[/?color\b.*?\]", string.Empty);
             string template = "[color #ff968f][A]((Admin -adminLevel- -userName-: -userMessage-))";

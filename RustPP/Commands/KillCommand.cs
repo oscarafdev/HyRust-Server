@@ -48,7 +48,7 @@
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (id == 0)
             {
-                pl.SendClientMessage("¡Comando cancelado!");
+                pl.MessageFrom(Core.Name, "Cancelled!");
                 return;
             }
             PList list = (PList)Core.killWaitList[pl.UID];

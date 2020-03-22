@@ -30,11 +30,6 @@ namespace RustPP.Components.AdminComponent.Commands
             }
             string search = ChatArguments[0];
             Fougerite.Player recipient = Fougerite.Player.FindByName(search);
-            if (!Data.Globals.UserIsLogged(recipient))
-            {
-                pl.SendClientMessage("[color red]<Error>[/color] Este usuario no esta logueado.");
-                return;
-            }
             RustPP.Data.Entities.User recipientUser = Data.Globals.GetInternalUser(recipient);
             if (recipient == null)
             {

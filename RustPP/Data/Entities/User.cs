@@ -11,23 +11,15 @@ namespace RustPP.Data.Entities
         public int ID { get; set; }
         public string Name { get; set; }
         public ulong SteamID { get; set; }
-        public int Muted { get; set; }
         public int Exp { get; set; }
         public int Level { get; set; }
         public int Kills { get; set; }
         public int Deaths { get; set; }
         public int Cash { get; set; }
-        public float XPos { get; set; }
-        public float YPos { get; set; }
-        public float ZPos { get; set; }
-        public int TimeToPayDay { get; set; }
-        public int TimeToKit { get; set; }
-        public int TimeToTP { get; set; }
         public int WoodFarmed { get; set; }
         public int MetalFarmed { get; set; }
         public int SulfureFarmed { get; set; }
         public int NPCFarmed { get; set; }
-        public int Connected { get; set; }
         public string AdminName { get; set; }
         public int AdminLevel { get; set; }
         public int ClanID { get; set; }
@@ -160,23 +152,6 @@ namespace RustPP.Data.Entities
                 this.Player.SendClientMessage($"Bajaste a nivel [color orange] Nivel {this.Level} [/color] de jugador.");
             }
         }
-        public void Connect()
-        {
-            using (MySqlConnection connection = new MySqlConnection(Data.Database.Connection.GetConnectionString()))
-            {
-                connection.Open();
-                MySqlCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE users SET " +
-                    "connected = @connected" +
-                    " WHERE username = @username";
-                command.Parameters.AddWithValue("@connected", this.Connected);
-
-                command.Parameters.AddWithValue("@username", this.Name);
-                MySqlDataReader reader = command.ExecuteReader();
-
-                connection.Close();
-            }
-        }
         public void Save()
         {
             using (MySqlConnection connection = new MySqlConnection(Data.Database.Connection.GetConnectionString()))
@@ -200,15 +175,7 @@ namespace RustPP.Data.Entities
                     "metalFarmed = @metalFarmed," +
                     "adminLevel = @adminLevel," +
                     "banned = @banned," +
-                    "inventoryItems = @inventoryItems," +
-                    "timeToPayDay = @timeToPayDay," +
-                    "timeToKit = @timeToKit," +
-                    "timeToTP = @timeToTP," +
-                    "connected = @connected," +
-                    "xPos = @xPos," +
-                    "yPos = @yPos," +
-                    "zPos = @zPos," +
-                    "muted = @muted" +
+                    "inventoryItems = @inventoryItems" +
                     " WHERE username = @username";
                 command.Parameters.AddWithValue("@playerLevel", this.Level);
                 command.Parameters.AddWithValue("@playerExp", this.Exp);
@@ -228,14 +195,6 @@ namespace RustPP.Data.Entities
                 command.Parameters.AddWithValue("@adminLevel", this.AdminLevel);
                 command.Parameters.AddWithValue("@banned", this.BannedPlayer);
                 command.Parameters.AddWithValue("@inventoryItems", this.InternalInventory);
-                command.Parameters.AddWithValue("@timeToPayDay", this.TimeToPayDay);
-                command.Parameters.AddWithValue("@timeToKit", this.TimeToKit);
-                command.Parameters.AddWithValue("@timeToTP", this.TimeToTP);
-                command.Parameters.AddWithValue("@connected", this.Connected);
-                command.Parameters.AddWithValue("@xPos", this.XPos);
-                command.Parameters.AddWithValue("@yPos", this.YPos);
-                command.Parameters.AddWithValue("@zPos", this.ZPos);
-                command.Parameters.AddWithValue("@muted", this.Muted);
                 command.Parameters.AddWithValue("@username", this.Name);
                 MySqlDataReader reader = command.ExecuteReader();
 
