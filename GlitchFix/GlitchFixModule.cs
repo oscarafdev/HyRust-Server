@@ -103,8 +103,8 @@ namespace GlitchFix
                 }
                 if (!string.IsNullOrEmpty(cachedRaycast.collider.gameObject.name)) return;
                 if (cachedRaycast.point.y < player.Y) return;
-                Logger.LogDebug(player.Name + " tried to TELEPORT rock glitch at " + player.Location);
-                Server.GetServer().Broadcast(player.Name + " don't try to rock glitch =)");
+                Logger.LogDebug(player.Name + "intentó teletransportarse dentro de una roca. " + player.Location);
+                Server.GetServer().Broadcast(player.Name + " intentó entrar dentro de una piedra.");
                 foreach (Collider collider in Physics.OverlapSphere(player.Location, 3f))
                 {
                     if (collider.gameObject.name == "SleepingBagA(Clone)")
@@ -114,10 +114,10 @@ namespace GlitchFix
                 {
                     if (player.Admin)
                     {
-                        player.Message("You administrator rights allowed you to bug inside rocks.");
+                        player.Message("Usted es administrador y está autorizado a buguear las piedras.");
                         return;
                     }
-                    player.Message("Glitching gets you killed.");
+                    player.SendClientMessage("[color red]<Atención> No esta permitido buguear las piedras.");
                     player.Kill();
                 }
             }
@@ -145,8 +145,8 @@ namespace GlitchFix
                 }
                 if (cachedRaycast.collider.gameObject.name != "") return;
                 if (cachedRaycast.point.y < player.Y) return;
-                Logger.LogDebug(player.Name + " tried to rock glitch at " + player.Location);
-                Server.GetServer().Broadcast(player.Name + " don't try to rock glitch =)");
+                Logger.LogDebug(player.Name + " intentó entrar a una piedra en" + player.Location);
+                Server.GetServer().Broadcast(player.Name + " esta intentando buguear una piedra.");
                 foreach (Collider collider in Physics.OverlapSphere(player.Location, 3f))
                 {
                     if (collider.gameObject.name == "SleepingBagA(Clone)")
@@ -156,10 +156,10 @@ namespace GlitchFix
                 {
                     if (player.Admin)
                     {
-                        player.Message("You administrator rights allowed you to bug inside rocks.");
+                        player.Message("Usted es administrador y está autorizado a buguear las piedras.");
                         return;
                     }
-                    player.Message("Glitching gets you killed.");
+                    player.SendClientMessage("[color red]<Atención> No esta permitido buguear las piedras.");
                     player.Kill();
                 }
             }
@@ -305,7 +305,7 @@ namespace GlitchFix
                             {
                                 if (Physics.OverlapSphere(location, 0.34f).Where(collider => collider.GetComponent<DeployableObject>() != null).Any(collider => collider.GetComponent<DeployableObject>().name.Contains("Barricade_Fence")))
                                 {
-                                    actualplacer.Message("Pillar Barricade glitching is not allowed!");
+                                    actualplacer.Message("Pillar Barricade glitching no esta permitido!");
                                     Entity.Destroy();
                                     if (actualplacer.IsOnline && GiveBack)
                                     {

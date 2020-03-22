@@ -118,7 +118,7 @@ namespace RustPP.Commands
                 string str = list[choice];
                 if (choice == 0)
                 {
-                    pl.MessageFrom(Core.Name, "Cancelled!");
+                    pl.SendClientMessage("¡Comando cancelado!");
                     tpWaitList.Remove(pl.UID);
                 }
                 else
