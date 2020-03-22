@@ -20,7 +20,7 @@
             if (ChatArguments.Length < 1)
             {
                 pl.SendClientMessage("[color red]<Sintaxis>[/color] /ayuda <Sección>");
-                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp - kit - casa");
+                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp");
                 return;
             }
             string search = ChatArguments[0].ToLower();
@@ -39,19 +39,10 @@
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - CHAT [color orange]--------");
                 pl.SendClientMessage($"- El chat común es local, te puede leer cualquier jugador que este dentro de 30 metros.");
                 pl.SendClientMessage($"- [color cyan]/duda[/color] Canal general de dudas, utiliza este canal para preguntas.");
-                pl.SendClientMessage($"- [color cyan]/reportar[/color] Reportar a un usuario.");
                 pl.SendClientMessage($"- [color cyan]/g[/color] Gritar (Rango 80m).");
                 pl.SendClientMessage($"- [color cyan]/w[/color] Envia un mensaje privado a un jugador.");
                 pl.SendClientMessage($"- [color cyan]/r[/color] Response un mensaje privado.");
                 pl.SendClientMessage($"- [color cyan]/historial[/color] Revisa tu historial de mensajes.");
-            }
-            else if (search == "casa")
-            {
-                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - AMIGOS [color orange]--------");
-                pl.SendClientMessage($"- [color cyan]/sethome[/color] Guardar tu casa.");
-                pl.SendClientMessage($"- [color cyan]/home[/color] Ir hacia tu casa.");
-                pl.SendClientMessage($"- [color cyan]/remove[/color] Destruir una parte de tu casa.");
-                pl.SendClientMessage($"- [color cyan]/removeall[/color] Destruir toda tu casa.");
             }
             else if (search == "amigos")
             {
@@ -64,16 +55,9 @@
             else if (search == "tp")
             {
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - TP [color orange]--------");
-                pl.SendClientMessage($"- [color cyan]/tp[/color] Teletransportes.");
                 pl.SendClientMessage($"- [color cyan]/tpr[/color] Envia una solicitud para transportarte a un jugador.");
                 pl.SendClientMessage($"- [color cyan]/tpa[/color] Acepta un TP.");
                 pl.SendClientMessage($"- [color cyan]/tpc[/color] Rechaza un TP.");
-            }
-            else if (search == "kit")
-            {
-                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - KIT [color orange]--------");
-                pl.SendClientMessage($"- El sistema de Kits funciona según el nivel de Cuenta, mientras más nivel mejores y más objetos.");
-                pl.SendClientMessage($"- [color cyan]/kit[/color] Obtienes un kit (Cada 15 minutos).");
             }
         }
     }

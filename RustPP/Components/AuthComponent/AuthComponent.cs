@@ -18,7 +18,7 @@ namespace RustPP.Components.AuthComponent
     class AuthComponent
     {
         public readonly System.Random Randomizer = new System.Random();
-        static readonly Dictionary<int, string> RewardList = new Dictionary<int, string>()
+        public readonly Dictionary<int, string> RewardList = new Dictionary<int, string>()
         {
             {1, "Armor Part 1"},
             {2, "Armor Part 2"},
@@ -48,59 +48,6 @@ namespace RustPP.Components.AuthComponent
             Fougerite.Hooks.OnEntityHurt += OnEntityHurt;
             Fougerite.Hooks.OnPlayerHurt += OnPlayerHurt;
             Fougerite.Hooks.OnChat += OnChat;
-            Fougerite.Hooks.OnPlayerUpdate += OnPlayerUpdate;
-        }
-        static void OnPlayerUpdate(Fougerite.Player player)
-        {
-            if (!UserIsLogged(player))
-            {
-                char ch = '☢';
-                player.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
-                return;
-            }
-            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
-            if(user.TimeToKit >= 1)
-            {
-                user.TimeToKit -= 1;
-            }
-            if(user.TimeToPayDay >= 1)
-            {
-                user.TimeToPayDay -= 1;
-            } 
-            else
-            {
-                int dinero = 0;
-                System.Random random = new System.Random();
-                int randomNumber = random.Next(0, 14);
-                player.SendClientMessage($"[color orange]------------[/color] PayDay [color orange]------------");
-                player.SendClientMessage($"[color orange]- Base :[/color] $ {user.Level*500} (Nivel {user.Level})");
-                dinero += user.Level * 500;
-                player.SendClientMessage($"[color orange]- Cazador :[/color] + $ {user.HunterLevel * 150} (Nivel {user.HunterLevel})");
-                dinero += user.HunterLevel * 150;
-                player.SendClientMessage($"[color orange]- Minero :[/color] + $ {user.MinerLevel * 50} (Nivel {user.MinerLevel})");
-                dinero += user.MinerLevel * 50;
-                player.SendClientMessage($"[color orange]- Leñador :[/color] + $ {user.LumberjackLevel * 50} (Nivel {user.LumberjackLevel})");
-                dinero += user.LumberjackLevel * 50;
-                player.SendClientMessage($"[color orange]- Total :[/color] [color #ea6b11]$ {dinero}  ");
-                user.Cash += dinero;
-                player.SendClientMessage($"[color orange]- Balance :[/color] [color #ea6b11]$ {user.Cash} ");
-                string reward = RewardList[randomNumber];
-                player.SendClientMessage($"[color orange]- Recompensa :[/color] [color #ea6b11]{reward} ");
-                
-                player.SendClientMessage($"[color orange]----------------------------------------------------");
-                user.GiveExp(1);
-                if(player.Inventory.FreeSlots >= 1)
-                {
-                    player.Inventory.AddItem(reward);
-                }
-                else
-                {
-                    player.SendClientMessage($"[color red]<PayDay>[/color] Perdiste la recompensa por no tener espacio en el inventario.");
-                }
-                
-                user.TimeToPayDay = 1800;
-            }
-
         }
         static void OnChat(Fougerite.Player player, ref ChatString text)
         {
@@ -113,6 +60,9 @@ namespace RustPP.Components.AuthComponent
         }
         static void OnPlayerMove(HumanController hc, Vector3 origin, int encoded, ushort stateFlags, uLink.NetworkMessageInfo info, Util.PlayerActions action)
         {
+
+            
+            
         }
         static void OnPlayerHurt(HurtEvent he)
         {
@@ -249,12 +199,9 @@ namespace RustPP.Components.AuthComponent
             if (!UserIsLogged(player))
             {
                 player.Inventory.ClearAll();
-               
                 if (CheckIfUserIsRegistered(player))
                 {
                     FreezePlayer(player);
-                    Vector3 pos0 = new Vector3(0.0f, 389.0f, 0.0f);
-                    player.TeleportTo(pos0);
                     player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para ingresar utiliza [color blue]/login <Contraseña>");
                 }
                 else
@@ -396,7 +343,7 @@ namespace RustPP.Components.AuthComponent
                 }
             }
         }
-        public static void LoginPlayer(Fougerite.Player player, string username, string password, Boolean firstLogin = false)
+        public static void LoginPlayer(Fougerite.Player player, string username, string password)
         {
             if(UserIsLogged(player))
             {
@@ -422,6 +369,7 @@ namespace RustPP.Components.AuthComponent
                 if (reader.HasRows)
                 {
                     reader.Read();
+                    Fougerite.Player newplayer = Fougerite.Player.Search(reader.GetString("steamId"));
 
                     User newUser = new User
                     {
@@ -444,24 +392,9 @@ namespace RustPP.Components.AuthComponent
                         AdminLevel = reader.GetInt32("adminLevel"),
                         BannedPlayer = reader.GetInt32("banned"),
                         InternalInventory = reader.GetString("inventoryItems"),
-                        XPos = reader.GetFloat("xPos"),
-                        YPos = reader.GetFloat("yPos"),
-                        ZPos = reader.GetFloat("zPos"),
-                        TimeToPayDay = reader.GetInt32("timeToPayDay"),
-                        TimeToKit = reader.GetInt32("timeToKit"),
-                        Connected = 1,
-                        TimeToTP = reader.GetInt32("timeToTP"),
-                        Muted = reader.GetInt32("muted"),
                         Player = player
                     };
-                    if(firstLogin)
-                    {
-                        newUser.XPos = player.Location.x;
-                        newUser.YPos = player.Location.y;
-                        newUser.ZPos = player.Location.z;
-                    }
                     Data.Globals.usersOnline.Add(newUser);
-                    newUser.Connect();
                     player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
                     player.SendClientMessage($"Si tienes dudas utiliza [color blue]/ayuda[color white] o escribe tu duda por el canal [color blue]/duda");
                     if (newUser.AdminLevel >= 1)
@@ -493,8 +426,6 @@ namespace RustPP.Components.AuthComponent
                     player.Notice(ch.ToString(), $"Esta cuenta esta baneada, pide un desbaneo en la web www.hyaxe.com.", 4f);
                     player.Disconnect();
                 }
-                Vector3 position = new Vector3(user.XPos, user.YPos, user.ZPos);
-                player.TeleportTo(position);
                 LoadInventory(player);
                 ShareCommand command = ChatCommand.GetCommand("share") as ShareCommand;
                 command.AddDoors(user.SteamID, player);
@@ -548,7 +479,7 @@ namespace RustPP.Components.AuthComponent
                         MySqlDataReader reader = command.ExecuteReader();
                         player.SendClientMessage("¡Bienvenido a HyAxe Rust! Este servidor es algo diferente a los demás.");
                         player.SendClientMessage("Para informarte utiliza el comando [color orange]/ayuda[color white] o [color orange]/duda[color]");
-                        LoginPlayer(player, player.Name, password, true);
+                        LoginPlayer(player, player.Name, password);
 
 
                     }
@@ -564,13 +495,8 @@ namespace RustPP.Components.AuthComponent
         static void OnPlayerDisconnected(Fougerite.Player player)
         {
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
-            
-            if (user != null)
+            if(user != null)
             {
-                user.XPos = player.DisconnectLocation.x;
-                user.YPos = player.DisconnectLocation.y;
-                user.ZPos = player.DisconnectLocation.z;
-                user.Connected = 0;
                 UnshareCommand command = ChatCommand.GetCommand("unshare") as UnshareCommand;
                 command.DeleteDoors(user.SteamID, player);
                 List<UserInventoryItem> playerItems = new List<UserInventoryItem>();
