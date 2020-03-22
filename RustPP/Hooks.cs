@@ -99,7 +99,7 @@ namespace RustPP
                 Fougerite.Player attacker = e.Attacker as Fougerite.Player;
                 if (attacker != null)
                 {
-                    FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("friends");
+                    FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("amigos");
                     if (command2.ContainsException(attacker.UID) && command2.ContainsException(victim.UID))
                     {
                         return false;

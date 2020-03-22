@@ -21,7 +21,7 @@
         public static void CreateSaves()
         {
             ShareCommand command = (ShareCommand)ChatCommand.GetCommand("share");
-            FriendsCommand command2 = (FriendsCommand)ChatCommand.GetCommand("friends");
+            FriendsCommand command2 = (FriendsCommand)ChatCommand.GetCommand("amigos");
             if (command.GetSharedDoors().Count != 0)
             {
                 Logger.Log("Guardando puertas");

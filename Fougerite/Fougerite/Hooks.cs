@@ -1365,12 +1365,6 @@ namespace Fougerite
                 return;
             }
 
-            player.DisconnectTime = DateTime.UtcNow.Ticks;
-            player.IsDisconnecting = true;
-            Fougerite.Server.GetServer().RemovePlayer(uid);
-            //if (Fougerite.Server.GetServer().Players.Contains(player)) { Fougerite.Server.GetServer().Players.Remove(player); }
-            //player.PlayerClient.netUser.Dispose();
-            Fougerite.Server.Cache[uid] = player;
             //Rust.Steam.Server.Steam_UpdateServer(server.maxplayers, Fougerite.Server.GetServer().Players.Count, server.hostname, server.map, "modded, fougerite");
             try
             {
@@ -1383,6 +1377,10 @@ namespace Fougerite
             {
                 Logger.LogError("PlayerDisconnectedEvent Error " + ex.ToString());
             }
+            player.DisconnectTime = DateTime.UtcNow.Ticks;
+            player.IsDisconnecting = true;
+            Fougerite.Server.GetServer().RemovePlayer(uid);
+            Fougerite.Server.Cache[uid] = player;
             Logger.LogDebug("User Disconnected: " + player.Name + " (" + player.SteamID + ")" + " (" + player.IP + ")");
             if (Fougerite.Bootstrap.CR && Fougerite.Server.Cache.ContainsKey(uid)) { Fougerite.Server.Cache.Remove(uid); }
             if (sw == null) return;
