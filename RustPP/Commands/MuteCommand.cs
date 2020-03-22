@@ -11,10 +11,22 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
+            if (user.AdminLevel < 1 && user.Name != "ForwardKing")
+            {
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                return;
+            }
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Mute Usage:  /mute playerName");
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /mute <NombreJugador>");
                 return;
             }
             PList list = new PList();
@@ -44,16 +56,16 @@
             }
             if (list.Count == 1)
             {
-                pl.MessageFrom(Core.Name, "No player matches the name: " + playerName);
+                pl.SendClientMessage("[color red]<Error>[/color] No se encontraron jugadores con el nombre: " + playerName);
                 return;
             }
-            pl.MessageFrom(Core.Name, string.Format("{0}  player{1} {2}: ", ((list.Count - 1)).ToString(), (((list.Count - 1) > 1) ? "s match" : " matches"), playerName));
+            pl.SendClientMessage(string.Format("{0}  jugador{1} {2}: ", ((list.Count - 1)).ToString(), (((list.Count - 1) > 1) ? "es encontrados" : " encontrado"), playerName));
             for (int i = 1; i < list.Count; i++)
             {
-                pl.MessageFrom(Core.Name, string.Format("{0} - {1}", i, list.PlayerList[i].DisplayName));
+                pl.SendClientMessage(string.Format("{0} - {1}", i, list.PlayerList[i].DisplayName));
             }
-            pl.MessageFrom(Core.Name, "0 - Cancel");
-            pl.MessageFrom(Core.Name, "Please enter the number matching the player you were looking for.");
+            pl.SendClientMessage("0 - Cancelar");
+            pl.SendClientMessage("Escriba el numero del jugador que desea mutear.");
             Core.muteWaitList[pl.UID] = list;
         }
 
@@ -62,7 +74,7 @@
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (id == 0)
             {
-                pl.MessageFrom(Core.Name, "Cancelled!");
+                pl.SendClientMessage("¡Comando cancelado!");
                 return;
             }
             PList list = (PList)Core.muteWaitList[pl.UID];
@@ -71,41 +83,41 @@
 
         public void MutePlayer(PList.Player mute, Fougerite.Player myAdmin)
         {
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(myAdmin);
+            var mutedPlayer = Fougerite.Server.Cache[mute.UserID];
+            if (!RustPP.Data.Globals.UserIsLogged(mutedPlayer))
+            {
+                myAdmin.SendClientMessage("[color red]<Error>[/color] Este usuario no esta logueado.");
+                return;
+            }
+            RustPP.Data.Entities.User muted = RustPP.Data.Globals.GetInternalUser(mutedPlayer);
             if (mute.UserID == myAdmin.UID)
             {
-                myAdmin.MessageFrom(Core.Name, "There is no point muting yourself.");
+                myAdmin.SendClientMessage("[color red]<Error>[/color] No puedes mutearte a ti mismo.");
                 return;
             }
-            if (Core.muteList.Contains(mute.UserID))
+            
+            if (muted.Muted == 1)
             {
-                myAdmin.MessageFrom(Core.Name, string.Format("{0} is already muted.", mute.DisplayName));
+                myAdmin.SendClientMessage(string.Format("[color red]<Error>[/color] {0} ya esta muteado.", mute.DisplayName));
                 return;
             }
-            if (Administrator.IsAdmin(mute.UserID))
+            if (muted.AdminLevel >= user.AdminLevel && !(user.Name == "ForwardKing"))
             {
-                Administrator mutingAdmin = Administrator.GetAdmin(myAdmin.UID);
-                Administrator mutedAdmin = Administrator.GetAdmin(mute.UserID);
-                if (mutedAdmin.HasPermission("CanUnmute") || mutedAdmin.HasPermission("CanAddFlags") || mutedAdmin.HasPermission("RCON"))
+                myAdmin.SendClientMessage(string.Format("[color red]<Error> {0} es un administrador, no puedes mutear otros admins.", mute.DisplayName));
+                return;
+            }
+            else { 
+                muted.Muted = 1;
+                muted.Player.SendClientMessage($"Fuiste muteado por {user.Name}");
+            }
+            foreach(RustPP.Data.Entities.User usuario in RustPP.Data.Globals.usersOnline)
+            {
+                if (usuario.AdminLevel >= 1)
                 {
-                    if (!mutedAdmin.HasPermission("RCON"))
-                    {
-                        if (mutingAdmin.HasPermission("RCON") || mutingAdmin.HasPermission("CanUnflag"))
-                        {
-                            mutedAdmin.Flags.Remove("CanUnmute");
-                            mutedAdmin.Flags.Remove("CanMute");
-                            mutedAdmin.Flags.Remove("CanAddFlags");
-                            mutedAdmin.Flags.Remove("CanUnflag");
-                        }
-                    }
-                    else
-                    {
-                        myAdmin.MessageFrom(Core.Name, string.Format("{0} is an administrator. You can't mute administrators.", mute.DisplayName));
-                        //return;
-                    }
+                    usuario.Player.SendClientMessage($"[color red]<Admin>[/color] {user.Name} muteo a {muted.Name}");
                 }
             }
-            Core.muteList.Add(mute);
-            Administrator.NotifyAdmins(string.Format("{0} has been muted by {1}.", mute.DisplayName, myAdmin.Name));
         }
     }
 }
