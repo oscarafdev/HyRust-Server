@@ -64,7 +64,7 @@
             {
                 if (id == 0)
                 {
-                    pl.MessageFrom(Core.Name, "Cancelled!");
+                    pl.SendClientMessage("¡Comando cancelado!");
                     return;
                 }
                 PList list = (PList)Core.whiteWaitList[pl.UID];
