@@ -165,6 +165,101 @@ namespace Fougerite
                 this.RInventoryItem.SetUses(value);
             }
         }
+        public bool isWeapon
+        {
+            get
+            {
+                IInventoryItem itemdata = this.RInventoryItem;
+                ItemDataBlock datablock = itemdata.datablock;
+                return datablock.category == ItemDataBlock.ItemCategory.Weapons;
+            }
+        }
+        public int getModSlotsCount
+        {
+            get
+            {
+                if(this.isWeapon)
+                {
+                    IInventoryItem itemdata = this.RInventoryItem;
+                    IHeldItem heldItem = itemdata as IHeldItem;
+                    return heldItem.totalModSlots;
+                }
+                else
+                {
+                    return 0;
+                }
+                
+            }
+        }
+        public int getUsedModSlotsCount
+        {
+            get
+            {
+                if (this.isWeapon)
+                {
+                    IInventoryItem itemdata = this.RInventoryItem;
+                    IHeldItem heldItem = itemdata as IHeldItem;
+                    return heldItem.usedModSlots;
+                }
+                else
+                {
+                    return 0;
+                }
+
+            }
+        }
+        public IHeldItem heldItem
+        {
+            get
+            {
+                if (this.isWeapon)
+                {
+                    IInventoryItem itemdata = this.RInventoryItem;
+                    return itemdata as IHeldItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        public ItemModDataBlock getModSlot(int slot)
+        {
+            if (this.isWeapon)
+            {
+                IInventoryItem itemdata = this.RInventoryItem;
+                IHeldItem heldItem = itemdata as IHeldItem;
+                if(slot > this.getModSlotsCount)
+                {
+                    return null; 
+                }
+                else
+                {
+                    return heldItem.itemMods[slot];
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public bool addWeaponMod(string name)
+        {
+            if(this.isWeapon)
+            {
+                ItemModDataBlock weaponmod = DatablockDictionary.GetByName(name) as ItemModDataBlock;
+                if (weaponmod == null)
+                {
+                    return false;
+                }
+                this.heldItem.AddMod(weaponmod);
+                return true;
+            } 
+            else
+            {
+                return false;
+            }
+        }
 
         /*public class Mods
         {

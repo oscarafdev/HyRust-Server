@@ -12,14 +12,26 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
-            if (pl.CommandCancelList.Contains("give"))
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
+            if(user.AdminLevel <= 4)
+            {
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                return;
+            }
+            if (pl.CommandCancelList.Contains("dar"))
             {
                 return;
             }
-            string usage = "Give Item usage:  /give  playerName  itemName  (quantity)";
+            string usage = "[color orange]<Sintaxis>[/color] /dar <NombreJugador> <Item> <Cantidad>";
             if (ChatArguments.Length < 2) // minimum arguments = 2
             {
-                pl.MessageFrom(Core.Name, usage);
+                pl.SendClientMessage(usage);
                 return;
             }
 
@@ -61,7 +73,7 @@
             } 
             else if (ChatArguments.Length < 3) // qty given, but there is < 3 arguments => invalid
             {
-                pl.MessageFrom(Core.Name, usage);
+                pl.SendClientMessage(usage);
                 return;
             }
 
@@ -114,18 +126,19 @@
                 Fougerite.Player np = Fougerite.Server.GetServer().FindPlayer(recipName);
                 if (np == null)
                 {
-                    pl.MessageFrom(RustPP.Core.Name, "Coudln't find player!");
+                    pl.SendClientMessage("[color red]<Error>[/color] No se encontró al usuario");
                     return;
                 }
-                Logger.LogDebug(string.Format("[GiveItemCommand] quantity={0} item={1} recipient={2}", quantity, itemName, recipName));
+                
                 inv.giveplayer(ref Arguments);
-                pl.MessageFrom(RustPP.Core.Name, string.Format("{0}  {1} were placed in {2}'s inventory.", quantity, itemName, recipName));
-                np.MessageFrom(RustPP.Core.Name, string.Format("{0} gave you  {1}  {2}", Arguments.argUser.displayName, quantity, itemName));
+                RustPP.Data.Globals.SendAdminMessageForAll(string.Format("Admin {0} le dio {1}({2}) a {3}.", Arguments.argUser.displayName, itemName, quantity, recipName));
+                pl.SendClientMessage(string.Format("[color orange]<Admin>[/color] Le diste {0} ({1}) a {2}.", quantity, itemName, recipName));
+                np.SendClientMessage(string.Format("[color orange]<Admin>[/color] {0} te dio {1}({2})", Arguments.argUser.displayName, quantity, itemName));
             }
             else
             {
                 var str = Arguments.ArgsStr.Replace(string.Join(" ", collect.ToArray()), "");
-                pl.MessageFrom(Core.Name, string.Format("Unsure about {0}. Please be more specific.", str));
+                pl.SendClientMessage(string.Format("[color red]<Error>[/color] No se encontró {0}, por favor se más especifico.", str));
             }
         }
     }

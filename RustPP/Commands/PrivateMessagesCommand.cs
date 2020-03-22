@@ -9,12 +9,16 @@
 
     public class PrivateMessagesCommand : ChatCommand
     {
-        string green = "[color #009900]";
-        string teal = "[color #00FFFF]";
 
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             Fougerite.Player sender = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(sender))
+            {
+                char ch = '☢';
+                sender.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
             if (ChatArguments.Length < 2)
             {
                 sender.SendClientMessage("[color red]<Sintaxis>[/color] /w <NombreJugador> <Mensaje>");
@@ -25,6 +29,12 @@
             if (recipient == null)
             {
                 sender.SendClientMessage($"[color red]<Error>[/color] No se encontró al usuario {search}");
+                return;
+            }
+            if (!RustPP.Data.Globals.UserIsLogged(recipient))
+            {
+                
+                sender.SendClientMessage($"[color red]<Error>[/color] {search} no esta logueado.");
                 return;
             }
             List<string> wth = ChatArguments.ToList();

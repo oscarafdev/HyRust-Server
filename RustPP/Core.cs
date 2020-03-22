@@ -15,6 +15,7 @@ namespace RustPP
     using uLink;
     using RustPP.Components.AuthComponent;
     using RustPP.Commands.Chat;
+    using RustPP.Components.AdminComponent.Commands;
 
     public class Core
     {
@@ -48,7 +49,7 @@ namespace RustPP
         {
             InitializeCommands();
             ShareCommand command = ChatCommand.GetCommand("share") as ShareCommand;
-            FriendsCommand command2 = ChatCommand.GetCommand("friends") as FriendsCommand;
+            FriendsCommand command2 = ChatCommand.GetCommand("amigos") as FriendsCommand;
             bool success = false;
             if (File.Exists(RustPPModule.GetAbsoluteFilePath("doorsSave.xml")))
             {
@@ -147,10 +148,19 @@ namespace RustPP
 
         private static void InitializeCommands()
         {
+            // AdminComponent
+            ChatCommand.AddCommand("/daradmin", new DarAdminCommand());
+            ChatCommand.AddCommand("/adminkit", new AdminKitCommand());
+            ChatCommand.AddCommand("/traer", new TeleportHereCommand());
+            ChatCommand.AddCommand("/ir", new TeleportToCommand());
+            ChatCommand.AddCommand("/a", new AdminChatCommand());
+            ChatCommand.AddCommand("/saveloc", new SaveLocationCommand());
+            ChatCommand.AddCommand("/limpiarinv", new ClearInvCommand());
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
             ChatCommand.AddCommand("/registro", new RegisterCommand());
             ChatCommand.AddCommand("/cuenta", new AccountCommand()); // Logged
+            ChatCommand.AddCommand("/farm", new FarmCommand()); // Logged
             ChatCommand.AddCommand("/creditos", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
             ChatCommand.AddCommand("/duda", new DudaCommand());
@@ -159,9 +169,9 @@ namespace RustPP
             ChatCommand.AddCommand("/reglas", new RulesCommand());
             ChatCommand.AddCommand("/amigos", new FriendsCommand());
             ChatCommand.AddCommand("/ayuda", new HelpCommand());
-            ChatCommand.AddCommand("/history", new HistoryCommand());
+            ChatCommand.AddCommand("/historial", new HistoryCommand());
             ChatCommand.AddCommand("/motd", new MOTDCommand());
-            ChatCommand.AddCommand("/location", new LocationCommand());
+            ChatCommand.AddCommand("/ubicacion", new LocationCommand());
             ChatCommand.AddCommand("/ping", new PingCommand());
             ChatCommand.AddCommand("/players", new PlayersCommand());
             ChatCommand.AddCommand("/w", new PrivateMessagesCommand());
@@ -193,7 +203,7 @@ namespace RustPP
             /* Dar Items */
             GiveItemCommand command6 = new GiveItemCommand();
             command6.AdminFlags = "CanGiveItem";
-            ChatCommand.AddCommand("/give", command6);
+            ChatCommand.AddCommand("/dar", command6);
             /* Dar Flag */
             GodModeCommand command7 = new GodModeCommand();
             command7.AdminFlags = "CanGodMode";
@@ -239,13 +249,8 @@ namespace RustPP
             command17.AdminFlags = "RCON";
             ChatCommand.AddCommand("/setmasteradmin", command17);
 
-            TeleportHereCommand command18 = new TeleportHereCommand();
-            command18.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/traer", command18);
 
-            TeleportToCommand command19 = new TeleportToCommand();
-            command19.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/ir", command19);
+            
 
             UnbanCommand command20 = new UnbanCommand();
             command20.AdminFlags = "CanUnban";
