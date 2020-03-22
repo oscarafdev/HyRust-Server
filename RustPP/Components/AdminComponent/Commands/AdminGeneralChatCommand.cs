@@ -13,7 +13,7 @@ namespace RustPP.Components.AdminComponent.Commands
     using System.Text.RegularExpressions;
     using static ConsoleSystem;
 
-    public class AdminChatCommand : ChatCommand
+    public class AdminGeneralChatCommand : ChatCommand
     {
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
@@ -32,27 +32,19 @@ namespace RustPP.Components.AdminComponent.Commands
             }
             string strText = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             string rem = Regex.Replace(strText, @"\[/?color\b.*?\]", string.Empty);
-            string template = "[color #ff968f][A]((Admin -adminLevel- -userName-: -userMessage-))";
+            string template = "[color #d311ea][AO]((Admin -adminLevel- -userName-: -userMessage-))";
             string setname = Regex.Replace(template, "-userName-", Arguments.argUser.displayName);
             string setadmin = Regex.Replace(setname, "-adminLevel-", user.AdminLevel.ToString());
             string final = Regex.Replace(setadmin, "-userMessage-", rem);
             if (strText == string.Empty)
             {
-                pl.SendClientMessage("[color red]<Sintaxis> [color white]/a <Texto>");
+                pl.SendClientMessage("[color red]<Sintaxis> [color white]/ao <Texto>");
             }
             else
             {
-                foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
+                foreach (RustPP.Data.Entities.User player in RustPP.Data.Globals.usersOnline)
                 {
-                    if (player.IsOnline && Globals.UserIsLogged(player))
-                    {
-                        RustPP.Data.Entities.User uuser = RustPP.Data.Globals.GetInternalUser(player);
-                        if(uuser.AdminLevel >= 1)
-                        {
-                            player.SendClientMessage(final);
-                        }
-                        
-                    }
+                    player.Player.SendClientMessage(final);
                 }
             }
         }

@@ -10,6 +10,7 @@ namespace RustPP.Data
     class Globals
     {
         public static List<User> usersOnline = new List<User>();
+        public static List<KitItem> KitItems = new List<KitItem>();
         public static bool UserIsLogged(Fougerite.Player player)
         {
             if (Data.Globals.usersOnline.Count(x => x.Name == player.Name) >= 1)
