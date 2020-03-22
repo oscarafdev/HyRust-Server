@@ -70,7 +70,7 @@ namespace RustPP.Commands
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (id == 0)
             {
-                pl.MessageFrom(Core.Name, "Cancelled!");
+                pl.SendClientMessage("¡Comando cancelado!");
                 return;
             }
             PList list = (PList)Core.unshareWaitList[pl.UID];

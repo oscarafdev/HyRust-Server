@@ -128,6 +128,7 @@
 
         void ChatReceived(ref ConsoleSystem.Arg arg)
         {
+
             Fougerite.Player pl = Fougerite.Server.Cache[arg.argUser.userID];
             var command = ChatCommand.GetCommand("ir") as TeleportToCommand;
             if (command.GetTPWaitList().Contains(pl.UID))
@@ -192,12 +193,12 @@
                 arg.ArgsStr = string.Empty;
             } else if (Core.muteWaitList.Contains(pl.UID))
             {
-                (ChatCommand.GetCommand("mute") as MuteCommand).PartialNameMute(ref arg, arg.GetInt(0));
+                (ChatCommand.GetCommand("mutear") as MuteCommand).PartialNameMute(ref arg, arg.GetInt(0));
                 Core.muteWaitList.Remove(pl.UID);
                 arg.ArgsStr = string.Empty;
             } else if (Core.unmuteWaitList.Contains(pl.UID))
             {
-                (ChatCommand.GetCommand("unmute") as UnmuteCommand).PartialNameUnmute(ref arg, arg.GetInt(0));
+                (ChatCommand.GetCommand("desmutear") as UnmuteCommand).PartialNameUnmute(ref arg, arg.GetInt(0));
                 Core.unmuteWaitList.Remove(pl.UID);
                 arg.ArgsStr = string.Empty;
             } else if (Core.adminFlagWaitList.Contains(pl.UID))
