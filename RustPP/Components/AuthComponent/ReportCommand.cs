@@ -7,6 +7,8 @@ namespace RustPP.Components.AuthComponent
 {
     using RustPP.Commands;
     using RustPP.Data.Entities;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
 
     public class ReportCommand : ChatCommand
@@ -23,7 +25,6 @@ namespace RustPP.Components.AuthComponent
                     return;
                 }
                 string search = ChatArguments[0];
-                string reason = ChatArguments[1];
                 Fougerite.Player recipient = Fougerite.Player.FindByName(search);
                 if (!Data.Globals.UserIsLogged(recipient))
                 {
@@ -36,15 +37,35 @@ namespace RustPP.Components.AuthComponent
                     pl.SendClientMessage($"[color red]<Error>[/color] No se encontró al usuario {search}");
                     return;
                 }
-                pl.SendClientMessage($"[color red]Reportaste a {recipient.Name} por {reason}.");
-
-                foreach (RustPP.Data.Entities.User usuario in RustPP.Data.Globals.usersOnline)
+                List<string> wth = ChatArguments.ToList();
+                wth.Remove(wth[0]);
+                string message;
+                try
                 {
-                    if (usuario.AdminLevel >= 1)
+                    message = string.Join(" ", wth.ToArray()).Replace(search, "").Trim(new char[] { ' ', '"' }).Replace('"', 'ˮ');
+                }
+                catch
+                {
+                    pl.SendClientMessage("[color red]<Error>[/color] Algo salio mal, intentalo nuevamente más tarde");
+                    return;
+                }
+                if (message == string.Empty)
+                {
+                    pl.SendClientMessage("[color red]<Sintaxis>[/color] /reportar <NombreJugador> <Motivo>");
+                }
+                else
+                {
+                    pl.SendClientMessage($"[color red]Reportaste a {recipient.Name} por {message}.");
+
+                    foreach (RustPP.Data.Entities.User usuario in RustPP.Data.Globals.usersOnline)
                     {
-                        usuario.Player.SendClientMessage($"[color red]<!>[/color] [color #f77777]{pl.Name} reporto a {recipient.Name} por: {reason}");
+                        if (usuario.AdminLevel >= 1)
+                        {
+                            usuario.Player.SendClientMessage($"[color red]<!>[/color] [color #f77777]{pl.Name} reporto a {recipient.Name} por: {message}");
+                        }
                     }
                 }
+
 
             }
             else

@@ -14,6 +14,15 @@ namespace RustPP.Components.AuthComponent
     class TPCommand : ChatCommand
     {
         public readonly System.Random Randomizer = new System.Random();
+        private static readonly List<Vector3> Big = new List<Vector3>()
+        {
+            new Vector3 { x = 5188.32f, y = 364.15f, z = -4910.08f},
+            new Vector3 { x = 5251.76f, y = 359.972f, z = -4895.53f},
+            new Vector3(5232.88f,367.737f,-4852.29f),
+            new Vector3(5280.61f,369.62f,-4765.7f),
+            new Vector3(5265.83f,371.502f,-4691.78f),
+            new Vector3(5205.17f,375.898f,-4664.49f)
+        };
         private static readonly List<Vector3> Small = new List<Vector3>()
         {
             new Vector3 { x = 6051.9f, y = 385.24f, z = -3581.83f},
@@ -51,10 +60,23 @@ namespace RustPP.Components.AuthComponent
                 pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
                 return;
             }
+            
             if (ChatArguments.Length < 1)
             {
                 pl.SendClientMessage("[color red]<Sintaxis>[/color] /tp <Nombre>");
-                pl.SendClientMessage("Nombres: small - factory - vale");
+                pl.SendClientMessage("Nombres: small - factory - vale - big");
+                pl.SendClientMessage("[color cyan]- Costo:[/color] $100");
+                return;
+            }
+            if (user.TimeToTP >= 1)
+            {
+                pl.SendClientMessage($"[color red]<Error>[/color] Te faltan {user.TimeToTP} segundos para usar un TP.");
+                return;
+            }
+            if (user.Cash < 100)
+            {
+                int valor = 100 - user.Cash;
+                pl.SendClientMessage($"[color red]<Error>[/color] Te faltan $ {valor} para usar TP. (Valor: $100)");
                 return;
             }
             string search = ChatArguments[0].ToLower();
@@ -63,22 +85,46 @@ namespace RustPP.Components.AuthComponent
                 int number = Randomizer.Next(0, 4);
                 Vector3 pos = Small[number];
                 pl.TeleportTo(pos);
-                pl.SendClientMessage("[color yellow]<!>[/color] Te teletransportaste a Small.");
+                Fougerite.Server.GetServer().SendMessageForAll($"[color yellow]<!>[/color] {pl.Name} se teletransportó a Small.");
+                user.TimeToTP = 60;
+                user.Cash -= 100;
             }
-            if (search == "factory")
+            else if (search == "factory")
             {
                 int number = Randomizer.Next(0, 3);
                 Vector3 pos = Factory[number];
                 pl.TeleportTo(pos);
-                pl.SendClientMessage("[color yellow]<!>[/color] Te teletransportaste a Factory.");
+                Fougerite.Server.GetServer().SendMessageForAll($"[color yellow]<!>[/color] {pl.Name} se teletransportó a Factory.");
+                user.TimeToTP = 60;
+                user.Cash -= 100;
             }
-            if (search == "vale")
+            else if (search == "vale")
             {
                 int number = Randomizer.Next(0, 8);
                 Vector3 pos = Vale[number];
                 pl.TeleportTo(pos);
-                pl.SendClientMessage("[color yellow]<!>[/color] Te teletransportaste a Vale.");
+                Fougerite.Server.GetServer().SendMessageForAll($"[color yellow]<!>[/color] {pl.Name} se teletransportó a Vale.");
+                user.TimeToTP = 60;
+                user.Cash -= 100;
             }
+            else if (search == "big")
+            {
+                int number = Randomizer.Next(0, 5);
+                Vector3 pos = Big[number];
+                pl.TeleportTo(pos);
+                Fougerite.Server.GetServer().SendMessageForAll($"[color yellow]<!>[/color] {pl.Name} se teletransportó a Big.");
+                user.TimeToTP = 60;
+                user.Cash -= 100;
+            }
+            else
+            {
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /tp <Nombre>");
+                pl.SendClientMessage("Nombres: small - factory - vale - big");
+                pl.SendClientMessage("[color cyan]- Costo:[/color] $100");
+                return;
+            }
+            
+            
         }
     }
 }

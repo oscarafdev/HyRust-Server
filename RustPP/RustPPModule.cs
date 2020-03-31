@@ -5,6 +5,7 @@
     using Rust;
     using RustPP.Commands;
     using RustPP.Components.AuthComponent;
+    using RustPP.Components.RaidComponent;
     using System;
     using System.Collections;
     using System.IO;
@@ -94,6 +95,7 @@
             Fougerite.Hooks.OnFallDamage += OnFallDamage;
             Fougerite.Hooks.OnServerSaved += OnServerSaved;
             Server.GetServer().LookForRustPP();
+            RaidComponent.initComponent();
         }
 
         public override void DeInitialize()
@@ -112,7 +114,9 @@
             Fougerite.Hooks.OnChat -= Chat;
             Fougerite.Hooks.OnFallDamage -= OnFallDamage;
             Fougerite.Hooks.OnServerSaved -= OnServerSaved;
+            Components.AuthComponent.AuthComponent.Exit();
             TimedEvents.timer.Stop();
+            RaidComponent.destroyComponent();
             Logger.LogDebug("DeInitialized RPP");
         }
 
@@ -136,12 +140,7 @@
                 command.PartialNameTP(ref arg, arg.GetInt(0));
                 arg.ArgsStr = string.Empty;
             }
-            else if (Core.friendWaitList.Contains(arg.argUser.userID))
-            {
-                (ChatCommand.GetCommand("addfriend") as AddFriendCommand).PartialNameAddFriend(ref arg, arg.GetInt(0));
-                Core.friendWaitList.Remove(arg.argUser.userID);
-                arg.ArgsStr = string.Empty; 
-            } else if (Core.shareWaitList.Contains(pl.UID))
+            else if (Core.shareWaitList.Contains(pl.UID))
             {
                 (ChatCommand.GetCommand("share") as ShareCommand).PartialNameDoorShare(ref arg, arg.GetInt(0));
                 Core.shareWaitList.Remove(pl.UID);
@@ -196,11 +195,6 @@
                 (ChatCommand.GetCommand("mutear") as MuteCommand).PartialNameMute(ref arg, arg.GetInt(0));
                 Core.muteWaitList.Remove(pl.UID);
                 arg.ArgsStr = string.Empty;
-            } else if (Core.unmuteWaitList.Contains(pl.UID))
-            {
-                (ChatCommand.GetCommand("desmutear") as UnmuteCommand).PartialNameUnmute(ref arg, arg.GetInt(0));
-                Core.unmuteWaitList.Remove(pl.UID);
-                arg.ArgsStr = string.Empty;
             } else if (Core.adminFlagWaitList.Contains(pl.UID))
             {
                 (ChatCommand.GetCommand("addflag") as AddFlagCommand).PartialNameAddFlags(ref arg, arg.GetInt(0));
@@ -210,11 +204,6 @@
             {
                 (ChatCommand.GetCommand("unflag") as RemoveFlagsCommand).PartialNameRemoveFlags(ref arg, arg.GetInt(0));
                 Core.adminUnflagWaitList.Remove(pl.UID);
-                arg.ArgsStr = string.Empty;
-            } else if (Core.unbanWaitList.Contains(pl.UID))
-            {
-                (ChatCommand.GetCommand("unban") as UnbanCommand).PartialNameUnban(ref arg, arg.GetInt(0));
-                Core.unbanWaitList.Remove(pl.UID);
                 arg.ArgsStr = string.Empty;
             }
 
@@ -228,6 +217,7 @@
             {
                 text.NewText = "";
                 p.MessageFrom(Core.Name, "Estás Muteado.");
+                return;
             }
         }
 
@@ -264,7 +254,7 @@
             {   
                 Fougerite.Hooks.talkerTimers.Add(p.UID, Environment.TickCount);
             }
-            Notice.Inventory(player, "☎ " + p.Name);
+            Notice.Inventory(player, p.Name);
         }
 
         void OnServerShutdown()

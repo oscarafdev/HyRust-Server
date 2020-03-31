@@ -16,11 +16,15 @@ namespace RustPP
     using RustPP.Components.AuthComponent;
     using RustPP.Commands.Chat;
     using RustPP.Components.AdminComponent.Commands;
+    using RustPP.Components.ClanComponent.Commands;
+    using RustPP.Components.DonoComponent;
+    using RustPP.Components.UtilityComponent;
+    using RustPP.Components;
 
     public class Core
     {
-        public static string Name = "Rust++";
-        public static string Version = "1.1.8.0";
+        public static string Name = "HyRust";
+        public static string Version = "0.8";
         public static IniParser config;
         public static PList blackList = new PList();
         public static PList whiteList = new PList();
@@ -131,6 +135,7 @@ namespace RustPP
             {
                 blackList = new PList();
             }
+            RustPP.Data.Globals.LoadClans();
         }
 
         public static void handleCommand(ref ConsoleSystem.Arg arg)
@@ -143,6 +148,7 @@ namespace RustPP
             {
                 chatArgs[i - 1] = strArray[i];
             }
+            
             ChatCommand.CallCommand(cmd, ref arg, ref chatArgs);
         }
 
@@ -154,8 +160,12 @@ namespace RustPP
             ChatCommand.AddCommand("/ir", new TeleportToCommand()); // Nivel 1
             ChatCommand.AddCommand("/a", new AdminChatCommand()); // Nivel 1
             ChatCommand.AddCommand("/mutear", new MuteCommand()); // Nivel 1
+            
             ChatCommand.AddCommand("/desmutear", new UnmuteCommand()); // Nivel 1
             ChatCommand.AddCommand("/anuncio", new AnnounceCommand()); // Nivel 2
+            ChatCommand.AddCommand("/god", new GodModeCommand()); // Nivel 2
+            ChatCommand.AddCommand("/adminkit", new AdminKitCommand());  // Nivel 2
+            ChatCommand.AddCommand("/day", new DayCommand());// Nivel 2
             ChatCommand.AddCommand("/ban", new BanCommand()); // Nivel 3
             ChatCommand.AddCommand("/ao", new AdminGeneralChatCommand()); // Admin 4
             ChatCommand.AddCommand("/payday", new PayDayCommand()); // Admin 4
@@ -164,36 +174,59 @@ namespace RustPP
             ChatCommand.AddCommand("/i", new SpawnItemCommand()); // Admin 5
             ChatCommand.AddCommand("/dar", new GiveItemCommand()); // Admin 5
             ChatCommand.AddCommand("/daradmin", new DarAdminCommand()); // Nivel 6
-            ChatCommand.AddCommand("/adminkit", new AdminKitCommand());  // Nivel 6
+            
 
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
+            ChatCommand.AddCommand("/report", new ErrorCommand("/reportar"));
             ChatCommand.AddCommand("/reportar", new ReportCommand());
             ChatCommand.AddCommand("/tp", new TPCommand());
             ChatCommand.AddCommand("/registro", new RegisterCommand());
+            ChatCommand.AddCommand("/pagar", new PagarCommand());
             ChatCommand.AddCommand("/cuenta", new AccountCommand()); // Logged
             ChatCommand.AddCommand("/farm", new FarmCommand()); // Logged
             ChatCommand.AddCommand("/creditos", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
-            ChatCommand.AddCommand("/duda", new DudaCommand());
+            ChatCommand.AddCommand("/duda", new ErrorCommand("/o"));
+            ChatCommand.AddCommand("/o", new DudaCommand());
+            ChatCommand.AddCommand("/report", new ErrorCommand("/reportar"));
             ChatCommand.AddCommand("/reportar", new DudaCommand());
-            ChatCommand.AddCommand("/agregar", new AddFriendCommand());
+            ChatCommand.AddCommand("/addfriend", new AddFriendCommand());
             ChatCommand.AddCommand("/r", new ReplyCommand());
+            ChatCommand.AddCommand("/rules", new ErrorCommand("/reglas"));
             ChatCommand.AddCommand("/reglas", new RulesCommand());
+            ChatCommand.AddCommand("/friends", new ErrorCommand("/amigos"));
             ChatCommand.AddCommand("/amigos", new FriendsCommand());
+            ChatCommand.AddCommand("/help", new ErrorCommand("/ayuda"));
             ChatCommand.AddCommand("/ayuda", new HelpCommand());
             ChatCommand.AddCommand("/historial", new HistoryCommand());
             ChatCommand.AddCommand("/motd", new MOTDCommand());
+            ChatCommand.AddCommand("/loc", new ErrorCommand("/ubicacion"));
+            ChatCommand.AddCommand("/location", new ErrorCommand("/ubicacion"));
             ChatCommand.AddCommand("/ubicacion", new LocationCommand());
             ChatCommand.AddCommand("/ping", new PingCommand());
             ChatCommand.AddCommand("/players", new PlayersCommand());
+            ChatCommand.AddCommand("/pm", new ErrorCommand("/w"));
             ChatCommand.AddCommand("/w", new PrivateMessagesCommand());
             ChatCommand.AddCommand("/share", new ShareCommand());
             ChatCommand.AddCommand("/starter", new StarterCommand());
             ChatCommand.AddCommand("/unfriend", new UnfriendCommand());
             ChatCommand.AddCommand("/unshare", new UnshareCommand());
             ChatCommand.AddCommand("/kit", new KitCommand());
+            // Clans Component
 
+            ChatCommand.AddCommand("/crearclan", new CreateClanCommand());
+            ChatCommand.AddCommand("/clanes", new ClansCommand());
+            ChatCommand.AddCommand("/clan", new ClanCommand());
+            ChatCommand.AddCommand("/aceptar", new AceptarCommand());
+            ChatCommand.AddCommand("/f", new ClanChatCommand());
+
+            //DonoComponent
+            ChatCommand.AddCommand("/dono", new ErrorCommand("/prop"));
+            ChatCommand.AddCommand("/prop", new DonoCommand());
+
+            //UtilityComponent
+            ChatCommand.AddCommand("/fps", new FPSCommand());
             /* Dar Admin */
             AddAdminCommand command = new AddAdminCommand();
             command.AdminFlags = "CanAddAdmin";
@@ -215,13 +248,6 @@ namespace RustPP
             /* Dar Items */
 
             
-            /* Dar Flag */
-            GodModeCommand command7 = new GodModeCommand();
-            command7.AdminFlags = "CanGodMode";
-            ChatCommand.AddCommand("/god", command7);
-            
-            
-
             InstaKOCommand command9 = new InstaKOCommand();
             command9.AdminFlags = "CanInstaKO";
             ChatCommand.AddCommand("/instako", command9);

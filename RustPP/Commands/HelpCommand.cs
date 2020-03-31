@@ -20,11 +20,24 @@
             if (ChatArguments.Length < 1)
             {
                 pl.SendClientMessage("[color red]<Sintaxis>[/color] /ayuda <Sección>");
-                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp - kit - casa");
+                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp - kit - casa - clanes [color red]¡Nuevo![/color]");
                 return;
             }
             string search = ChatArguments[0].ToLower();
-            if(search == "cuenta")
+            if (search == "clanes")
+            {
+                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - CLANES [color orange]--------");
+                pl.SendClientMessage($"- Poseemos un sistema de clanes por niveles, y un ranking de clanes.");
+                pl.SendClientMessage($"- En cada payday los miembros aportarán 1 punto de experiencia al clan.");
+                pl.SendClientMessage($"- También aportarán materiales al farmear y experiencia al asesinar una persona.");
+                pl.SendClientMessage($"- [color cyan]/clanes[/color] Muestra el top 10 de clanes (Ordenado por nivel).");
+                pl.SendClientMessage($"- [color cyan]/crearclan[/color] Comando para fundar un nuevo clan (Cuesta $100.000).");
+                pl.SendClientMessage($"- [color cyan]/clan[/color] Si estas en un clan, este comando te dirá los comandos disponibles.");
+                pl.SendClientMessage($"- [color cyan]/f[/color] Canal privado del clan.");
+                pl.SendClientMessage($"- [color cyan]/kitclan[/color] ¡Te da un kit del clan!. (Proximamente)");
+                return;
+            }
+            if (search == "cuenta")
             {
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - CUENTA [color orange]--------");
                 pl.SendClientMessage($"- Este servidor usa un guardado MySql, podrás acceder a tu cuenta desde otra PC con tu contraseña.");
@@ -47,24 +60,27 @@
             }
             else if (search == "casa")
             {
-                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - AMIGOS [color orange]--------");
+                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - CASA [color orange]--------");
                 pl.SendClientMessage($"- [color cyan]/sethome[/color] Guardar tu casa.");
                 pl.SendClientMessage($"- [color cyan]/home[/color] Ir hacia tu casa.");
                 pl.SendClientMessage($"- [color cyan]/remove[/color] Destruir una parte de tu casa.");
                 pl.SendClientMessage($"- [color cyan]/removeall[/color] Destruir toda tu casa.");
+                pl.SendClientMessage($"- [color cyan]/prop[/color] Te dice el propietario de una casa.");
             }
             else if (search == "amigos")
             {
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - AMIGOS [color orange]--------");
                 pl.SendClientMessage($"- [color cyan]/addfriend[/color] Agregar un amigo, no podrás hacerle daño.");
-                pl.SendClientMessage($"- [color cyan]/unfriend[/color] Eliminar un amigo.");
+                pl.SendClientMessage($"- [color cyan]/unfriend[/color] Eliminar a un amigo, podrás hacerle daño.");
+                pl.SendClientMessage($"- [color cyan]/addfriendh[/color] Permite a un amigo hacer home en tu casa.");
+                pl.SendClientMessage($"- [color cyan]/delfriendh[/color] Elimina el permiso de hacer home en tu casa.");
                 pl.SendClientMessage($"- [color cyan]/share[/color] Compartir puertas a un jugador, podrá abrir todas tus puertas.");
                 pl.SendClientMessage($"- [color cyan]/unshare[/color] Dejar de compartir puertas con un jugador.");
             }
             else if (search == "tp")
             {
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - TP [color orange]--------");
-                pl.SendClientMessage($"- [color cyan]/tp[/color] Teletransportes.");
+                pl.SendClientMessage($"- [color cyan]/tp[/color] Teletransportes. (Cada 30 segundos)");
                 pl.SendClientMessage($"- [color cyan]/tpr[/color] Envia una solicitud para transportarte a un jugador.");
                 pl.SendClientMessage($"- [color cyan]/tpa[/color] Acepta un TP.");
                 pl.SendClientMessage($"- [color cyan]/tpc[/color] Rechaza un TP.");

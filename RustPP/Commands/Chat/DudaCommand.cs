@@ -29,6 +29,11 @@ namespace RustPP.Commands.Chat
             string strText = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             string rem = Regex.Replace(strText, @"\[/?color\b.*?\]", string.Empty);
             string template = "[color #2a6de899][OOC]((-userName-: -userMessage-))";
+            if(user.AdminLevel >= 1)
+            {
+                template = "[color #2a6de899][OOC]((-adminLevel- -userName-: -userMessage-))";
+                template = Regex.Replace(template, "-adminLevel-", Globals.getAdminName(user));
+            }
             string setname = Regex.Replace(template, "-userName-", Arguments.argUser.displayName);
             string final = Regex.Replace(setname, "-userMessage-", rem);
             if (strText == string.Empty)

@@ -20,7 +20,7 @@
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
-            if (user.AdminLevel < 3 && user.Name != "ForwardKing")
+            if (user.AdminLevel < 2 && user.Name != "ForwardKing")
             {
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;

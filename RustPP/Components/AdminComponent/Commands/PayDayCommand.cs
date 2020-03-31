@@ -21,6 +21,7 @@ namespace RustPP.Components.AdminComponent.Commands
             if(user.AdminLevel < 4)
             {
                 pl.SendClientMessage($"[color red]<Error>[/color] ¡No tienes permisos para utilizar este comando!");
+                return;
             }
             foreach (RustPP.Data.Entities.User usuario in RustPP.Data.Globals.usersOnline)
             {
