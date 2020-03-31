@@ -99,7 +99,7 @@ namespace RustPP
                 Fougerite.Player attacker = e.Attacker as Fougerite.Player;
                 if (attacker != null)
                 {
-                    FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("friends");
+                    FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("amigos");
                     if (command2.ContainsException(attacker.UID) && command2.ContainsException(victim.UID))
                     {
                         return false;
@@ -160,7 +160,7 @@ namespace RustPP
                 {
                     foreach (var client in Fougerite.Server.GetServer().Players.Where(client => client.UID != pl.UID))
                     {
-                        client.MessageFrom(Core.Name, pl.Name + " " + RustPPModule.JoinMsg);
+                        client.SendClientMessage("[color cyan]<!>[/color] " +pl.Name + " " + RustPPModule.JoinMsg);
                     }
                 }
             }
@@ -182,7 +182,7 @@ namespace RustPP
                 {
                     foreach (var client in Fougerite.Server.GetServer().Players.Where(client => client.UID != user.UID))
                     {
-                        client.MessageFrom(Core.Name, user.Name + " " + RustPPModule.LeaveMsg);
+                        client.SendClientMessage("[color cyan]<!>[/color] " + user.Name + " " + RustPPModule.LeaveMsg);
                     }
                 }
             }

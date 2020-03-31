@@ -16,7 +16,7 @@
                 pl.MessageFrom(Core.Name, "Friends Management Usage:  /unfriend playerName");
                 return;
             }
-            FriendsCommand command = (FriendsCommand)ChatCommand.GetCommand("friends");
+            FriendsCommand command = (FriendsCommand)ChatCommand.GetCommand("amigos");
             FriendList friendsList = (FriendList)command.GetFriendsLists()[pl.UID];
             if (friendsList == null)
             {
@@ -75,7 +75,7 @@
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (id == 0)
             {
-                pl.MessageFrom(Core.Name, "Cancelled!");
+                pl.SendClientMessage("¡Comando cancelado!");
                 return;
             }
             PList list = (PList)Core.unfriendWaitList[pl.UID];
@@ -84,7 +84,7 @@
 
         public void Unfriend(PList.Player exfriend, Fougerite.Player unfriending)
         {
-            FriendsCommand command = (FriendsCommand)ChatCommand.GetCommand("friends");
+            FriendsCommand command = (FriendsCommand)ChatCommand.GetCommand("amigos");
             FriendList friendsList = (FriendList)command.GetFriendsLists()[unfriending.UID];
 
             friendsList.RemoveFriend(exfriend.UserID);

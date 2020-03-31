@@ -15,11 +15,16 @@ namespace RustPP
     using uLink;
     using RustPP.Components.AuthComponent;
     using RustPP.Commands.Chat;
+    using RustPP.Components.AdminComponent.Commands;
+    using RustPP.Components.ClanComponent.Commands;
+    using RustPP.Components.DonoComponent;
+    using RustPP.Components.UtilityComponent;
+    using RustPP.Components;
 
     public class Core
     {
-        public static string Name = "Rust++";
-        public static string Version = "1.1.8.0";
+        public static string Name = "HyRust";
+        public static string Version = "0.8";
         public static IniParser config;
         public static PList blackList = new PList();
         public static PList whiteList = new PList();
@@ -48,7 +53,7 @@ namespace RustPP
         {
             InitializeCommands();
             ShareCommand command = ChatCommand.GetCommand("share") as ShareCommand;
-            FriendsCommand command2 = ChatCommand.GetCommand("friends") as FriendsCommand;
+            FriendsCommand command2 = ChatCommand.GetCommand("amigos") as FriendsCommand;
             bool success = false;
             if (File.Exists(RustPPModule.GetAbsoluteFilePath("doorsSave.xml")))
             {
@@ -130,46 +135,98 @@ namespace RustPP
             {
                 blackList = new PList();
             }
+            RustPP.Data.Globals.LoadClans();
         }
 
         public static void handleCommand(ref ConsoleSystem.Arg arg)
         {
             string displayname = arg.argUser.user.Displayname;
             string[] strArray = arg.GetString(0).Trim().Split(new char[] { ' ' });
-            string cmd = strArray[0].Trim();
+            string cmd = strArray[0].Trim().ToLower();
             string[] chatArgs = new string[strArray.Length - 1];
             for (int i = 1; i < strArray.Length; i++)
             {
                 chatArgs[i - 1] = strArray[i];
             }
+            
             ChatCommand.CallCommand(cmd, ref arg, ref chatArgs);
         }
 
         private static void InitializeCommands()
         {
+            // AdminComponent
+            ChatCommand.AddCommand("/ah", new AdminHelpCommand()); // Admin 1
+            ChatCommand.AddCommand("/traer", new TeleportHereCommand()); // Nivel 1
+            ChatCommand.AddCommand("/ir", new TeleportToCommand()); // Nivel 1
+            ChatCommand.AddCommand("/a", new AdminChatCommand()); // Nivel 1
+            ChatCommand.AddCommand("/mutear", new MuteCommand()); // Nivel 1
+            
+            ChatCommand.AddCommand("/desmutear", new UnmuteCommand()); // Nivel 1
+            ChatCommand.AddCommand("/anuncio", new AnnounceCommand()); // Nivel 2
+            ChatCommand.AddCommand("/god", new GodModeCommand()); // Nivel 2
+            ChatCommand.AddCommand("/adminkit", new AdminKitCommand());  // Nivel 2
+            ChatCommand.AddCommand("/day", new DayCommand());// Nivel 2
+            ChatCommand.AddCommand("/ban", new BanCommand()); // Nivel 3
+            ChatCommand.AddCommand("/ao", new AdminGeneralChatCommand()); // Admin 4
+            ChatCommand.AddCommand("/payday", new PayDayCommand()); // Admin 4
+            ChatCommand.AddCommand("/limpiarinv", new ClearInvCommand()); // Admin 3
+            ChatCommand.AddCommand("/saveloc", new SaveLocationCommand()); // Admin 5
+            ChatCommand.AddCommand("/i", new SpawnItemCommand()); // Admin 5
+            ChatCommand.AddCommand("/dar", new GiveItemCommand()); // Admin 5
+            ChatCommand.AddCommand("/daradmin", new DarAdminCommand()); // Nivel 6
+            
+
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
+            ChatCommand.AddCommand("/report", new ErrorCommand("/reportar"));
+            ChatCommand.AddCommand("/reportar", new ReportCommand());
+            ChatCommand.AddCommand("/tp", new TPCommand());
             ChatCommand.AddCommand("/registro", new RegisterCommand());
+            ChatCommand.AddCommand("/pagar", new PagarCommand());
             ChatCommand.AddCommand("/cuenta", new AccountCommand()); // Logged
+            ChatCommand.AddCommand("/farm", new FarmCommand()); // Logged
             ChatCommand.AddCommand("/creditos", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
-            ChatCommand.AddCommand("/duda", new DudaCommand());
-            ChatCommand.AddCommand("/agregar", new AddFriendCommand());
+            ChatCommand.AddCommand("/duda", new ErrorCommand("/o"));
+            ChatCommand.AddCommand("/o", new DudaCommand());
+            ChatCommand.AddCommand("/report", new ErrorCommand("/reportar"));
+            ChatCommand.AddCommand("/reportar", new DudaCommand());
+            ChatCommand.AddCommand("/addfriend", new AddFriendCommand());
             ChatCommand.AddCommand("/r", new ReplyCommand());
+            ChatCommand.AddCommand("/rules", new ErrorCommand("/reglas"));
             ChatCommand.AddCommand("/reglas", new RulesCommand());
+            ChatCommand.AddCommand("/friends", new ErrorCommand("/amigos"));
             ChatCommand.AddCommand("/amigos", new FriendsCommand());
+            ChatCommand.AddCommand("/help", new ErrorCommand("/ayuda"));
             ChatCommand.AddCommand("/ayuda", new HelpCommand());
-            ChatCommand.AddCommand("/history", new HistoryCommand());
+            ChatCommand.AddCommand("/historial", new HistoryCommand());
             ChatCommand.AddCommand("/motd", new MOTDCommand());
-            ChatCommand.AddCommand("/location", new LocationCommand());
+            ChatCommand.AddCommand("/loc", new ErrorCommand("/ubicacion"));
+            ChatCommand.AddCommand("/location", new ErrorCommand("/ubicacion"));
+            ChatCommand.AddCommand("/ubicacion", new LocationCommand());
             ChatCommand.AddCommand("/ping", new PingCommand());
             ChatCommand.AddCommand("/players", new PlayersCommand());
+            ChatCommand.AddCommand("/pm", new ErrorCommand("/w"));
             ChatCommand.AddCommand("/w", new PrivateMessagesCommand());
             ChatCommand.AddCommand("/share", new ShareCommand());
             ChatCommand.AddCommand("/starter", new StarterCommand());
             ChatCommand.AddCommand("/unfriend", new UnfriendCommand());
             ChatCommand.AddCommand("/unshare", new UnshareCommand());
+            ChatCommand.AddCommand("/kit", new KitCommand());
+            // Clans Component
 
+            ChatCommand.AddCommand("/crearclan", new CreateClanCommand());
+            ChatCommand.AddCommand("/clanes", new ClansCommand());
+            ChatCommand.AddCommand("/clan", new ClanCommand());
+            ChatCommand.AddCommand("/aceptar", new AceptarCommand());
+            ChatCommand.AddCommand("/f", new ClanChatCommand());
+
+            //DonoComponent
+            ChatCommand.AddCommand("/dono", new ErrorCommand("/prop"));
+            ChatCommand.AddCommand("/prop", new DonoCommand());
+
+            //UtilityComponent
+            ChatCommand.AddCommand("/fps", new FPSCommand());
             /* Dar Admin */
             AddAdminCommand command = new AddAdminCommand();
             command.AdminFlags = "CanAddAdmin";
@@ -179,30 +236,18 @@ namespace RustPP
             command2.AdminFlags = "CanAddFlags";
             ChatCommand.AddCommand("/addflag", command2);
             /* Anuncio */
-            AnnounceCommand command3 = new AnnounceCommand();
-            command3.AdminFlags = "CanAnnounce";
-            ChatCommand.AddCommand("/announce", command3);
+
+            
             /* Ban */
-            BanCommand command4 = new BanCommand();
-            command4.AdminFlags = "CanBan";
-            ChatCommand.AddCommand("/ban", command4);
+
+            
             /* Obtener Flags */
             GetFlagsCommand command5 = new GetFlagsCommand();
             command5.AdminFlags = "CanGetFlags";
             ChatCommand.AddCommand("/getflags", command5);
             /* Dar Items */
-            GiveItemCommand command6 = new GiveItemCommand();
-            command6.AdminFlags = "CanGiveItem";
-            ChatCommand.AddCommand("/give", command6);
-            /* Dar Flag */
-            GodModeCommand command7 = new GodModeCommand();
-            command7.AdminFlags = "CanGodMode";
-            ChatCommand.AddCommand("/god", command7);
-            
-            SpawnItemCommand command8 = new SpawnItemCommand();
-            command8.AdminFlags = "CanSpawnItem";
-            ChatCommand.AddCommand("/i", command8);
 
+            
             InstaKOCommand command9 = new InstaKOCommand();
             command9.AdminFlags = "CanInstaKO";
             ChatCommand.AddCommand("/instako", command9);
@@ -218,10 +263,8 @@ namespace RustPP
             LoadoutCommand command12 = new LoadoutCommand();
             command12.AdminFlags = "CanLoadout";
             ChatCommand.AddCommand("/loadout", command12);
+
             
-            MuteCommand command13 = new MuteCommand();
-            command13.AdminFlags = "CanMute";
-            ChatCommand.AddCommand("/mute", command13);
             
             ReloadCommand command14 = new ReloadCommand();
             command14.AdminFlags = "CanReload";
@@ -239,13 +282,8 @@ namespace RustPP
             command17.AdminFlags = "RCON";
             ChatCommand.AddCommand("/setmasteradmin", command17);
 
-            TeleportHereCommand command18 = new TeleportHereCommand();
-            command18.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/traer", command18);
 
-            TeleportToCommand command19 = new TeleportToCommand();
-            command19.AdminFlags = "CanTeleport";
-            ChatCommand.AddCommand("/ir", command19);
+            
 
             UnbanCommand command20 = new UnbanCommand();
             command20.AdminFlags = "CanUnban";
@@ -255,9 +293,7 @@ namespace RustPP
             command21.AdminFlags = "CanUnflag";
             ChatCommand.AddCommand("/unflag", command21);
 
-            UnmuteCommand command22 = new UnmuteCommand();
-            command22.AdminFlags = "CanUnmute";
-            ChatCommand.AddCommand("/unmute", command22);
+            
             
             WhiteListAddCommand command23 = new WhiteListAddCommand();
             command23.AdminFlags = "CanWhiteList";

@@ -70,7 +70,7 @@ namespace RustPP.Commands
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
             if (id == 0)
             {
-                pl.MessageFrom(Core.Name, "Cancelled!");
+                pl.SendClientMessage("¡Comando cancelado!");
                 return;
             }
             PList list = (PList)Core.unshareWaitList[pl.UID];
@@ -86,6 +86,13 @@ namespace RustPP.Commands
             Fougerite.Player client = Fougerite.Server.GetServer().FindPlayer(exfriend.UserID.ToString());
             if (client != null)
                 client.MessageFrom(Core.Name, string.Format("{0} is no longer sharing his doors with you.", unsharing.Name));
+        }
+        public void DeleteDoors(ulong UID, Fougerite.Player player)
+        {
+            ShareCommand command = (ShareCommand)ChatCommand.GetCommand("share");
+
+            ((ArrayList)command.GetSharedDoors()[UID]).Remove(player.UID);
+
         }
     }
 }

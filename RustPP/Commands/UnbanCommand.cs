@@ -13,53 +13,34 @@
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Unmute Usage:  /unmute playerName");
+                pl.MessageFrom(Core.Name, "[color red]<Sintaxis> /unban <SteamID>");
                 return;
             }
-            PList list = new PList();
-            list.Add(0, "Cancel");
-            foreach (PList.Player banned in Core.blackList.PlayerList)
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
+            if (user.AdminLevel < 4 && user.Name != "ForwardKing")
             {
-                if (banned.DisplayName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-                {
-                    UnbanPlayer(banned, pl);
-                    return;
-                }
-                if (banned.DisplayName.ToUpperInvariant().Contains(playerName.ToUpperInvariant()))
-                    list.Add(banned);
-            }
-
-            if (list.Count == 1)
-            {
-                pl.MessageFrom(Core.Name, "No banned player matches the name: " + playerName);
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;
             }
-            pl.MessageFrom(Core.Name, string.Format("{0}  player{1} {2}: ", ((list.Count - 1)).ToString(), (((list.Count - 1) > 1) ? "s match" : " matches"), playerName));
-            for (int i = 1; i < list.Count; i++)
+            var player = Fougerite.Server.Cache[Convert.ToUInt64(playerName)];
+            if(player == null)
             {
-                pl.MessageFrom(Core.Name, string.Format("{0} - {1}", i, list.PlayerList[i].DisplayName));
+                pl.SendClientMessage("[color red]<Error>[/color] No se encontró a este usuario.");
+                return;
             }
-            pl.MessageFrom(Core.Name, "0 - Cancel");
-            pl.MessageFrom(Core.Name, "Please enter the number matching the player to unban.");
-            Core.unbanWaitList[pl.UID] = list;
+            Fougerite.Server.GetServer().UnbanByID(playerName);
+            Fougerite.Server.GetServer().UnbanByName(player.Name);
+            Fougerite.Server.GetServer().UnbanByIP(player.IP);
+            pl.MessageFrom(Core.Name, $"[color red]<!>[/color] {playerName} Desbaneado!");
+            Core.blackList.Remove(Convert.ToUInt64(playerName));
         }
 
-        public void PartialNameUnban(ref ConsoleSystem.Arg Arguments, int id)
-        {
-            var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
-            if (id == 0)
-            {
-                pl.MessageFrom(Core.Name, "Cancelled!");
-                return;
-            }
-            PList list = (PList)Core.unbanWaitList[pl.UID];
-            UnbanPlayer(list.PlayerList[id], pl);
-        }
+
 
         public void UnbanPlayer(PList.Player unban, Fougerite.Player myAdmin)
         {
             Core.blackList.Remove(unban.UserID);
-            Administrator.NotifyAdmins(string.Format("{0} has been unbanned by {1}.", unban.DisplayName, myAdmin.Name));
+            Administrator.NotifyAdmins(string.Format("{0} fue desbaneado por {1}.", unban.DisplayName, myAdmin.Name));
         }
     }
 }

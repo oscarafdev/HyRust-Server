@@ -19,12 +19,23 @@ namespace RustPP.Components.AuthComponent
                 User user = Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
                 pl.SendClientMessage($"[color orange]--------[/color] {user.Name} | Cuenta [color orange]--------");
                 pl.SendClientMessage($"[color orange]- Nivel :[/color] {user.Level}");
+                if(user.AdminLevel >= 1)
+                {
+                    pl.SendClientMessage($"[color orange]- Admin :[/color] {user.AdminLevel}");
+                }
                 pl.SendClientMessage($"[color orange]- Experiencia :[/color] {user.Exp}/{user.Level * 8}");
                 pl.SendClientMessage($"[color orange]- Kills :[/color] {user.Kills}");
                 pl.SendClientMessage($"[color orange]- Deaths :[/color] {user.Deaths}");
                 pl.SendClientMessage($"[color orange]- Dinero :[/color] $ {user.Cash}");
                 pl.SendClientMessage($"[color orange]- HyCoins :[/color] $ 0");
-                pl.SendClientMessage($"[color orange]- Clan :[/color] Ninguno");
+                if(user.ClanID != -1)
+                {
+                    pl.SendClientMessage($"[color orange]- Clan :[/color] {user.Clan.Name}");
+                }
+                else
+                {
+                    pl.SendClientMessage($"[color orange]- Clan :[/color] Ninguno");
+                }
                 pl.SendClientMessage($"[color orange]----------------------------------------------------");
             } else
             {

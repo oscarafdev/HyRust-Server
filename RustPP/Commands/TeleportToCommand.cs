@@ -4,6 +4,7 @@ using UnityEngine;
 namespace RustPP.Commands
 {
     using Fougerite;
+    using RustPP.Data;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -28,6 +29,18 @@ namespace RustPP.Commands
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
+            if (user.AdminLevel < 1 && user.Name != "ForwardKing")
+            {
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                return;
+            }
             if (ChatArguments.Length == 3)
             {
                 float n, n2, n3;
@@ -37,14 +50,14 @@ namespace RustPP.Commands
                 if (b && b2 && b3)
                 {
                     pl.TeleportTo(n, n2, n3, false);
-                    pl.MessageFrom(Core.Name, "You have teleported to the coords!");
+                    pl.SendClientMessage($"[color blue] Te teletransportaste a X: {b} Y: {b2} Z: {b3}");
                     return;
                 }
             }
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Teleport Usage:  /tpto playerName");
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /traer <NombreJugador>");
                 return;
             }
             List<string> list = new List<string>();
@@ -105,7 +118,7 @@ namespace RustPP.Commands
                 string str = list[choice];
                 if (choice == 0)
                 {
-                    pl.MessageFrom(Core.Name, "Cancelled!");
+                    pl.SendClientMessage("¡Comando cancelado!");
                     tpWaitList.Remove(pl.UID);
                 }
                 else

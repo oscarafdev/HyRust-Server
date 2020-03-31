@@ -12,14 +12,14 @@ namespace Fougerite
     {
         public FriendList FriendsOf(ulong steamid)
         {
-            FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("friends");
+            FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("amigos");
             FriendList list = (FriendList) command2.GetFriendsLists()[steamid];
             return list;
         }
 
         public FriendList FriendsOf(string steamid)
         {
-            FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("friends");
+            FriendsCommand command2 = (FriendsCommand) ChatCommand.GetCommand("amigos");
             FriendList list = (FriendList) command2.GetFriendsLists()[Convert.ToUInt64(steamid)];
             return list;
         }
@@ -36,7 +36,7 @@ namespace Fougerite
         {
             get
             {
-                return (FriendsCommand) ChatCommand.GetCommand("friends");
+                return (FriendsCommand) ChatCommand.GetCommand("amigos");
             }
         }
 

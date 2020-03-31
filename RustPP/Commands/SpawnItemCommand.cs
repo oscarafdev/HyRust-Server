@@ -11,7 +11,19 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
-            if (pl.CommandCancelList.Contains("give"))
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
+            if (user.AdminLevel <= 4)
+            {
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                return;
+            }
+            if (pl.CommandCancelList.Contains("dar"))
             {
                 return;
             }
@@ -61,7 +73,7 @@
                 string itemName = string.Join(" ", remain.ToArray()).MatchItemName();
                 Arguments.Args = new string[] { itemName, quantity };
                 Logger.LogDebug(string.Format("[SpawnItemCommand] terms={0}, itemName={1}, quantity={2}", string.Join(",", remain.ToArray()), itemName, quantity));
-                pl.MessageFrom(Core.Name, string.Format("{0}  {1} were placed in your inventory.", quantity, itemName));
+                pl.SendClientMessage(string.Format("Te diste {0} {1}.", quantity, itemName));
                 inv.give(ref Arguments);
             }
             else

@@ -14,56 +14,49 @@
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Unmute Usage:  /unmute playerName");
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /desmutear <NombreJugador>");
                 return;
             }
-            PList list = new PList();
-            list.Add(0, "Cancel");
-            foreach (PList.Player muted in Core.muteList.PlayerList)
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
+            if (user.AdminLevel < 1 && user.Name != "ForwardKing")
             {
-                Logger.LogDebug(string.Format("[UnmuteCommand] muted.DisplayName={0}, playerName={1}", muted.DisplayName, playerName));
-                if (muted.DisplayName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                return;
+            }
+            string search = ChatArguments[0];
+            Fougerite.Player recipient = Fougerite.Player.FindByName(search);
+            RustPP.Data.Entities.User recipientUser = RustPP.Data.Globals.GetInternalUser(recipient);
+            if (recipient == null)
+            {
+                pl.SendClientMessage($"[color red]<Error>[/color] No se encontró al usuario {search}");
+                return;
+            }
+
+            UnmutePlayer(recipient, pl);
+            
+        }
+
+
+        public void UnmutePlayer(Fougerite.Player unmute, Fougerite.Player myAdmin)
+        {
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(myAdmin);
+            var mutedPlayer = Fougerite.Server.Cache[unmute.UID];
+            if (!RustPP.Data.Globals.UserIsLogged(mutedPlayer))
+            {
+                myAdmin.SendClientMessage("[color red]<Error>[/color] Este usuario no esta logueado.");
+                return;
+            }
+            RustPP.Data.Entities.User muted = RustPP.Data.Globals.GetInternalUser(mutedPlayer);
+            foreach (RustPP.Data.Entities.User usuario in RustPP.Data.Globals.usersOnline)
+            {
+                if (usuario.AdminLevel >= 1)
                 {
-                    UnmutePlayer(muted, pl);
-                    return;
+                    usuario.Player.SendClientMessage($"[color red]<Admin>[/color] {user.Name} desmuteo a {muted.Name}");
                 }
-                if (muted.DisplayName.ToUpperInvariant().Contains(playerName.ToUpperInvariant()))
-                    list.Add(muted);
             }
-            if (list.Count == 1)
-            {
-                pl.MessageFrom(Core.Name, "No player in the mute list matches the name: " + playerName);
-                return;
-            }
-            pl.MessageFrom(Core.Name, string.Format("{0}  player{1} {2}: ", ((list.Count - 1)).ToString(), (((list.Count - 1) > 1) ? "s match" : " matches"), playerName));
-            for (int i = 1; i < list.Count; i++)
-            {
-                pl.MessageFrom(Core.Name, string.Format("{0} - {1}", i, list.PlayerList[i].DisplayName));
-            }
-            pl.MessageFrom(Core.Name, "0 - Cancel");
-            pl.MessageFrom(Core.Name, "Please enter the number matching the player to unmute.");
-            Core.unmuteWaitList[pl.UID] = list;
-        }
-
-        public void PartialNameUnmute(ref ConsoleSystem.Arg Arguments, int id)
-        {
-            var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
-            if (id == 0)
-            {
-                pl.MessageFrom(Core.Name, "Cancelled!");
-                return;
-            }
-            PList list = (PList)Core.unmuteWaitList[pl.UID];
-            UnmutePlayer(list.PlayerList[id], pl);
-        }
-
-        public void UnmutePlayer(PList.Player unmute, Fougerite.Player myAdmin)
-        {
-            Core.muteList.Remove(unmute.UserID);
-            Administrator.NotifyAdmins(string.Format("{0} has been unmuted by {1}.", unmute.DisplayName, myAdmin.Name));
-            Fougerite.Player client = Fougerite.Server.GetServer().FindPlayer(unmute.UserID.ToString());
-            if (client != null)
-                client.MessageFrom(Core.Name, string.Format("You have been unmuted by {0}", myAdmin.Name));
+            muted.Muted = 0;
+            muted.Save();
+            muted.Player.SendClientMessage($"Fuiste desmuteado por {user.Name}");
         }
     }
 }

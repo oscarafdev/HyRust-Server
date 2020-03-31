@@ -9,6 +9,7 @@ namespace Fougerite
         private PlayerItem[] _barItems;
         private Inventory _inv;
         private PlayerItem[] _items;
+        private PlayerItem[] _allItems;
         private Fougerite.Player player;
 
         public PlayerInv(Fougerite.Player player)
@@ -94,6 +95,27 @@ namespace Fougerite
                     belt = Inventory.Slot.Kind.Armor;
                 }
                 this._inv.AddItemSomehow(byName, new Inventory.Slot.Kind?(belt), slot, amount);
+            }
+        }
+
+        public IInventoryItem AddIItemTo(string name, int slot, int amount)
+        {
+            ItemDataBlock byName = DatablockDictionary.GetByName(name);
+            if (byName != null)
+            {
+                Inventory.Slot.Kind belt = Inventory.Slot.Kind.Default;
+                if ((slot > 0x1d) && (slot < 0x24))
+                {
+                    belt = Inventory.Slot.Kind.Belt;
+                }
+                else if ((slot >= 0x24) && (slot < 40))
+                {
+                    belt = Inventory.Slot.Kind.Armor;
+                }
+                return this._inv.AddItemSomehow(byName, new Inventory.Slot.Kind?(belt), slot, amount);
+            } else
+            {
+                return null;
             }
         }
 
@@ -191,6 +213,17 @@ namespace Fougerite
             return this.HasItem(name, 1);
         }
 
+        public PlayerItem GetItem(int slot)
+        {
+            foreach (PlayerItem item in this.Items)
+            {
+                if (item.Slot == slot)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
         /// <summary>
         /// Checks if the player has a specific amount of item.
         /// </summary>
@@ -253,11 +286,13 @@ namespace Fougerite
 
         private void InitItems()
         {
+            this.AllItems = new PlayerItem[40];
             this.Items = new PlayerItem[30];
             this.ArmorItems = new PlayerItem[4];
             this.BarItems = new PlayerItem[6];
             for (int i = 0; i < this._inv.slotCount; i++)
             {
+                this.AllItems[i] = new PlayerItem(ref this._inv, i);
                 if (i < 30)
                 {
                     this.Items[i] = new PlayerItem(ref this._inv, i);
@@ -565,6 +600,18 @@ namespace Fougerite
             set
             {
                 this._items = value;
+            }
+        }
+
+        public PlayerItem[] AllItems
+        {
+            get
+            {
+                return this._allItems;
+            }
+            set
+            {
+                this._allItems = value;
             }
         }
     }

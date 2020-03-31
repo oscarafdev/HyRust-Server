@@ -23,11 +23,13 @@
         {
             var pl = Fougerite.Server.Cache[arg.argUser.userID];
             if (pl.CommandCancelList.Contains(cmd)) { return; }
+            bool commandExists = false;
             foreach (ChatCommand command in classInstances)
             {
                 if (command.Command == cmd)
                 {
-                    if(1 == 1)//if (command.Enabled)
+                    commandExists = true;
+                    if (1 == 1)//if (command.Enabled)
                     {
                         if (command.AdminRestricted)
                         {
@@ -50,12 +52,12 @@
                                 }
                                 else
                                 {
-                                    pl.MessageFrom(RustPP.Core.Name, string.Format("Only administrators with the {0} permission can use that command.", command.AdminFlags));
+                                    pl.MessageFrom(RustPP.Core.Name, string.Format("[color red]<Error>[/color] Necesitas los permisos de {0} para utilizar este comando.", command.AdminFlags));
                                 }
                             }
                             else
                             {
-                                pl.MessageFrom(RustPP.Core.Name, "You don't have access to use this command");
+                                pl.MessageFrom(RustPP.Core.Name, "No tienes permisos para utilizar este comando.");
                             }
                         }
                         else
@@ -65,6 +67,10 @@
                     }
                     break;
                 }
+            }
+            if(!commandExists)
+            {
+                //pl.SendClientMessage($"[color red]¡Ups![/color] Al parecer ingresaste un comando que no existe, utiliza [color cyan]/ayuda[/color] para ver los comandos.")
             }
         }
 

@@ -10,7 +10,7 @@ namespace Fougerite
     {
         void Start()
         {
-            CTimer.SetTimer(() => ExecutePlayerUpdate(), 500, 1);
+            CTimer.SetTimer(() => ExecutePlayerUpdate(), 1000, 1);
         }
         void ExecutePlayerUpdate()
         {
@@ -21,7 +21,7 @@ namespace Fougerite
                     Hooks.PlayerUpdate(player);
                 }
             }
-            CTimer.SetTimer(() => ExecutePlayerUpdate(), 500, 1);
+            CTimer.SetTimer(() => ExecutePlayerUpdate(), 1000, 1);
         }
 
         void Update()
