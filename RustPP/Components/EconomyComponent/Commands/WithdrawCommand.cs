@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RustPP.Components.EconomyComponent.Commands
 {
-    class SellCommand : ChatCommand
+    class WithdrawCommand : ChatCommand
     {
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
