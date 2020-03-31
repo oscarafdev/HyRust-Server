@@ -195,7 +195,8 @@ FakesAssemblies/
 .LSOverride
 
 # Icon must ends with two \r.
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -225,15 +226,3 @@ $RECYCLE.BIN/
 *.userprefs
 *.ide
 *.lock
-*.csproj
-*.csproj
-*.csproj
-Fougerite/Fougerite.csproj
-/.vs/Fougerite/DesignTimeBuild/.dtbcache
-/.vs/Fougerite/v15/Server/sqlite3/storage.ide-shm
-/.vs/Fougerite/v15/Server/sqlite3/storage.ide-wal
-/.vs/ProjectSettings.json
-/.vs/slnx.sqlite
-/.vs/VSWorkspaceState.json
-/Fougerite/packages.config
-/Fougerite.Patcher/packages.config
