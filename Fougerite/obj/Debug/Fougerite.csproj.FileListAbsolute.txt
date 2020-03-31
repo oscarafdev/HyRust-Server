@@ -1,0 +1,16 @@
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\Fougerite.cfg
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\FougeriteDirectory.cfg
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\Fougerite.dll
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\Fougerite.pdb
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite\obj\Debug\Fougerite.csprojAssemblyReference.cache
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite\obj\Debug\Fougerite.csproj.CopyComplete
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite\obj\Debug\Fougerite.dll
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite\obj\Debug\Fougerite.pdb
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\Fougerite.cfg
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\FougeriteDirectory.cfg
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\Fougerite.dll
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\Fougerite.pdb
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite\obj\Debug\Fougerite.csprojAssemblyReference.cache
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite\obj\Debug\Fougerite.csproj.CopyComplete
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite\obj\Debug\Fougerite.dll
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite\obj\Debug\Fougerite.pdb
