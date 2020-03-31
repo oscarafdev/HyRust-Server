@@ -371,9 +371,9 @@ namespace Fougerite
                 Fougerite.Player player = Fougerite.Server.GetServer().FindPlayer(arg.argUser.playerClient.userID);
                 if (command == "rainbow")
                 {
-                    player.Message("[color #00FFFF]Rainbow v[color yellow]" + Bootstrap.Version);
+                    player.Message("[color #00FFFF]HyRust v[color yellow]" + Bootstrap.Version);
                     player.Message("[color green]Comunidad Hyaxe: www.hyaxe.com");
-                    player.Message("[color #0C86AE]Rainbow Server: www.rainbowrust.com");
+                    player.Message("[color #0C86AE]HyRust Server: www.rainbowrust.com");
                 }
                 var cargs = new string[args.Length - 1];
                 Array.Copy(args, 1, cargs, 0, cargs.Length);
@@ -1169,7 +1169,7 @@ namespace Fougerite
         {
             Player player = Server.GetServer().FindByPlayerClient(e.attacker.client);
             float distance = Vector3.Distance(e.victim.character.origin, player.Location);
-            Logger.LogError($"Disparo {distance} m");
+            //Logger.LogError($"Disparo {distance} m");
             Controllable controllable = player.PlayerClient.controllable;
             HumanController localController = controllable.character.controller as HumanController;
             InventoryItem currentEquippedItem = GetCurrentEquippedItem(localController);
@@ -1179,10 +1179,9 @@ namespace Fougerite
                 if (item2 != null)
                 {
 
-                    Logger.LogError($"Bullet range: {item2.datablock.bulletRange} - {e.attacker.character.name}");
                     if (distance > item2.datablock.bulletRange)
                     {
-                        player.SendClientMessage("Você está usando hacks - Estás usando hacks");
+                        Server.GetServer().Broadcast($"[color red] El jugador {player.Name} esta utilizando hacks.");
                     }
                 }
             }
@@ -1401,10 +1400,7 @@ namespace Fougerite
             GatherEvent ge = new GatherEvent(rt, rg, amount);
             try
             {
-                if (OnPlayerGathering != null)
-                {
-                    OnPlayerGathering(player, ge);
-                }
+                OnPlayerGathering?.Invoke(player, ge);
                 amount = ge.Quantity;
                 if (!ge.Override)
                 {
@@ -2302,7 +2298,7 @@ namespace Fougerite
             sw.Stop();
             if (sw.Elapsed.TotalSeconds > 0) Logger.LogSpeed("HandleuLinkDisconnect Speed: " + Math.Round(sw.Elapsed.TotalSeconds) + " secs");
         }
-
+        internal static Dictionary<string, float> FloodCooldownNovo = new Dictionary<string, float>();
         public static void PlayerApproval(ConnectionAcceptor ca, NetworkPlayerApproval approval)
         {
             Stopwatch sw = null;
@@ -2313,7 +2309,30 @@ namespace Fougerite
             }
             if (ca.m_Connections.Count >= server.maxplayers)
             {
-                approval.Deny(uLink.NetworkConnectionError.TooManyConnectedPlayers);
+                if (FloodCooldownNovo.ContainsKey(approval.ipAddress))
+                {
+                    float timeLoginAnterior = FloodCooldownNovo[approval.ipAddress];
+                    float timeAtual = Time.realtimeSinceStartup;
+                    float diferencaDeUmLoginParaOutro = timeAtual - timeLoginAnterior;
+                    //Debug.Log("timeLoginAnterior: " + timeLoginAnterior + " timeAtual:" + timeAtual + " diferencaDeUmLoginParaOutro:" + diferencaDeUmLoginParaOutro);
+                    //se a diferenca do login for menor ou igual a 4000(4 seg) bloqueia a conexao
+                    if (diferencaDeUmLoginParaOutro <= 5)
+                    {
+                        approval.Deny(uLink.NetworkConnectionError.ConnectionTimeout);
+                        //conexaoBloqueada = true;
+                    }
+                    else
+                    {
+                        //Debug.Log("ip: " + approval.ipAddress +" diff:"+ diferencaDeUmLoginParaOutro);
+                        FloodCooldownNovo[approval.ipAddress] = Time.realtimeSinceStartup;
+                    }
+                }
+                else
+                {
+                    FloodCooldownNovo[approval.ipAddress] = Time.realtimeSinceStartup;
+                    Debug.Log("ip2: " + approval.ipAddress);
+                }
+                //approval.Deny(uLink.NetworkConnectionError.TooManyConnectedPlayers);
             }
             else
             {

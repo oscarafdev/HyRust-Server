@@ -32,9 +32,9 @@ namespace RustPP.Components.AdminComponent.Commands
             }
             string strText = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             string rem = Regex.Replace(strText, @"\[/?color\b.*?\]", string.Empty);
-            string template = "[color #d311ea][AO]((Admin -adminLevel- -userName-: -userMessage-))";
+            string template = "[color #d311ea][AO]((-adminLevel- -userName-: -userMessage-))";
             string setname = Regex.Replace(template, "-userName-", Arguments.argUser.displayName);
-            string setadmin = Regex.Replace(setname, "-adminLevel-", user.AdminLevel.ToString());
+            string setadmin = Regex.Replace(setname, "-adminLevel-", Globals.getAdminName(user));
             string final = Regex.Replace(setadmin, "-userMessage-", rem);
             if (strText == string.Empty)
             {

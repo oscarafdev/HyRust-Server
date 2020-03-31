@@ -28,7 +28,14 @@ namespace RustPP.Components.AuthComponent
                 pl.SendClientMessage($"[color orange]- Deaths :[/color] {user.Deaths}");
                 pl.SendClientMessage($"[color orange]- Dinero :[/color] $ {user.Cash}");
                 pl.SendClientMessage($"[color orange]- HyCoins :[/color] $ 0");
-                pl.SendClientMessage($"[color orange]- Clan :[/color] Ninguno");
+                if(user.ClanID != -1)
+                {
+                    pl.SendClientMessage($"[color orange]- Clan :[/color] {user.Clan.Name}");
+                }
+                else
+                {
+                    pl.SendClientMessage($"[color orange]- Clan :[/color] Ninguno");
+                }
                 pl.SendClientMessage($"[color orange]----------------------------------------------------");
             } else
             {

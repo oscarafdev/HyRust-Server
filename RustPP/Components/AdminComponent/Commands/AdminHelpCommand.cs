@@ -40,6 +40,7 @@ namespace RustPP.Components.AdminComponent.Commands
             if(user.AdminLevel >= 2)
             {
                 pl.SendClientMessage($"- [color cyan]/anuncio[/color] Anuncio general.");
+                pl.SendClientMessage($"- [color cyan]/adminkit[/color] Admin Kit.");
             }
             if (user.AdminLevel >= 3)
             {
@@ -60,7 +61,6 @@ namespace RustPP.Components.AdminComponent.Commands
             if (user.AdminLevel >= 6)
             {
                 pl.SendClientMessage($"- [color cyan]/daradmin[/color] Dar admin.");
-                pl.SendClientMessage($"- [color cyan]/adminkit[/color] Admin Kit.");
             }
         }
     }

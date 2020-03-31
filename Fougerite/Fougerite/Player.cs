@@ -524,12 +524,12 @@ namespace Fougerite
                     if (Bootstrap.RustChat)
                     {
                         this.SendCommand("chat.add " + "\\n\\n " +
-                                        Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + arg));
+                                        Facepunch.Utility.String.QuoteSafe(arg));
                     }
 
                     if (Bootstrap.RPCChat)
                     {
-                        string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + arg);
+                        string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe(arg);
                         uLink.NetworkView.Get(this.PlayerClient.networkView)
                             .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
                     }
@@ -553,12 +553,12 @@ namespace Fougerite
                         {
                             if (Bootstrap.RustChat)
                             {
-                                this.SendCommand("chat.add " + "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<"+ playername+"> " +lastcolor + x));
+                                this.SendCommand("chat.add " + "\\n\\n " + Facepunch.Utility.String.QuoteSafe(lastcolor + x));
                             }
 
                             if (Bootstrap.RPCChat)
                             {
-                                string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + lastcolor + x);
+                                string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe(lastcolor + x);
                                 uLink.NetworkView.Get(this.PlayerClient.networkView)
                                     .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
                             }
@@ -567,12 +567,12 @@ namespace Fougerite
                         {
                             if (Bootstrap.RustChat)
                             {
-                                this.SendCommand("chat.add " + "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + x));
+                                this.SendCommand("chat.add " + "\\n\\n " + Facepunch.Utility.String.QuoteSafe(x));
                             }
 
                             if (Bootstrap.RPCChat)
                             {
-                                string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe("<" + playername + "> " + x);
+                                string text = "\\n\\n " + Facepunch.Utility.String.QuoteSafe(x);
                                 uLink.NetworkView.Get(this.PlayerClient.networkView)
                                     .RPC(Bootstrap.RPCChatMethod, this.NetworkPlayer, text);
                             }

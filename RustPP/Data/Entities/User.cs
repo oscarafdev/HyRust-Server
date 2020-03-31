@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Fougerite;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,9 @@ namespace RustPP.Data.Entities
         public int LumberjackExp { get; set; }
         public string LastKilled { get; set; }
         public int BannedPlayer { get; set; }
+        public int InvitedClan { get; set; }
         public string InternalInventory { get; set; }
+        public bool FPS { get; set; } = false;
 
         public void AddWoodExp(int quantity)
         {
@@ -60,8 +63,7 @@ namespace RustPP.Data.Entities
                 else
                 {
                     char ch = '♜';
-                    this.Player.Notice(ch.ToString(), $"+ 1 Exp (Leñador)", 3f);
-                    this.Player.InventoryNotice($"Leñador {this.LumberjackExp}/{this.LumberjackLevel * 100}");
+                    this.Player.Notice(ch.ToString(), $"Leñador {this.LumberjackExp}/{this.LumberjackLevel * 100}", 3f);
                 }
 
             }
@@ -84,8 +86,7 @@ namespace RustPP.Data.Entities
                 else
                 {
                     char ch = '♜';
-                    this.Player.Notice(ch.ToString(), $"+ 1 Exp (Minero)", 3f);
-                    this.Player.InventoryNotice($"Leñador {this.MinerExp}/{this.MinerLevel * 100}");
+                    this.Player.Notice(ch.ToString(), $"Minero {this.MinerExp}/{this.MinerLevel * 100}", 3f);
                 }
 
             }
@@ -108,8 +109,7 @@ namespace RustPP.Data.Entities
                 else
                 {
                     char ch = '♜';
-                    this.Player.Notice(ch.ToString(), $"+ 1 Exp (Minero)", 3f);
-                    this.Player.InventoryNotice($"Leñador {this.MinerExp}/{this.MinerLevel * 100}");
+                    this.Player.Notice(ch.ToString(), $"Minero {this.MinerExp}/{this.MinerLevel * 100}", 3f);
                 }
 
             }
@@ -154,7 +154,7 @@ namespace RustPP.Data.Entities
         {
             this.Exp -= experience;
             if (this.Exp < 0)
-            { 
+            {
                 this.Level -= 1;
                 this.GiveExp(this.Level * 7);
                 this.Player.SendClientMessage($"Bajaste a nivel [color orange] Nivel {this.Level} [/color] de jugador.");
@@ -208,7 +208,9 @@ namespace RustPP.Data.Entities
                     "xPos = @xPos," +
                     "yPos = @yPos," +
                     "zPos = @zPos," +
-                    "muted = @muted" +
+                    "muted = @muted," +
+                    "clan = @clan," +
+                    "clanRank = @clanRank" +
                     " WHERE username = @username";
                 command.Parameters.AddWithValue("@playerLevel", this.Level);
                 command.Parameters.AddWithValue("@playerExp", this.Exp);
@@ -236,12 +238,24 @@ namespace RustPP.Data.Entities
                 command.Parameters.AddWithValue("@yPos", this.YPos);
                 command.Parameters.AddWithValue("@zPos", this.ZPos);
                 command.Parameters.AddWithValue("@muted", this.Muted);
+                command.Parameters.AddWithValue("@clan", this.ClanID);
+                command.Parameters.AddWithValue("@clanRank", this.ClanRank);
                 command.Parameters.AddWithValue("@username", this.Name);
                 MySqlDataReader reader = command.ExecuteReader();
 
                 connection.Close();
             }
         }
+        public void GetClan()
+        {
+            int count = Data.Globals.Clans.Count(x => x.ID == this.ClanID);
+            if(count >= 1)
+            {
+                RustPP.Data.Entities.Clan clan = Data.Globals.Clans.Find(x => x.ID == this.ClanID);
+                this.Clan = clan;
+            }
+        }
+        public RustPP.Data.Entities.Clan Clan { get; set; }
         public Fougerite.Player Player { get; set; }
     }
 }

@@ -20,6 +20,10 @@
     {
         public static void CreateSaves()
         {
+            Logger.Log("Guardando clanes");
+            RustPP.Data.Globals.GuardarClanes();
+            Logger.Log("Guardando cuentas");
+            RustPP.Data.Globals.GuardarCuentas();
             ShareCommand command = (ShareCommand)ChatCommand.GetCommand("share");
             FriendsCommand command2 = (FriendsCommand)ChatCommand.GetCommand("amigos");
             if (command.GetSharedDoors().Count != 0)

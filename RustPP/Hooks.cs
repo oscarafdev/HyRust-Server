@@ -160,7 +160,7 @@ namespace RustPP
                 {
                     foreach (var client in Fougerite.Server.GetServer().Players.Where(client => client.UID != pl.UID))
                     {
-                        client.MessageFrom(Core.Name, pl.Name + " " + RustPPModule.JoinMsg);
+                        client.SendClientMessage("[color cyan]<!>[/color] " +pl.Name + " " + RustPPModule.JoinMsg);
                     }
                 }
             }
@@ -182,7 +182,7 @@ namespace RustPP
                 {
                     foreach (var client in Fougerite.Server.GetServer().Players.Where(client => client.UID != user.UID))
                     {
-                        client.MessageFrom(Core.Name, user.Name + " " + RustPPModule.LeaveMsg);
+                        client.SendClientMessage("[color cyan]<!>[/color] " + user.Name + " " + RustPPModule.LeaveMsg);
                     }
                 }
             }

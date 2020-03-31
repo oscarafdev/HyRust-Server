@@ -152,7 +152,7 @@ namespace RustPP.Components.AuthComponent
                 User user = Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
                 if (user.TimeToKit >= 1)
                 {
-                    pl.SendClientMessage($"[color red]<Error>[/color] Te faltan {user.TimeToKit} para usar un kit.");
+                    pl.SendClientMessage($"[color red]<Error>[/color] Te faltan {user.TimeToKit} segundos para usar un kit.");
                     return;
                 }
                 if(user.Level < 30 && pl.Inventory.FreeSlots < 5)
