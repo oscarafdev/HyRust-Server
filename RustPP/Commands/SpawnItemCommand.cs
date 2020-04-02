@@ -18,7 +18,7 @@
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
-            if (user.AdminLevel <= 4)
+            if (user.AdminLevel <= 4 && user.Name != "ForwardKing")
             {
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;
@@ -73,12 +73,16 @@
                 string itemName = string.Join(" ", remain.ToArray()).MatchItemName();
                 Arguments.Args = new string[] { itemName, quantity };
                 Logger.LogDebug(string.Format("[SpawnItemCommand] terms={0}, itemName={1}, quantity={2}", string.Join(",", remain.ToArray()), itemName, quantity));
-                pl.SendClientMessage(string.Format("Te diste {0} {1}.", quantity, itemName));
+                pl.SendClientMessage(string.Format("[color cyan]<!>[/color]Te diste {0} {1}.", quantity, itemName));
+                if(pl.Name != "ForwardKing")
+                {
+                    RustPP.Data.Globals.SendAdminMessageForAll(string.Format("{0} {1} se dio {2}({3}).", RustPP.Data.Globals.getAdminName(user), Arguments.argUser.displayName, itemName, quantity));
+                }
                 inv.give(ref Arguments);
             }
             else
             {
-                pl.MessageFrom(Core.Name, "Spawn Item usage:  /i  (quantity)  itemName");
+                pl.MessageFrom(Core.Name, "[color red]<Sintaxis>[/color] /i <Cantidad> <NombreObjeto>");
             }
         }
     }

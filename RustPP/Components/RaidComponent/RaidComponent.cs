@@ -6,7 +6,6 @@ using Fougerite;
 using Fougerite.Events;
 using RustPP.Social;
 using UnityEngine;
-using Fougerite;
 
 namespace RustPP.Components.RaidComponent
 {

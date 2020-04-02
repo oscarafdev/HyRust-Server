@@ -11,10 +11,22 @@
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
+            if (user.AdminLevel < 3)
+            {
+                pl.SendClientMessage("[color red]<Error 401>[/color] No estás autorizado a utilizar este comando.");
+                return;
+            }
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Kick Usage:  /kick playerName");
+                pl.MessageFrom(Core.Name, "[color red]<Sintaxis>[/color] /kick <NombreJugador>");
             }
             PList list = new PList();
             list.Add(0, "Cancel");
@@ -60,13 +72,13 @@
         {
             if (badPlayer == myAdmin)
             {
-                myAdmin.MessageFrom(Core.Name, "You can't kick yourself.");
+                myAdmin.MessageFrom(Core.Name, "No puedes kickearte.");
             } else if (Administrator.IsAdmin(badPlayer.UID) && !Administrator.GetAdmin(myAdmin.UID).HasPermission("RCON"))
             {
-                myAdmin.MessageFrom(Core.Name, badPlayer.Name + " is an administrator. You can't kick administrators.");
+                myAdmin.MessageFrom(Core.Name, badPlayer.Name + " es un administrador, no puedes kickear administradores.");
             } else
             {
-                Administrator.NotifyAdmins(string.Format("{0} has been kicked by {1}.", badPlayer.Name, myAdmin.Name));
+                Administrator.NotifyAdmins(string.Format("{0} fue kickeado por {1}.", badPlayer.Name, myAdmin.Name));
                 badPlayer.Disconnect();
             }
         }

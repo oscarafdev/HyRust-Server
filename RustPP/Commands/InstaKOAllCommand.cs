@@ -13,6 +13,17 @@ namespace RustPP
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
+            if(user.AdminLevel < 5)
+            {
+                pl.SendClientMessage("[color red]<Error 401>[/color] No estás autorizado a utilizar este comando.");
+            }
             if (pl.CommandCancelList.Contains("instakoall"))
             {
                 if (userIDs.Contains(pl.UID))

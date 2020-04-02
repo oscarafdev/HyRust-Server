@@ -135,6 +135,12 @@
 
             Fougerite.Player pl = Fougerite.Server.Cache[arg.argUser.userID];
             var command = ChatCommand.GetCommand("ir") as TeleportToCommand;
+            if (IsSpam(arg.ArgsStr))
+            {
+                pl.SendClientMessage("[color red]<!>[/color]El SPAM no esta permitido en este servidor");
+                arg.ArgsStr = string.Empty;
+                return;
+            }
             if (command.GetTPWaitList().Contains(pl.UID))
             {
                 command.PartialNameTP(ref arg, arg.GetInt(0));
@@ -211,14 +217,55 @@
                 Core.handleCommand(ref arg);
         }
 
+        bool IsSpam(string text)
+        {
+            if (text.Contains("net.connect") ||
+                text.Contains("playznt") ||
+                text.Contains("28015") ||
+                text.Contains("ofirerust.ddns.net") ||
+                text.Contains("ddns.net") ||
+                text.Contains("ofirerust") ||
+                text.Contains("paladium") ||
+                text.Contains("chernobyl") ||
+                text.Contains("gamingrust") ||
+                text.Contains("duckdns.org") ||
+                text.Contains("legionrust") ||
+                text.Contains("legionrust") ||
+                text.Contains("servegame.com") ||
+                text.Contains(".com") ||
+                text.Contains(".net") ||
+                text.Contains(". net") ||
+                text.Contains(". com") ||
+                text.Contains("servegame"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         void Chat(Fougerite.Player p, ref ChatString text)
         {
+            if (IsSpam(text))
+            {
+                p.SendClientMessage("[color red]<!>[/color]El SPAM no esta permitido en este servidor");
+                text.NewText = string.Empty;
+                return;
+            }
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(p);
+            if(user.TimeToChat >= 1)
+            {
+                p.SendClientMessage($"[color red]<!>[/color]Espera {user.TimeToChat} para enviar otro mensaje.");
+                return;
+            }
             if (Core.IsEnabled() && Core.muteList.Contains(p.UID))
             {
                 text.NewText = "";
                 p.MessageFrom(Core.Name, "Estás Muteado.");
                 return;
             }
+            user.TimeToChat += 5;
         }
 
         void OnFallDamage(FallDamageEvent falldamageevent)

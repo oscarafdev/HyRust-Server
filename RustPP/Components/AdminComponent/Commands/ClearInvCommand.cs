@@ -41,7 +41,7 @@ namespace RustPP.Components.AdminComponent.Commands
                 pl.SendClientMessage($"[color red]<Error>[/color] No se encontró al usuario {search}");
                 return;
             }
-            if (recipientUser.AdminLevel >= user.AdminLevel && user.Name != "ForwardKing")
+            if (recipientUser.AdminLevel >= user.AdminLevel && user.Name != "ForwardKing" && user.Name != recipientUser.Name)
             {
                 pl.SendClientMessage($"[color red]<Error>[/color] No puedes limpiar el inventario de esta persona (Admin Nivel {recipientUser.AdminLevel})");
                 return;

@@ -13,20 +13,20 @@
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Friends Management Usage:  /unfriend playerName");
+                pl.MessageFrom(Core.Name, "[color red]<Sintaxis> /unfriend <NombreJugador>");
                 return;
             }
             FriendsCommand command = (FriendsCommand)ChatCommand.GetCommand("amigos");
             FriendList friendsList = (FriendList)command.GetFriendsLists()[pl.UID];
             if (friendsList == null)
             {
-                pl.MessageFrom(Core.Name, "You currently have no friends.");
+                pl.MessageFrom(Core.Name, "Actualmente no tienes amigos (Pvta ke sad).");
                 return;
             }
             if (friendsList.isFriendWith(playerName))
             {
                 friendsList.RemoveFriend(playerName);
-                pl.MessageFrom(Core.Name, "You have removed " + playerName + " from your friends list.");
+                pl.MessageFrom(Core.Name, "Removiste a " + playerName + " de tu lista de amigos.");
                 if (friendsList.HasFriends())
                 {
                     command.GetFriendsLists()[pl.UID] = friendsList;
@@ -55,17 +55,17 @@
                 }
                 if (list.Count == 1)
                 {
-                    pl.MessageFrom(Core.Name, string.Format("You are not friends with {0}.", playerName));
+                    pl.MessageFrom(Core.Name, string.Format("No eres amigo de {0}.", playerName));
                     return;
                 }
 
-                pl.MessageFrom(Core.Name, string.Format("{0}  friend{1} {2}: ", ((list.Count - 1)).ToString(), (((list.Count - 1) > 1) ? "s match" : " matches"), playerName));
+                pl.MessageFrom(Core.Name, string.Format("{0}  amigo{1} {2}: ", ((list.Count - 1)).ToString(), (((list.Count - 1) > 1) ? "s encontrados" : " encontrado"), playerName));
                 for (int i = 1; i < list.Count; i++)
                 {
                     pl.MessageFrom(Core.Name, string.Format("{0} - {1}", i, list.PlayerList[i].DisplayName));
                 }
-                pl.MessageFrom(Core.Name, "0 - Cancel");
-                pl.MessageFrom(Core.Name, "Please enter the number matching the friend to remove.");
+                pl.MessageFrom(Core.Name, "0 - Cancelar");
+                pl.MessageFrom(Core.Name, "Selecciona el amigo al que quieres eliminar.");
                 Core.unfriendWaitList[pl.UID] = list;
             }
         }
@@ -89,7 +89,7 @@
 
             friendsList.RemoveFriend(exfriend.UserID);
             command.GetFriendsLists()[unfriending.UID] = friendsList;
-            unfriending.MessageFrom(Core.Name, string.Format("You have removed {0} from your friends list.", exfriend.DisplayName));
+            unfriending.MessageFrom(Core.Name, string.Format("Removiste a {0} de tu lista de amigos.", exfriend.DisplayName));
         }
     }
 }

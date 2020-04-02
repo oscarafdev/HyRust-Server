@@ -20,17 +20,17 @@ namespace RustPP.Commands
                 if (ChatArguments[0] == "urgent")
                 {
                     Fougerite.Hooks.IsShuttingDown = true;
-                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Server Shutdown NOW!");
+                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "¡Reinicio del servidor AHORA!");
                     //UnityEngine.Application.Quit();
                     Process.GetCurrentProcess().Kill();
                 }
                 else if (ChatArguments[0] == "safeurgent")
                 {
                     Fougerite.Hooks.IsShuttingDown = true;
-                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Saving Server...");
+                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Guardando datos de las cuentas...");
                     World.GetWorld().ServerSaveHandler.ManualSave();
-                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Saved Server Data!");
-                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Server is shutting down in " + ShutdownTime + " seconds.");
+                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "¡Se guardaron los datos!");
+                    Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "El servidor se cerrará en " + ShutdownTime + " segundos.");
                     _timer = new Timer(TriggerTime * 1000);
                     _timer.Elapsed += Trigger;
                     _timer.Start();
@@ -53,7 +53,7 @@ namespace RustPP.Commands
                 return;
             }
             Fougerite.Hooks.IsShuttingDown = true;
-            Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Server is shutting down in " + ShutdownTime + " seconds.");
+            Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Reinicio del servidor en " + ShutdownTime + " segundos.");
             _timer = new Timer(TriggerTime * 1000);
             _timer.Elapsed += Trigger;
             _timer.Start();
@@ -65,23 +65,23 @@ namespace RustPP.Commands
             if (Time >= ShutdownTime)
             {
                 _timer.Dispose();
-                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Saving Server...");
+                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Guardando datos...");
                 World.GetWorld().ServerSaveHandler.ManualSave();
-                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Saved Server Data!");
-                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Server shutdown in 15 seconds!");
+                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "¡Se guardaron todos los datos!");
+                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "¡Cerrando servidor en 15 segundos!");
                 _timer2 = new Timer(15000);
                 _timer2.Elapsed += Trigger2;
                 _timer2.Start();
             }
             else
             {
-                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Server is shutting down in " + (ShutdownTime - Time) + " seconds.");
+                Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "El servidor se cerrará en " + (ShutdownTime - Time) + " segundos.");
             }
         }
 
         internal static void Trigger2(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "Server Shutdown NOW!");
+            Fougerite.Server.GetServer().BroadcastFrom(Core.Name, "¡Reinicio del servidor AHORA!");
             _timer2.Dispose();
             //Loom.QueueOnMainThread(UnityEngine.Application.Quit);
             //UnityEngine.Application.Quit();

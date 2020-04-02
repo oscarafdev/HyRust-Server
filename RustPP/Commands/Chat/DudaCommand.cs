@@ -9,7 +9,7 @@ namespace RustPP.Commands.Chat
     using System.Text.RegularExpressions;
     using static ConsoleSystem;
 
-    public class DudaCommand : ChatCommand
+    public class GeneralChatCommand : ChatCommand
     {
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
@@ -21,7 +21,12 @@ namespace RustPP.Commands.Chat
                 pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
                 return;
             }
-            if(user.Muted == 1)
+            if (user.TimeToChat >= 1)
+            {
+                pl.SendClientMessage($"[color red]<Error> [color white]Espera {user.TimeToChat} para enviar otro mensaje.");
+                return;
+            }
+            if (user.Muted == 1)
             {
                 pl.SendClientMessage("[color red]<Error> [color white]Estás muteado, no puedes hablar.");
                 return;
@@ -43,6 +48,7 @@ namespace RustPP.Commands.Chat
             else
             {
                 Server.GetServer().SendMessageForAll(final);
+                user.TimeToChat += 5;
             }
         }
     }

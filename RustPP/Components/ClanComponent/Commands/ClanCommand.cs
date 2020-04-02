@@ -281,7 +281,7 @@ return;
                     pl.SendClientMessage("[color red]<Sintaxis>[/color] /clan darlider <NombreJugador>");
                     return;
                 }
-                if (user.Name == user.Clan.Owner)
+                if (user.Name != user.Clan.Owner)
                 {
                     pl.SendClientMessage($"[color red]<Error>[/color] Solo el lider puede usar este comando.");
                     return;

@@ -89,6 +89,7 @@
     <Compile Include="Components\AdminComponent\Commands\SaveLocationCommand.cs" />
     <Compile Include="Components\AuthComponent\AccountCommand.cs" />
     <Compile Include="Components\AuthComponent\AuthComponent.cs" />
+    <Compile Include="Components\AuthComponent\DudaCommand.cs" />
     <Compile Include="Components\AuthComponent\FarmCommand.cs" />
     <Compile Include="Components\AuthComponent\KitCommand.cs" />
     <Compile Include="Components\AuthComponent\LoginCommand.cs" />

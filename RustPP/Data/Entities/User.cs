@@ -44,6 +44,8 @@ namespace RustPP.Data.Entities
         public int InvitedClan { get; set; }
         public string InternalInventory { get; set; }
         public bool FPS { get; set; } = false;
+        public int TimeToDuda { get; set; } = 0;
+        public int TimeToChat { get; set; } = 0;
 
         public void AddWoodExp(int quantity)
         {

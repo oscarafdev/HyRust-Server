@@ -3632,7 +3632,6 @@ namespace Fougerite
                 }
             }
         }
-        
         public static void StructureComponentDoAction1(StructureComponentDataBlock instance, uLink.BitStream stream, ItemRepresentation rep, ref uLink.NetworkMessageInfo info)
         {
             IStructureComponentItem item;
@@ -3649,31 +3648,31 @@ namespace Fougerite
                 {
                     return;
                 }
-                
-                if (float.IsNaN(origin.x) || float.IsInfinity(origin.x) || float.IsNaN(origin.y) || float.IsInfinity(origin.y) 
+
+                if (float.IsNaN(origin.x) || float.IsInfinity(origin.x) || float.IsNaN(origin.y) || float.IsInfinity(origin.y)
                     || float.IsNaN(origin.z) || float.IsInfinity(origin.z))
                 {
                     return;
                 }
-                
-                if (float.IsNaN(direction.x) || float.IsInfinity(direction.x) || float.IsNaN(direction.y) || float.IsInfinity(direction.y) 
+
+                if (float.IsNaN(direction.x) || float.IsInfinity(direction.x) || float.IsNaN(direction.y) || float.IsInfinity(direction.y)
                     || float.IsNaN(direction.z) || float.IsInfinity(direction.z))
                 {
                     return;
                 }
-                
-                if (float.IsNaN(position.x) || float.IsInfinity(position.x) || float.IsNaN(position.y) || float.IsInfinity(position.y) 
+
+                if (float.IsNaN(position.x) || float.IsInfinity(position.x) || float.IsNaN(position.y) || float.IsInfinity(position.y)
                     || float.IsNaN(position.z) || float.IsInfinity(position.z))
                 {
                     return;
                 }
-                
-                if (float.IsNaN(rotation.x) || float.IsInfinity(rotation.x) || float.IsNaN(rotation.y) || float.IsInfinity(rotation.y) 
+
+                if (float.IsNaN(rotation.x) || float.IsInfinity(rotation.x) || float.IsNaN(rotation.y) || float.IsInfinity(rotation.y)
                     || float.IsNaN(rotation.z) || float.IsInfinity(rotation.z) || float.IsNaN(rotation.w) || float.IsInfinity(rotation.w))
                 {
                     return;
                 }
-                
+
                 StructureMaster component = null;
                 if (viewID == uLink.NetworkViewID.unassigned)
                 {
@@ -3683,7 +3682,8 @@ namespace Fougerite
                     }
                     if (structureToPlacePrefab.type != StructureComponent.StructureComponentType.Foundation)
                     {
-                       // Debug.Log("ERROR, tried to place non foundation structure on terrain!");
+                        Debug.Log("TESTE 1");
+                        return;
                     }
                     else
                     {
@@ -3697,8 +3697,8 @@ namespace Fougerite
                 }
                 if (component == null)
                 {
+                    Debug.Log("TESTE 2");
                     return;
-                    //Debug.Log("NO master, something seriously wrong");
                 }
                 if (instance._structureToPlace.CheckLocation(component, position, rotation) && instance.CheckBlockers(position))
                 {
@@ -3718,6 +3718,8 @@ namespace Fougerite
                 }
             }
         }
+
+        
         
         public static void TorchDoAction1(TorchItemDataBlock instance, uLink.BitStream stream, ItemRepresentation rep, ref uLink.NetworkMessageInfo info)
         {

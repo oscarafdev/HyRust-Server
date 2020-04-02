@@ -51,7 +51,8 @@
             {
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - CHAT [color orange]--------");
                 pl.SendClientMessage($"- El chat común es local, te puede leer cualquier jugador que este dentro de 30 metros.");
-                pl.SendClientMessage($"- [color cyan]/duda[/color] Canal general de dudas, utiliza este canal para preguntas.");
+                pl.SendClientMessage($"- [color cyan]/o[/color] Canal general.");
+                pl.SendClientMessage($"- [color cyan]/duda[/color] Canald de dudas, solo lo leen los administradores.");
                 pl.SendClientMessage($"- [color cyan]/reportar[/color] Reportar a un usuario.");
                 pl.SendClientMessage($"- [color cyan]/g[/color] Gritar (Rango 80m).");
                 pl.SendClientMessage($"- [color cyan]/w[/color] Envia un mensaje privado a un jugador.");

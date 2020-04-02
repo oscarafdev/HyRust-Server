@@ -19,7 +19,11 @@ namespace RustPP.Components.ClanComponent.Commands
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
-            
+            if(user.TimeToChat >= 1)
+            {
+                pl.SendClientMessage("[color red]<Error>[/color] Tienes que esperar {user.TimeToChat} para enviar otro mensaje");
+                return;
+            }
             if(user.ClanID == -1)
             {
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes Clan");
@@ -61,6 +65,7 @@ namespace RustPP.Components.ClanComponent.Commands
                         }
                     }
                 }
+                user.TimeToChat += 5;
             }
         }
     }

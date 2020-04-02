@@ -97,17 +97,9 @@
                     bannedUser.BannedPlayer = 1;
                 }
             }
-            if (RustPP.Core.blackList.Contains(ban.UserID))
-            {
-                Logger.LogError(string.Format("[BanPlayer] {0}, id={1} ya esta en la lista de baneados.", ban.DisplayName, ban.UserID));
-                Core.blackList.Remove(ban.UserID);
-            }
-            Core.blackList.Add(ban);
-            Administrator.DeleteAdmin(ban.UserID);
-            Server.GetServer().SendMessageForAll(string.Format("[color red]{0} fue baneado permanentemente por {1}.", ban.DisplayName, myAdmin.Name));
             Fougerite.Player client = Fougerite.Server.GetServer().FindPlayer(ban.UserID.ToString());
-            if (client != null)
-                client.Disconnect();
+            Server.GetServer().BanPlayer(client,myAdmin.Name, "Decisión Administrativa", myAdmin, true);
+            client.Disconnect();
         }
     }
 }

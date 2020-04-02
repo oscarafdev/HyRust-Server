@@ -98,6 +98,18 @@ namespace RustPP.Components.AuthComponent
                         player.SendClientMessage("[color cyan]<!>[/color] Ya puedes utilizar /tp.");
                     }
                 }
+                if(user.TimeToDuda >= 1)
+                {
+                    user.TimeToDuda -= 1;
+                    if (user.TimeToTP == 1)
+                    {
+                        player.SendClientMessage("[color cyan]<!>[/color] Ya puedes utilizar /duda.");
+                    }
+                }
+                if (user.TimeToChat >= 1)
+                {
+                    user.TimeToChat -= 1;
+                }
                 if (user.TimeToPayDay >= 1)
                 {
                     user.TimeToPayDay -= 1;
@@ -107,7 +119,7 @@ namespace RustPP.Components.AuthComponent
                     user.TimeToPayDay = 1800;
                     int dinero = 0;
                     System.Random random = new System.Random();
-                    int randomNumber = random.Next(0, 14);
+                    int randomNumber = random.Next(0, 13);
                     player.SendClientMessage($"[color orange]------------[/color] PayDay [color orange]------------");
                     player.SendClientMessage($"[color orange]- Base :[/color] $ {user.Level * 500} (Nivel {user.Level})");
                     dinero += user.Level * 500;
@@ -566,7 +578,7 @@ namespace RustPP.Components.AuthComponent
                     }
                     if(newUser.ClanID != -1)
                     {
-                        player.SendClientMessage($"[color orange]<{newUser.Clan.Name}[/color] {newUser.Clan.MOTD}");
+                        player.SendClientMessage($"[color orange]<{newUser.Clan.Name}>[/color] {newUser.Clan.MOTD}");
                     }
                     connection.Close();
                     LoadPlayer(player, firstLogin);

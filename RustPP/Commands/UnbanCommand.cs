@@ -28,11 +28,12 @@
                 pl.SendClientMessage("[color red]<Error>[/color] No se encontró a este usuario.");
                 return;
             }
-            Fougerite.Server.GetServer().UnbanByID(playerName);
-            Fougerite.Server.GetServer().UnbanByName(player.Name);
+            Fougerite.Server.GetServer().UnbanByID(player.UID.ToString());
+            Fougerite.Server.GetServer().UnbanByName(player.Name, "HyRust", pl);
             Fougerite.Server.GetServer().UnbanByIP(player.IP);
-            pl.MessageFrom(Core.Name, $"[color red]<!>[/color] {playerName} Desbaneado!");
-            Core.blackList.Remove(Convert.ToUInt64(playerName));
+            Core.blackList.Remove(player.UID);
+            pl.MessageFrom(Core.Name, $"[color red]<!>[/color] {player.Name} Desbaneado!");
+            
         }
 
 

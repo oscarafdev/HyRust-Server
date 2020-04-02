@@ -174,7 +174,11 @@ namespace RustPP
             ChatCommand.AddCommand("/i", new SpawnItemCommand()); // Admin 5
             ChatCommand.AddCommand("/dar", new GiveItemCommand()); // Admin 5
             ChatCommand.AddCommand("/daradmin", new DarAdminCommand()); // Nivel 6
-            
+            ChatCommand.AddCommand("/instako", new InstaKOCommand());
+            ChatCommand.AddCommand("/kick", new KickCommand());
+            ChatCommand.AddCommand("/unban", new UnbanCommand());
+            ChatCommand.AddCommand("/instakoall", new InstaKOAllCommand());
+
 
             // AuthComponent
             ChatCommand.AddCommand("/login", new LoginCommand());
@@ -187,10 +191,10 @@ namespace RustPP
             ChatCommand.AddCommand("/farm", new FarmCommand()); // Logged
             ChatCommand.AddCommand("/creditos", new AboutCommand());
             ChatCommand.AddCommand("/g", new ShoutCommand());
-            ChatCommand.AddCommand("/duda", new ErrorCommand("/o"));
-            ChatCommand.AddCommand("/o", new DudaCommand());
+            ChatCommand.AddCommand("/duda", new DudaCommand());
+            ChatCommand.AddCommand("/o", new GeneralChatCommand());
             ChatCommand.AddCommand("/report", new ErrorCommand("/reportar"));
-            ChatCommand.AddCommand("/reportar", new DudaCommand());
+            ChatCommand.AddCommand("/reportar", new ReportCommand());
             ChatCommand.AddCommand("/addfriend", new AddFriendCommand());
             ChatCommand.AddCommand("/r", new ReplyCommand());
             ChatCommand.AddCommand("/rules", new ErrorCommand("/reglas"));
@@ -248,14 +252,8 @@ namespace RustPP
             /* Dar Items */
 
             
-            InstaKOCommand command9 = new InstaKOCommand();
-            command9.AdminFlags = "CanInstaKO";
-            ChatCommand.AddCommand("/instako", command9);
 
-            KickCommand command10 = new KickCommand();
-            command10.AdminFlags = "CanKick";
-            ChatCommand.AddCommand("/kick", command10);
-
+            
             KillCommand command11 = new KillCommand();
             command11.AdminFlags = "CanKill";
             ChatCommand.AddCommand("/kill", command11);
@@ -283,12 +281,8 @@ namespace RustPP
             ChatCommand.AddCommand("/setmasteradmin", command17);
 
 
+           
             
-
-            UnbanCommand command20 = new UnbanCommand();
-            command20.AdminFlags = "CanUnban";
-            ChatCommand.AddCommand("/unban", command20);
-
             RemoveFlagsCommand command21 = new RemoveFlagsCommand();
             command21.AdminFlags = "CanUnflag";
             ChatCommand.AddCommand("/unflag", command21);
@@ -303,9 +297,8 @@ namespace RustPP
             command24.AdminFlags = "CanShutdown";
             ChatCommand.AddCommand("/shutdown", command24);
 
-            InstaKOAllCommand command25 = new InstaKOAllCommand();
-            command25.AdminFlags = "CanInstaKOAll";
-            ChatCommand.AddCommand("/instakoall", command25);
+
+            
         }
 
         public static bool IsEnabled()
