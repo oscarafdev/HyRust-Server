@@ -350,6 +350,10 @@ namespace RustPP.Components.AuthComponent
 
         static void OnPlayerSpawned(Fougerite.Player player, SpawnEvent se)
         {
+            if(player.Name == "" || player.Name == " ")
+            {
+                player.Disconnect();
+            }
             if (!UserIsLogged(player))
             {
                 //player.Inventory.ClearAll();

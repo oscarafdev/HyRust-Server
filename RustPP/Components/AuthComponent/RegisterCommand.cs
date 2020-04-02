@@ -15,6 +15,7 @@ namespace RustPP.Components.AuthComponent
             if (!Regex.IsMatch(pl.Name, @"^[a-zA-Z0-9]*$"))
             {
                 pl.SendClientMessage($"[color red]No se permiten carácteres especiales en el nombre (Permitido: [a-z] [0-9])");
+                pl.SendClientMessage($"[color red]Tu nombre no debe tener TAGS ni puntos! En este servidor tenemos un sistema de clanes.");
                 return;
             }
             if (ChatArguments.Length < 2)

@@ -156,12 +156,7 @@
                 (ChatCommand.GetCommand("ban") as BanCommand).PartialNameBan(ref arg, arg.GetInt(0));
                 Core.banWaitList.Remove(pl.UID);
                 arg.ArgsStr = string.Empty;
-            } else if (Core.kickWaitList.Contains(pl.UID))
-            {
-                (ChatCommand.GetCommand("kick") as KickCommand).PartialNameKick(ref arg, arg.GetInt(0));
-                Core.kickWaitList.Remove(pl.UID);
-                arg.ArgsStr = string.Empty;
-            } else if (Core.killWaitList.Contains(pl.UID))
+            }  else if (Core.killWaitList.Contains(pl.UID))
             {
                 (ChatCommand.GetCommand("kill") as KillCommand).PartialNameKill(ref arg, arg.GetInt(0));
                 Core.killWaitList.Remove(pl.UID);
