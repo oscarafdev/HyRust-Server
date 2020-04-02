@@ -14,6 +14,7 @@ namespace RustPP.Data
         public static List<User> usersOnline = new List<User>();
         public static List<KitItem> KitItems = new List<KitItem>();
         public static List<Clan> Clans = new List<Clan>();
+        public static List<Connections> IncommingConections = new List<Connections>();
         public static bool UserIsLogged(Fougerite.Player player)
         {
             if (Data.Globals.usersOnline.Count(x => x.Name == player.Name) >= 1)

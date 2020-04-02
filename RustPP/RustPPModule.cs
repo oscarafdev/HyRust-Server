@@ -8,8 +8,11 @@
     using RustPP.Components.RaidComponent;
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Timers;
+    using UnityEngine;
 
     public class RustPPModule : Fougerite.Module
     {
@@ -346,9 +349,47 @@
             if (Core.IsEnabled())
                 RustPP.Hooks.logoffNotice(player);
         }
-
+        internal static Dictionary<string, float> ConnectionsIncoming = new Dictionary<string, float>();
         void PlayerConnect(Fougerite.Player player)
         {
+
+            Data.Entities.Connections conection = new Data.Entities.Connections
+            {
+                IP = player.IP,
+                Name = player.Name,
+                Time = Time.realtimeSinceStartup,
+                Player = player
+            };
+            Data.Globals.IncommingConections.Add(conection);
+            if (Data.Globals.IncommingConections.Count(x => x.IP == player.IP) >= 3)
+            {
+                float timeAtual = Time.realtimeSinceStartup;
+                int matches = 0;
+                foreach (Data.Entities.Connections Connection in Data.Globals.IncommingConections.FindAll(x => x.IP == player.IP))
+                {
+                    if(Connection.Name != player.Name)
+                    {
+                        float difference = timeAtual - conection.Time;
+
+                        if (difference <= 5)
+                        {
+                            matches += 1;
+                        }
+                    }
+                }
+                if(matches >= 3)
+                {
+                    foreach (Data.Entities.Connections Connection in Data.Globals.IncommingConections.FindAll(x => x.IP == player.IP))
+                    {
+                        Connection.Player.Disconnect();
+                        Fougerite.Server.GetServer().BanPlayerIP(Connection.IP);
+                        Data.Globals.IncommingConections.Remove(Connection);
+                    }
+                    Server.GetServer().SendMessageForAll($"[color red]<Server>[/color] [color #f77777]Se detectó un ataque con bots desde la IP: {player.IP}. Bloqueando conexiones.");
+                }
+            }
+            
+
             if (Core.IsEnabled())
                 RustPP.Hooks.loginNotice(player);
         }

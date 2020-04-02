@@ -696,6 +696,7 @@ namespace RustPP.Components.AuthComponent
         {
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
             Data.Globals.usersOnline.RemoveAll(x => x.Name == player.Name);
+            Data.Globals.IncommingConections.RemoveAll(x => x.Name == player.Name);
             if (user != null && user.SteamID != player.UID)
             {
                 user.XPos = player.DisconnectLocation.x;

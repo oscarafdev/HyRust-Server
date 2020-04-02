@@ -2216,9 +2216,16 @@ namespace Fougerite
                 }
                 return;
             }
-            string deny = "Auth failed: " + strReason + " - " + cc.UserName + " (" +
+            string deny = "Auth failed: " + strReason + " - "+ cc.netUser.networkPlayer.ipAddress +" - " + cc.UserName + " (" +
                        cc.UserID.ToString() +
                        ")";
+            if(cc.netUser.networkPlayer != null)
+            {
+                if(cc.netUser.networkPlayer.ipAddress != "")
+                {
+                    ConsoleSystem.Print($"Incomming Connection: {cc.netUser.networkPlayer.ipAddress} ({cc.UserName})", false);
+                }
+            } 
             ConsoleSystem.Print(deny, false);
             approval.Deny((uLink.NetworkConnectionError)errornum);
             ConnectionAcceptor.CloseConnection(cc);
@@ -2227,7 +2234,7 @@ namespace Fougerite
             sw.Stop();
             if (sw.Elapsed.TotalSeconds > 0) Logger.LogSpeed("SteamDeny Speed: " + Math.Round(sw.Elapsed.TotalSeconds) + " secs");
         }
-
+        
         public static void HandleuLinkDisconnect(string msg, object NetworkPlayer)
         {
             Stopwatch sw = null;
@@ -2845,6 +2852,7 @@ namespace Fougerite
         public static void RPCFix(Class48 c48, Class5 class5_0, uLink.NetworkPlayer networkPlayer_1)
         {
             Class56 class2 = c48.method_270(networkPlayer_1);
+            Logger.LogRPC(class5_0.enum0_0.ToString());
             if (class2 != null)
             {
                 c48.method_277(class5_0, class2);
@@ -2890,6 +2898,7 @@ namespace Fougerite
                 //NetworkLog.Error<string, string, uLink.NetworkPlayer, string>(NetworkLogFlags.BadMessage | NetworkLogFlags.RPC, "Private RPC ", (class5_0.method_11() ? class5_0.string_0 : ("(internal RPC " + class5_0.enum0_0 + ")")) + " was not sent because a connection to ", class5_0.networkPlayer_1, " was not found!");
             }
         }
+
 
         public static void RPCCatch(object obj)
         {

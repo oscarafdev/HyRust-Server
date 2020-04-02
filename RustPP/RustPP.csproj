@@ -115,6 +115,7 @@
     <Compile Include="Core.cs" />
     <Compile Include="Data\Database\Connection.cs" />
     <Compile Include="Data\Entities\Clan.cs" />
+    <Compile Include="Data\Entities\Connections.cs" />
     <Compile Include="Data\Entities\KitItem.cs" />
     <Compile Include="Data\Entities\User.cs" />
     <Compile Include="Data\Entities\UserInventoryItem.cs" />
