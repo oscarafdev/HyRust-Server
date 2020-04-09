@@ -57,7 +57,7 @@ namespace RustPP.Components.ClanComponent.Commands
             }
             if (search == "miembros")
             {
-                pl.SendClientMessage($"[color blue] Miembros de {user.Clan.Name} [/color]");
+                pl.SendClientMessage($"[color blue] Miembros de {user.Clan.Name} conectados [/color]");
                 string miembros = "";
                 foreach (RustPP.Data.Entities.User player in Data.Globals.usersOnline)
                 {
@@ -65,7 +65,6 @@ namespace RustPP.Components.ClanComponent.Commands
                     if (player.ClanID == user.ClanID)
                     {
                         miembros = miembros + " - " + player.Name;
-                        
                     }
 
                 }
@@ -133,6 +132,7 @@ namespace RustPP.Components.ClanComponent.Commands
                 }
 
                 recipientUser.InvitedClan = user.ClanID;
+                pl.SendClientMessage($"[color purple]<!>[/color] Invitaste a [color purple]{recipientUser.Name}[/color] a unirse a tu clan.");
                 recipient.SendClientMessage($"[color purple]<!>[/color] El usuario [color purple]{user.Name}[/color] te invito a unirte a [color purple]{user.Clan.Name}[/color]");
                 recipient.SendClientMessage($"[color purple]<!>[/color] Utiliza [color purple]/aceptar[/color] para aceptar la invitación.");
             }
@@ -188,7 +188,7 @@ namespace RustPP.Components.ClanComponent.Commands
                     pl.SendClientMessage("[color red]<Sintaxis>[/color] /clan motd <Texto>");
                     return;
                 }
-                if (user.ClanRank == 3)
+                if (user.ClanRank != 3 && user.Clan.Owner != user.Name)
                 {
                     pl.SendClientMessage($"[color red]<Error>[/color] Solo el lider o el encargado del clan pueden dar rango.");
                     return;
@@ -207,7 +207,7 @@ namespace RustPP.Components.ClanComponent.Commands
                 }
                 if (message == string.Empty)
                 {
-                    pl.SendClientMessage("[color red]<Sintaxis>[/color] /reportar <NombreJugador> <Motivo>");
+                    pl.SendClientMessage("[color red]<Sintaxis>[/color] /clan motd <Texto>");
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace RustPP.Components.ClanComponent.Commands
                     pl.SendClientMessage("[color green]<!>[/color] Cambiaste el MOTD del clan.");
                     user.Clan.save();
                 }
-return;
+                return;
             }
             if (search == "darrango")
             {
@@ -276,7 +276,7 @@ return;
             }
             if (search == "darlider")
             {
-                if (ChatArguments.Length < 3)
+                if (ChatArguments.Length < 2)
                 {
                     pl.SendClientMessage("[color red]<Sintaxis>[/color] /clan darlider <NombreJugador>");
                     return;

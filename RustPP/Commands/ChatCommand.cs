@@ -70,7 +70,7 @@
             }
             if(!commandExists)
             {
-                //pl.SendClientMessage($"[color red]¡Ups![/color] Al parecer ingresaste un comando que no existe, utiliza [color cyan]/ayuda[/color] para ver los comandos.")
+                //pl.SendClientMessage($"[color red]¡Ups![/color] Al parecer el comando [color red]{cmd}[/color] no existe, utiliza [color cyan]/ayuda[/color] para ver los comandos.");
             }
         }
 

@@ -74,10 +74,12 @@
     <Compile Include="Commands\TeleportHereCommand.cs" />
     <Compile Include="Commands\TeleportToCommand.cs" />
     <Compile Include="Commands\UnbanCommand.cs" />
+    <Compile Include="Commands\UnBanIPCommand.cs" />
     <Compile Include="Commands\UnfriendCommand.cs" />
     <Compile Include="Commands\UnmuteCommand.cs" />
     <Compile Include="Commands\UnshareCommand.cs" />
     <Compile Include="Commands\WhiteListAddCommand.cs" />
+    <Compile Include="Components\AdminComponent\AdminComponent.cs" />
     <Compile Include="Components\AdminComponent\Commands\AdminChatCommand.cs" />
     <Compile Include="Components\AdminComponent\Commands\AdminGeneralChatCommand.cs" />
     <Compile Include="Components\AdminComponent\Commands\AdminHelpCommand.cs" />
@@ -85,8 +87,11 @@
     <Compile Include="Components\AdminComponent\Commands\ClearInvCommand.cs" />
     <Compile Include="Components\AdminComponent\Commands\DarAdminCommand.cs" />
     <Compile Include="Components\AdminComponent\Commands\DayCommand.cs" />
+    <Compile Include="Components\AdminComponent\Commands\GetSteamIDCommand.cs" />
     <Compile Include="Components\AdminComponent\Commands\PayDayCommand.cs" />
     <Compile Include="Components\AdminComponent\Commands\SaveLocationCommand.cs" />
+    <Compile Include="Components\AdminComponent\Commands\SetClanLeaderCommand.cs" />
+    <Compile Include="Components\AdminComponent\Commands\ShowAccountCommand.cs" />
     <Compile Include="Components\AuthComponent\AccountCommand.cs" />
     <Compile Include="Components\AuthComponent\AuthComponent.cs" />
     <Compile Include="Components\AuthComponent\DudaCommand.cs" />
@@ -104,19 +109,31 @@
     <Compile Include="Components\ClanComponent\Commands\ClansCommand.cs" />
     <Compile Include="Components\ClanComponent\Commands\CreateClanCommand.cs" />
     <Compile Include="Components\DonoComponent\DonoCommand.cs" />
+    <Compile Include="Components\DonoComponent\DuenoCommand.cs" />
     <Compile Include="Components\EconomyComponent\Commands\BuyCommand.cs" />
     <Compile Include="Components\EconomyComponent\Commands\SellCommand.cs" />
     <Compile Include="Components\EconomyComponent\Commands\ShopCommand.cs" />
+    <Compile Include="Components\EconomyComponent\Commands\ToggleShopCommand.cs" />
     <Compile Include="Components\EconomyComponent\Commands\WithdrawCommand.cs" />
+    <Compile Include="Components\EconomyComponent\EconomyComponent.cs" />
     <Compile Include="Components\ErrorCommand.cs" />
+    <Compile Include="Components\FriendComponent\Commands\FriendsCommand.cs" />
+    <Compile Include="Components\FriendComponent\FriendComponent.cs" />
+    <Compile Include="Components\LanguageComponent\LanguageComponent.cs" />
     <Compile Include="Components\RaidComponent\RaidComponent.cs" />
+    <Compile Include="Components\RewardsComponent\Commands\CanjeArmorCommand.cs" />
+    <Compile Include="Components\RewardsComponent\Commands\CanjeWeaponsCommand.cs" />
+    <Compile Include="Components\UtilityComponent\ConfirmCommand.cs" />
     <Compile Include="Components\UtilityComponent\FPSCommand.cs" />
     <Compile Include="Configs\MySqlConfig.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Data\Database\Connection.cs" />
     <Compile Include="Data\Entities\Clan.cs" />
     <Compile Include="Data\Entities\Connections.cs" />
+    <Compile Include="Data\Entities\Friend.cs" />
     <Compile Include="Data\Entities\KitItem.cs" />
+    <Compile Include="Data\Entities\MessageString.cs" />
+    <Compile Include="Data\Entities\StoreItem.cs" />
     <Compile Include="Data\Entities\User.cs" />
     <Compile Include="Data\Entities\UserInventoryItem.cs" />
     <Compile Include="Data\Globals.cs" />
@@ -147,9 +164,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Fougerite\References\PatchedRustDlls\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Server\rust_server_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BCrypt.Net, Version=0.1.4141.31969, Culture=neutral, PublicKeyToken=f3bc8f8c31beeb49, processorArchitecture=MSIL">
       <HintPath>..\packages\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>

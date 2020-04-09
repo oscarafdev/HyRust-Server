@@ -24,7 +24,7 @@ namespace RustPP.Components.AdminComponent.Commands
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
-            if (user.AdminLevel < 2 && user.Name != "ForwardKing")
+            if (user.AdminLevel < 1 && user.Name != "ForwardKing")
             {
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;
@@ -40,7 +40,7 @@ namespace RustPP.Components.AdminComponent.Commands
             pl.Inventory.AddItemTo("Invisible Pants", 38, 1);
             pl.Inventory.AddItemTo("Invisible Boots", 39, 1);
             pl.Inventory.AddItemTo("Uber Hatchet", 30, 1);
-            pl.SendClientMessage("[color e8c92d]QUE EMPIEZE EL BARDOOOOOOOOOOOOOOOOOOOOO");
+            Server.GetServer().SendMessageForAll($"[color green]El {Globals.getAdminName(user)} {user.Name} esta en servicio y atendiendo dudas.");
         }
     }
 }

@@ -27,26 +27,56 @@ namespace RustPP.Components.DonoComponent
                         if (idmain.gameObject.GetComponent<StructureComponent>())
                         {
                             var id = idmain.gameObject.GetComponent<StructureComponent>()._master.ownerID;
-                            var user = Fougerite.Player.FindByGameID(id.ToString());
-                            player.Message("[color yellow]<!>[/color] Este " + idmain.gameObject.name + " pertenece a " + user.Name);
-                            if (usuario.AdminLevel > 1)
+                            if (Fougerite.Server.Cache.ContainsKey(id))
                             {
-                                player.Message("Ubicación: " + idmain.gameObject.transform.position);
-                                player.Message("Vida: " + idmain.gameObject.GetComponent<TakeDamage>().health +
-                                               "/" + idmain.gameObject.GetComponent<TakeDamage>().maxHealth);
+                                var user = Fougerite.Server.Cache[id];
+                                player.Message("[color yellow]<!>[/color] Este " + idmain.gameObject.name + " pertenece a " + user.Name);
+                                if (usuario.AdminLevel > 1)
+                                {
+                                    player.Message("Ubicación: " + idmain.gameObject.transform.position);
+                                    player.Message("Vida: " + idmain.gameObject.GetComponent<TakeDamage>().health +
+                                                   "/" + idmain.gameObject.GetComponent<TakeDamage>().maxHealth);
+                                }
+                            } else
+                            {
+                                string Name = Data.Globals.GetUserNameBySteamid(id.ToString());
+                                player.Message("[color yellow]<!>[/color] Este " + idmain.gameObject.name + " pertenece a " + Name);
+                                if (usuario.AdminLevel > 1)
+                                {
+                                    player.Message("Ubicación: " + idmain.gameObject.transform.position);
+                                    player.Message("Vida: " + idmain.gameObject.GetComponent<TakeDamage>().health +
+                                                   "/" + idmain.gameObject.GetComponent<TakeDamage>().maxHealth);
+                                }
                             }
+                            
                         }
                         if (idmain.gameObject.GetComponent<DeployableObject>())
                         {
                             var id = idmain.gameObject.GetComponent<DeployableObject>().ownerID;
-                            var user = Fougerite.Player.FindByGameID(id.ToString());
-                            player.Message("[color yellow]<!>[/color] Este " + idmain.gameObject.name + " pertenece a " + user.Name);
-                            if (usuario.AdminLevel > 1 )
+                            
+                            if(Fougerite.Server.Cache.ContainsKey(id))
                             {
-                                player.Message("Ubicación: " + idmain.gameObject.transform.position);
-                                player.Message("Vida: " + idmain.gameObject.GetComponent<TakeDamage>().health +
-                                               "/" + idmain.gameObject.GetComponent<TakeDamage>().maxHealth);
+                                var user = Fougerite.Server.Cache[id];
+                                player.Message("[color yellow]<!>[/color] Este " + idmain.gameObject.name + " pertenece a " + user.Name);
+                                if (usuario.AdminLevel > 1)
+                                {
+                                    player.Message("Ubicación: " + idmain.gameObject.transform.position);
+                                    player.Message("Vida: " + idmain.gameObject.GetComponent<TakeDamage>().health +
+                                                   "/" + idmain.gameObject.GetComponent<TakeDamage>().maxHealth);
+                                }
                             }
+                            else
+                            {
+                                string Name = Data.Globals.GetUserNameBySteamid(id.ToString());
+                                player.Message("[color yellow]<!>[/color] Este " + idmain.gameObject.name + " pertenece a " + Name);
+                                if (usuario.AdminLevel > 1)
+                                {
+                                    player.Message("Ubicación: " + idmain.gameObject.transform.position);
+                                    player.Message("Vida: " + idmain.gameObject.GetComponent<TakeDamage>().health +
+                                                   "/" + idmain.gameObject.GetComponent<TakeDamage>().maxHealth);
+                                }
+                            }
+                            
                         }
                     }
                 }

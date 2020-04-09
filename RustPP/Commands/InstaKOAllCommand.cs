@@ -23,31 +23,35 @@ namespace RustPP
             if(user.AdminLevel < 5)
             {
                 pl.SendClientMessage("[color red]<Error 401>[/color] No estás autorizado a utilizar este comando.");
-            }
-            if (pl.CommandCancelList.Contains("instakoall"))
-            {
-                if (userIDs.Contains(pl.UID))
-                {
-                    userIDs.Remove(pl.UID);
-                    pl.MessageFrom(Core.Name, "InstaKO ALL mode has been deactivated!");
-                }
                 return;
             }
-            if (!this.userIDs.Contains(pl.UID))
+            if (user.InstaKOAll)
             {
-                this.userIDs.Add(pl.UID);
-                pl.MessageFrom(Core.Name, "InstaKO ALL mode has been activated!");
+                user.InstaKOAll = false;
+                pl.MessageFrom(Core.Name, "[color green]<!>[/color] El modo InstaKO fue desactivado.");
+                return;
             }
             else
             {
-                this.userIDs.Remove(pl.UID);
-                pl.MessageFrom(Core.Name, "InstaKO ALL mode has been deactivated!");
+                user.InstaKOAll = true;
+                pl.MessageFrom(Core.Name, "[color red]<!>[/color] El modo InstaKO fue activado.");
             }
+            
         }
 
         public bool IsOn(ulong uid)
         {
-            return this.userIDs.Contains(uid);
+            if (Fougerite.Server.Cache.ContainsKey(uid))
+            {
+                var pl = Fougerite.Server.Cache[uid];
+                if (!RustPP.Data.Globals.UserIsLogged(pl))
+                {
+                    return false;
+                }
+                RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
+                return user.InstaKOAll;
+            }
+            return false;
         }
     }
 }

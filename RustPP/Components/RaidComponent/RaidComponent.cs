@@ -16,8 +16,7 @@ namespace RustPP.Components.RaidComponent
         public static int RaidTime = 20;
         public static int MaxRaidTime = 60;
         public static bool AllowAllModerators = false;
-        public static bool RustPP = true;
-        public static bool CanOpenChestIfThereIsNoStructureClose = false;
+        public static bool CanOpenChestIfThereIsNoStructureClose = true;
         public static bool AutoWhiteListFriends = false;
         public static readonly List<string> WhiteListedIDs = new List<string>();
         public static readonly List<string> DSNames = new List<string>();
@@ -40,7 +39,7 @@ namespace RustPP.Components.RaidComponent
         {
             if (!File.Exists(Path.Combine(RustPPModule.ConfigsFolder, "Logs.log"))) { File.Create(Path.Combine(RustPPModule.ConfigsFolder, "Logs.log")).Dispose(); }
             PathLog = Path.Combine(RustPPModule.ConfigsFolder, "Logs.log");
-            PathC = Path.Combine(RustPPModule.ConfigsFolder, "Settings.ini");
+            PathC = Path.Combine(RustPPModule.ConfigsFolder, "LegitRaid.ini");
             RaiderTime = new Dictionary<ulong, int>();
             OwnerTimeData = new Dictionary<ulong, double>();
             if (!File.Exists(PathC))
@@ -49,8 +48,8 @@ namespace RustPP.Components.RaidComponent
                 Settings = new IniParser(PathC);
                 Settings.AddSetting("Settings", "RaidTime", "20");
                 Settings.AddSetting("Settings", "MaxRaidTime", "60");
-                Settings.AddSetting("Settings", "AllowAllModerators", "False");
-                Settings.AddSetting("Settings", "CanOpenChestIfThereIsNoStructureClose", "True");
+                Settings.AddSetting("Settings", "AllowAllModerators", "false");
+                Settings.AddSetting("Settings", "CanOpenChestIfThereIsNoStructureClose", "true");
                 Settings.AddSetting("Settings", "DataStoreTables", "RaidComponent");
                 Settings.AddSetting("Settings", "WhiteListedIDs", "76561197961872487");
                 Settings.AddSetting("Settings", "AutoWhiteListFriends", "True");
@@ -95,18 +94,19 @@ namespace RustPP.Components.RaidComponent
             Fougerite.Hooks.OnCommand -= OnCommand;
             Fougerite.Hooks.OnServerSaved -= OnServerSaved;
         }
+
         public static void OnEntityDeployedWithPlacer(Fougerite.Player player, Entity e, Fougerite.Player actualplacer)
         {
             if (actualplacer == null || e == null)
             {
                 return;
             }
-            if (!e.Name.ToLower().Contains("storage") && !e.Name.ToLower().Contains("stash"))
+            if (!e.Name.ToLower().Contains("box") && !e.Name.ToLower().Contains("stash"))
             {
                 return;
             }
-            var id = GetHouseOwner(e);
-            if (id == 0)
+            ulong id = GetHouseOwner(e.Location);
+            if (id == 0UL)
             {
                 return;
             }
@@ -115,52 +115,22 @@ namespace RustPP.Components.RaidComponent
                 if (DataStore.GetInstance().Get("LegitRaidED", id) != null)
                 {
                     List<string> list = (List<string>)DataStore.GetInstance().Get("LegitRaidED", id);
-                    if (!list.Contains(actualplacer.SteamID))
+                    if (!list.Contains(actualplacer.PlayerClient.userID.ToString()))
                     {
-                        list.Add(actualplacer.SteamID);
+                        list.Add(actualplacer.PlayerClient.userID.ToString());
                     }
                     DataStore.GetInstance().Add("LegitRaidED", id, list);
                 }
                 else
                 {
                     List<string> list = new List<string>();
-                    list.Add(actualplacer.SteamID);
+                    list.Add(actualplacer.PlayerClient.userID.ToString());
                     DataStore.GetInstance().Add("LegitRaidED", id, list);
                 }
             }
         }
 
-        public static ulong GetHouseOwner(Entity e)
-        {
-            RaycastHit cachedRaycast;
-            StructureComponent cachedStructure;
-            Collider cachedCollider;
-            StructureMaster cachedMaster;
-            Facepunch.MeshBatch.MeshBatchInstance cachedhitInstance;
-            bool cachedBoolean;
-            var entitypos = e.Location;
-            if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -1f, 0f)),
-                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
-            {
-                return 0;
-            }
-            if (cachedhitInstance != null)
-            {
-                cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
-                if (cachedCollider == null)
-                {
-                    return 0;
-                }
-                cachedStructure = cachedCollider.GetComponent<StructureComponent>();
-                if (cachedStructure != null && cachedStructure._master != null)
-                {
-                    cachedMaster = cachedStructure._master;
-                    var id = cachedMaster.ownerID;
-                    return id;
-                }
-            }
-            return 0;
-        }
+        
 
         public static void OnServerSaved(int amount, double seconds)
         {
@@ -273,7 +243,7 @@ namespace RustPP.Components.RaidComponent
             instance.Flush("LOwnerTimeData");
             instance.Flush("LRaiderTime");
         }
-
+        
         public static void OnEntityHurt(HurtEvent he)
         {
             if (he.AttackerIsPlayer && he.VictimIsEntity)
@@ -281,17 +251,61 @@ namespace RustPP.Components.RaidComponent
                 if (he.Attacker != null && he.Entity != null)
                 {
                     Fougerite.Entity entity = he.Entity;
+                    Fougerite.Player player = (Fougerite.Player)he.Attacker;
+                    Data.Entities.User user = Data.Globals.GetInternalUser(player);
+                    if(user.SpectingOwner)
+                    {
+                        string OwnerName = Data.Globals.GetUserNameBySteamid(entity.OwnerID);
+                        player.SendClientMessage($"Dueño: {entity.OwnerName} - {GetHouseOwner(entity.Location).ToString()}");
+                        user.SpectingOwner = false;
+                    }
                     if (entity.Name.ToLower().Contains("box") || entity.Name.ToLower().Contains("stash"))
                     {
-                        if (!he.WeaponName.Contains("explosive") && !he.WeaponName.Contains("grenade"))
+                        if (entity.IsStorage())
                         {
-                            he.DamageAmount = 0f;
+                            if(entity.hasInventory)
+                            {
+                                if (entity.Inventory.FreeSlots < entity.Inventory.Items.Length)
+                                {
+                                    he.DamageAmount = 0f;
+                                    player.Notice("No puedes destruir cofres con cosas adentro.");
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-
+        public static ulong GetHouseOwner(Vector3 entitypos)
+        {
+            RaycastHit cachedRaycast;
+            StructureComponent cachedStructure;
+            Collider cachedCollider;
+            StructureMaster cachedMaster;
+            Facepunch.MeshBatch.MeshBatchInstance cachedhitInstance;
+            bool cachedBoolean;
+            if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -1f, 0f)),
+                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+            {
+                return 0;
+            }
+            if (cachedhitInstance != null)
+            {
+                cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                if (cachedCollider == null)
+                {
+                    return 0;
+                }
+                cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                if (cachedStructure != null && cachedStructure._master != null)
+                {
+                    cachedMaster = cachedStructure._master;
+                    var id = cachedMaster.ownerID;
+                    return id;
+                }
+            }
+            return 0;
+        }
         public static void OnEntityDestroyed(DestroyEvent de)
         {
             if (de.Attacker != null && de.Entity != null && !de.IsDecay)
@@ -307,6 +321,7 @@ namespace RustPP.Components.RaidComponent
                 {
                     Fougerite.Entity entity = de.Entity;
                     OwnerTimeData[entity.UOwnerID] = TimeSpan.FromTicks(DateTime.Now.Ticks).TotalSeconds;
+                    //DataStore.GetInstance().Add("LegitRaidA", ((Fougerite.Player)de.Attacker).UID, true);
                     if (RaiderTime.ContainsKey(entity.UOwnerID))
                     {
                         if (MaxRaidTime < RaiderTime[entity.UOwnerID] + RaidTime)
@@ -331,18 +346,29 @@ namespace RustPP.Components.RaidComponent
                 return;
             }
             if (!lootstartevent.IsObject || DataStore.GetInstance().ContainsKey("LegitRaidA", lootstartevent.Player.UID)
-                || DataStore.GetInstance().ContainsKey("HGIG", lootstartevent.Player.SteamID)) { return; }
+                || DataStore.GetInstance().ContainsKey("HGIG", lootstartevent.Player.SteamID)) {
+                Logger.LogError("Incumple 1"); 
+                return; 
+            }
             if (DSNames.Any(table => DataStore.GetInstance().ContainsKey(table, lootstartevent.Player.SteamID) ||
                                      DataStore.GetInstance().ContainsKey(table, lootstartevent.Player.UID)))
             {
+                Logger.LogError("Incumple 2");
                 return;
             }
-            if (lootstartevent.Entity.UOwnerID == lootstartevent.Player.UID)
+            if(!lootstartevent.Entity.IsStorage())
             {
+                Logger.LogError("Incumple 3");
+                return;
+            }
+            if (GetHouseOwner(lootstartevent.Entity.Location) == lootstartevent.Player.UID)
+            {
+                Logger.LogError("Cumple 4");
                 return;
             }
             if (CanOpenChestIfThereIsNoStructureClose)
             {
+                Logger.LogError("Cumple 5");
                 var objects = Physics.OverlapSphere(lootstartevent.Entity.Location, 3.8f);
                 var names = new List<string>();
                 foreach (var x in objects.Where(x => !names.Contains(x.name.ToLower())))
@@ -359,22 +385,19 @@ namespace RustPP.Components.RaidComponent
                     return;
                 }
             }
-            if (RustPP)
+            var id = GetHouseOwner(lootstartevent.Entity.Location);
+            Logger.LogError($"Comprobando si {id} es amigo de {lootstartevent.Player.UID}");
+            RustPP.Commands.FriendsCommand command = (RustPP.Commands.FriendsCommand)RustPP.Commands.ChatCommand.GetCommand("amigos");
+            FriendList friendsList = (FriendList)command.GetFriendsLists()[id];
+            if (friendsList.isFriendWith(lootstartevent.Player.UID))
             {
-                var friendc = Fougerite.Server.GetServer().GetRustPPAPI().GetFriendsCommand.GetFriendsLists();
-                if (friendc.ContainsKey(lootstartevent.Entity.UOwnerID))
-                {
-                    var fs = (RustPP.Social.FriendList)friendc[lootstartevent.Entity.UOwnerID];
-                    bool isfriend = fs.Cast<FriendList.Friend>().Any(friend => friend.GetUserID() == lootstartevent.Player.UID);
-                    if ((isfriend && DataStore.GetInstance().Get("LegitRaid", lootstartevent.Entity.UOwnerID) != null) || isfriend)
-                    {
-                        return;
-                    }
-                }
+                Logger.LogError("Es amigo");
+                return;
             }
-            if (OwnerTimeData.ContainsKey(lootstartevent.Entity.UOwnerID))
+            
+            if (OwnerTimeData.ContainsKey(id))
             {
-                var id = lootstartevent.Entity.UOwnerID;
+                Logger.LogError("Incumple 5");
                 var ticks = OwnerTimeData[id];
                 var calc = TimeSpan.FromTicks(DateTime.Now.Ticks).TotalSeconds - ticks;
                 int timeraid = RaidTime;
@@ -407,17 +430,18 @@ namespace RustPP.Components.RaidComponent
                 }
                 else
                 {
+                    Logger.LogError("Cumple 5");
                     var done = Math.Round(calc);
                     lootstartevent.Player.Notice("¡Puedes lootear por " + ((timeraid * 60) - done) + " segundos!");
                 }
             }
             else
             {
-                var id = GetHouseOwner(lootstartevent.Entity);
+                Logger.LogError("incumple 6");
                 if (DataStore.GetInstance().Get("LegitRaidED", id) != null)
                 {
                     List<string> list = (List<string>)DataStore.GetInstance().Get("LegitRaidED", id);
-                    if (list.Contains(lootstartevent.Entity.OwnerID) && OwnerTimeData.ContainsKey(id))
+                    if (list.Contains(id.ToString()) && OwnerTimeData.ContainsKey(id))
                     {
                         var ticks = OwnerTimeData[id];
                         var calc = TimeSpan.FromTicks(DateTime.Now.Ticks).TotalSeconds - ticks;

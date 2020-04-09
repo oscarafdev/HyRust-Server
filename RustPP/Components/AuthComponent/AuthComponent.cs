@@ -23,6 +23,7 @@ namespace RustPP.Components.AuthComponent
         public readonly System.Random Randomizer = new System.Random();
         static readonly Dictionary<int, string> RewardList = new Dictionary<int, string>()
         {
+            {0, "Research Kit"},
             {1, "Armor Part 1"},
             {2, "Armor Part 2"},
             {3, "Armor Part 3"},
@@ -36,7 +37,8 @@ namespace RustPP.Components.AuthComponent
             {11, "Weapon Part 4"},
             {12, "Weapon Part 5"},
             {13, "Weapon Part 6"},
-            {14, "Weapon Part 7"}
+            {14, "Weapon Part 7"},
+            {15, "Weapon Part 7"},
         };
         public static void Init()
         {
@@ -82,6 +84,7 @@ namespace RustPP.Components.AuthComponent
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
             if (user != null)
             {
+                EconomyComponent.EconomyComponent.CheckPurchases(user);
                 if (user.TimeToKit >= 1)
                 {
                     user.TimeToKit -= 1;
@@ -532,8 +535,10 @@ namespace RustPP.Components.AuthComponent
 
                     User newUser = new User
                     {
+                        ID = reader.GetInt32("id"),
                         Name = player.Name,
                         SteamID = player.UID,
+                        IP = reader.GetString("ip"),
                         Level = reader.GetInt32("level"),
                         Exp = reader.GetInt32("exp"),
                         Kills = reader.GetInt32("kills"),
@@ -694,15 +699,18 @@ namespace RustPP.Components.AuthComponent
 
         static void OnPlayerDisconnected(Fougerite.Player player)
         {
-            User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
-            Data.Globals.usersOnline.RemoveAll(x => x.Name == player.Name);
+            Data.Entities.User user = Data.Globals.GetInternalUser(player);
+            
             Data.Globals.IncommingConections.RemoveAll(x => x.Name == player.Name);
-            if (user != null && user.SteamID != player.UID)
+            if (user != null)
             {
                 user.XPos = player.DisconnectLocation.x;
                 user.YPos = player.DisconnectLocation.y;
                 user.ZPos = player.DisconnectLocation.z;
                 user.Connected = 0;
+                user.IP = player.IP;
+                user.Save();
+                Data.Globals.usersOnline.RemoveAll(x => x.Name == player.Name);
                 //UnshareCommand command = ChatCommand.GetCommand("unshare") as UnshareCommand;
                 //command.DeleteDoors(user.SteamID, player);
                 /*List<UserInventoryItem> playerItems = new List<UserInventoryItem>();
@@ -765,9 +773,10 @@ namespace RustPP.Components.AuthComponent
                 //Logger.LogError(json.SerializeObjectToJson(playerItems));
                 user.InternalInventory = json.SerializeObjectToJson(playerItems);
                 */
-                user.Save();
-                
+
+
             }
+            
         }
         
         static void OnPlayerGathering(Fougerite.Player player, GatherEvent ge)
@@ -800,7 +809,7 @@ namespace RustPP.Components.AuthComponent
                         player.Inventory.AddItem(ge.Item, quantity);
                         player.InventoryNotice($"{quantity} x {ge.Item}");
 
-                        user.AddWoodExp(ge.Quantity);
+                        user.AddWoodExp(quantity);
                         
                     }
                     else
@@ -826,11 +835,11 @@ namespace RustPP.Components.AuthComponent
 
                         if (ge.Item == "Metal Ore")
                         {
-                            user.AddMetalExp(ge.Quantity);
+                            user.AddMetalExp(quantity);
                         }
                         else if (ge.Item == "Sulfur Ore")
                         {
-                            user.AddSulfureExp(ge.Quantity);
+                            user.AddSulfureExp(quantity);
                         }
                     }
                     else

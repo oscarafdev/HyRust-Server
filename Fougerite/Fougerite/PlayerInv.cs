@@ -54,6 +54,17 @@ namespace Fougerite
             inv.give(ref arg);
         }
 
+        public int NewAddItem(string name, int amount)
+        {
+            ItemDataBlock byName = DatablockDictionary.GetByName(name);
+            if (byName != null)
+            {
+                //AddItemAmount
+                return this._inv.AddItemAmount(byName, amount);
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Adds an Item to the inventory.
         /// </summary>
@@ -201,6 +212,17 @@ namespace Fougerite
                 }
             }
             return num;
+        }
+        private int GetFirstSlotFree()
+        {
+            for (int i = 0; i < (this._inv.slotCount - 4); i++)
+            {
+                if (this._inv.IsSlotFree(i))
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         /// <summary>
@@ -570,6 +592,14 @@ namespace Fougerite
             get
             {
                 return this.GetFreeSlots();
+            }
+        }
+
+        public int FirstFreeSlot
+        {
+            get
+            {
+                return this.GetFirstSlotFree();
             }
         }
 

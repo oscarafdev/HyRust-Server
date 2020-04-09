@@ -54,17 +54,7 @@ namespace RustPP.Components.ClanComponent.Commands
             }
             else
             {
-                foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
-                {
-                    if (player.IsOnline && Data.Globals.UserIsLogged(player))
-                    {
-                        RustPP.Data.Entities.User uuser = RustPP.Data.Globals.GetInternalUser(player);
-                        if (uuser.ClanID == user.ClanID)
-                        {
-                            player.SendClientMessage(final);
-                        }
-                    }
-                }
+                user.Clan.SendMessage(final);
                 user.TimeToChat += 5;
             }
         }

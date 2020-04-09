@@ -21,17 +21,56 @@ namespace RustPP.Data.Entities
         public int Cash { get; set; }
         public string MOTD { get; set; }
 
+        public void SendMessage(string message) {
+            foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
+            {
+                if (player.IsOnline && Data.Globals.UserIsLogged(player))
+                {
+                    RustPP.Data.Entities.User uuser = RustPP.Data.Globals.GetInternalUser(player);
+                    if (uuser.ClanID == this.ID)
+                    {
+                        player.SendClientMessage(message);
+                    }
+                }
+            }
+        }
         public void addExp(int quantity)
         {
             if (this != null)
             {
-                this.Exp += quantity;
-                if (this.Exp >= this.Level * 500)
+                this.Exp += quantity * Globals.EventoExpClan;
+                if (this.Exp >= this.Level * 200)
                 {
-                    char cha = '♜';
-                    this.Exp -= this.Level * 500;
+                    this.Exp -= this.Level * 200;
                     this.Level += 1;
                     Data.Globals.SendMessageForClan(this.ID, $"El clan {this.Name} subió al nivel {this.Level}");
+                    this.save();
+                }
+            }
+        }
+        public void changeName(string name)
+        {
+            if (this != null)
+            {
+                if (name.Length > 3)
+                {
+
+                    Data.Globals.SendMessageForClan(this.ID, $"El clan {this.Name} cambio de nombre a {name}.");
+                    this.Name = name;
+                    this.save();
+                }
+            }
+        }
+        public void changeTag(string TAG)
+        {
+            if (this != null)
+            {
+                if (TAG.Length > 1 && TAG.Length < 4)
+                {
+
+                    Data.Globals.SendMessageForClan(this.ID, $"El clan {this.Name} cambio de TAG a {TAG}.");
+                    this.Tag = TAG;
+                    this.save();
                 }
             }
         }

@@ -20,7 +20,7 @@
             if (ChatArguments.Length < 1)
             {
                 pl.SendClientMessage("[color red]<Sintaxis>[/color] /ayuda <Sección>");
-                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp - kit - casa - clanes [color red]¡Nuevo![/color]");
+                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp - kit - casa - clanes - partes - tienda[color red]¡Nuevo![/color]");
                 return;
             }
             string search = ChatArguments[0].ToLower();
@@ -68,6 +68,26 @@
                 pl.SendClientMessage($"- [color cyan]/removeall[/color] Destruir toda tu casa.");
                 pl.SendClientMessage($"- [color cyan]/prop[/color] Te dice el propietario de una casa.");
             }
+            else if (search == "partes")
+            {
+                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - PARTES [color orange]--------");
+                pl.SendClientMessage($"En cada payday tendrás chances de recibir una parte de Arma o Armadura.");
+                pl.SendClientMessage($"Si juntas todas las partes de Arma o Armadura podrás canjearlo por objetos al azar.");
+                pl.SendClientMessage($"- [color cyan]/armorparts[/color] Canjea tus partes de Armadura por una armadura al azar.");
+                pl.SendClientMessage($"- [color cyan]/weaponparts[/color] Canjea tus partes de Arma por un kit arma al azar.");
+            }
+            else if (search == "tienda")
+            {
+                pl.SendClientMessage($"[color orange]--------[/color] AYUDA - TIENDA [color orange]--------");
+                
+                pl.SendClientMessage("-[color cyan] /tienda lista [/color] Ver todos los objetos en venta");
+                pl.SendClientMessage("-[color cyan] /tienda ver [/color] Mira los detalles de un objeto en venta, ejemplo: Estado [color red]¡Importante!");
+                pl.SendClientMessage("-[color cyan] /tienda vender [/color] Inserta en la tienda un objeto que tengas en el inventario.");
+                pl.SendClientMessage("-[color cyan] /tienda comprar [/color] Compra un objeto de la tienda");
+                pl.SendClientMessage("-[color cyan] /tienda cuenta [/color] Para ver los objetos en venta de tu cuenta.");
+                pl.SendClientMessage("-[color cyan] /tienda retirar [/color] Para retirar un objeto de tu pertenencia.");
+                pl.SendClientMessage("-[color cyan] /tiendachat [/color] Activa/Desactiva los mensajes al subir un objeto a la tienda.");
+            }
             else if (search == "amigos")
             {
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - AMIGOS [color orange]--------");
@@ -91,6 +111,12 @@
                 pl.SendClientMessage($"[color orange]--------[/color] AYUDA - KIT [color orange]--------");
                 pl.SendClientMessage($"- El sistema de Kits funciona según el nivel de Cuenta, mientras más nivel mejores y más objetos.");
                 pl.SendClientMessage($"- [color cyan]/kit[/color] Obtienes un kit (Cada 15 minutos).");
+            }
+            else
+            {
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /ayuda <Sección>");
+                pl.SendClientMessage("Secciones: cuenta - chat - amigos - tp - kit - casa - clanes - partes [color red]¡Nuevo![/color]");
+                return;
             }
         }
     }

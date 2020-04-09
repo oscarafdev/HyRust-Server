@@ -20,6 +20,8 @@ namespace RustPP
     using RustPP.Components.DonoComponent;
     using RustPP.Components.UtilityComponent;
     using RustPP.Components;
+    using RustPP.Components.RewardsComponent.Commands;
+    using RustPP.Components.EconomyComponent.Commands;
 
     public class Core
     {
@@ -160,24 +162,30 @@ namespace RustPP
             ChatCommand.AddCommand("/ir", new TeleportToCommand()); // Nivel 1
             ChatCommand.AddCommand("/a", new AdminChatCommand()); // Nivel 1
             ChatCommand.AddCommand("/mutear", new MuteCommand()); // Nivel 1
-            
+            ChatCommand.AddCommand("/vercuenta", new ShowAccountCommand()); // Admin 1
+
             ChatCommand.AddCommand("/desmutear", new UnmuteCommand()); // Nivel 1
             ChatCommand.AddCommand("/anuncio", new AnnounceCommand()); // Nivel 2
             ChatCommand.AddCommand("/god", new GodModeCommand()); // Nivel 2
             ChatCommand.AddCommand("/adminkit", new AdminKitCommand());  // Nivel 2
             ChatCommand.AddCommand("/day", new DayCommand());// Nivel 2
             ChatCommand.AddCommand("/ban", new BanCommand()); // Nivel 3
+            ChatCommand.AddCommand("/unban", new UnbanCommand()); // Nivel 3
+            ChatCommand.AddCommand("/unbanip", new UnBanIPCommand()); // Nivel 3
+            ChatCommand.AddCommand("/steam", new GetSteamIDCommand());
             ChatCommand.AddCommand("/ao", new AdminGeneralChatCommand()); // Admin 4
             ChatCommand.AddCommand("/payday", new PayDayCommand()); // Admin 4
             ChatCommand.AddCommand("/limpiarinv", new ClearInvCommand()); // Admin 3
             ChatCommand.AddCommand("/saveloc", new SaveLocationCommand()); // Admin 5
             ChatCommand.AddCommand("/i", new SpawnItemCommand()); // Admin 5
             ChatCommand.AddCommand("/dar", new GiveItemCommand()); // Admin 5
+            ChatCommand.AddCommand("/darmelider", new SetClanLeaderCommand()); // Admin 5
             ChatCommand.AddCommand("/daradmin", new DarAdminCommand()); // Nivel 6
             ChatCommand.AddCommand("/instako", new InstaKOCommand());
-            ChatCommand.AddCommand("/kick", new KickCommand());
-            ChatCommand.AddCommand("/unban", new UnbanCommand());
             ChatCommand.AddCommand("/instakoall", new InstaKOAllCommand());
+            ChatCommand.AddCommand("/kick", new KickCommand());
+            ChatCommand.AddCommand("/spawner", new BuyCommand());
+            ChatCommand.AddCommand("/evento", new SellCommand());
 
 
             // AuthComponent
@@ -210,6 +218,7 @@ namespace RustPP
             ChatCommand.AddCommand("/ubicacion", new LocationCommand());
             ChatCommand.AddCommand("/ping", new PingCommand());
             ChatCommand.AddCommand("/players", new PlayersCommand());
+            ChatCommand.AddCommand("/owner", new DuenoCommand());
             ChatCommand.AddCommand("/pm", new ErrorCommand("/w"));
             ChatCommand.AddCommand("/w", new PrivateMessagesCommand());
             ChatCommand.AddCommand("/share", new ShareCommand());
@@ -217,6 +226,14 @@ namespace RustPP
             ChatCommand.AddCommand("/unfriend", new UnfriendCommand());
             ChatCommand.AddCommand("/unshare", new UnshareCommand());
             ChatCommand.AddCommand("/kit", new KitCommand());
+            ChatCommand.AddCommand("/armorparts", new CanjeArmorCommand());
+            ChatCommand.AddCommand("/weaponparts", new CanjeWeaponsCommand());
+            // Tienda
+            ChatCommand.AddCommand("/vender", new ErrorCommand("/tienda"));
+            ChatCommand.AddCommand("/comprar", new ErrorCommand("/tienda"));
+            ChatCommand.AddCommand("/tienda", new ShopCommand());
+            ChatCommand.AddCommand("/tiendachat", new ToggleShopCommand());
+            ChatCommand.AddCommand("/confirmar", new ConfirmCommand());
             // Clans Component
 
             ChatCommand.AddCommand("/crearclan", new CreateClanCommand());

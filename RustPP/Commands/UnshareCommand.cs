@@ -14,14 +14,14 @@ namespace RustPP.Commands
             string playerName = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
             if (playerName == string.Empty)
             {
-                pl.MessageFrom(Core.Name, "Sharing Doors Usage:  /unshare playerName");
+                pl.MessageFrom(Core.Name, "<Sintaxis> /unshare <NombreJugador>");
                 return;
             }
             ShareCommand command = (ShareCommand)ChatCommand.GetCommand("share");
             ArrayList shareList = (ArrayList)command.GetSharedDoors()[Arguments.argUser.userID];
             if (shareList == null)
             {
-                pl.MessageFrom(Core.Name, "You aren't sharing doors with anyone.");
+                pl.MessageFrom(Core.Name, "No compartes puertas con nadie.");
                 return;
             }
             PList list = new PList();
@@ -82,10 +82,10 @@ namespace RustPP.Commands
             ShareCommand command = (ShareCommand)ChatCommand.GetCommand("share");
 
             ((ArrayList)command.GetSharedDoors()[unsharing.UID]).Remove(exfriend.UserID);
-            unsharing.MessageFrom(Core.Name, string.Format("{0} can use your doors no longer.", exfriend.DisplayName));
+            unsharing.MessageFrom(Core.Name, string.Format("{0} ya no podrá abrir las puertas de tu casa.", exfriend.DisplayName));
             Fougerite.Player client = Fougerite.Server.GetServer().FindPlayer(exfriend.UserID.ToString());
             if (client != null)
-                client.MessageFrom(Core.Name, string.Format("{0} is no longer sharing his doors with you.", unsharing.Name));
+                client.MessageFrom(Core.Name, string.Format("{0} te quitó el permiso de abrir sus puertas.", unsharing.Name));
         }
         public void DeleteDoors(ulong UID, Fougerite.Player player)
         {

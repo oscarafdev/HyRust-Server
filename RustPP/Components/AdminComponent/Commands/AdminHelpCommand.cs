@@ -37,7 +37,8 @@ namespace RustPP.Components.AdminComponent.Commands
             pl.SendClientMessage($"- [color cyan]/a[/color] Canal de administradores.");
             pl.SendClientMessage($"- [color cyan]/mutear[/color] Mutear a un jugador.");
             pl.SendClientMessage($"- [color cyan]/desmutear[/color] Desmutea a un jugador.");
-            if(user.AdminLevel >= 2)
+            pl.SendClientMessage($"- [color cyan]/vercuenta[/color] Te muestra las estadisticas de un jugador.");
+            if (user.AdminLevel >= 2)
             {
                 pl.SendClientMessage($"- [color cyan]/anuncio[/color] Anuncio general.");
                 pl.SendClientMessage($"- [color cyan]/adminkit[/color] Admin Kit.");
@@ -45,17 +46,22 @@ namespace RustPP.Components.AdminComponent.Commands
             if (user.AdminLevel >= 3)
             {
                 pl.SendClientMessage($"- [color cyan]/ban[/color] Banear a un usuario.");
+                pl.SendClientMessage($"- [color cyan]/unban[/color] Desbanea a un usuario por SteamID.");
+                pl.SendClientMessage($"- [color cyan]/steam[/color] Obtiene el steamID de un usuario.");
                 pl.SendClientMessage($"- [color cyan]/limpiarinv[/color] Limpiar el inventario a un usuario.");
             }
             if (user.AdminLevel >= 4)
             {
                 pl.SendClientMessage($"- [color cyan]/ao[/color] Chat general como administrador.");
+                pl.SendClientMessage($"- [color cyan]/instako[/color] Activa el modo destruir (¡Ten cuidado!).");
                 pl.SendClientMessage($"- [color cyan]/payday[/color] Llama al PayDay inmediatamente.");
             }
             if (user.AdminLevel >= 5)
             {
                 pl.SendClientMessage($"- [color cyan]/i[/color] Spawneas un item.");
                 pl.SendClientMessage($"- [color cyan]/dar[/color] Dar un item.");
+                pl.SendClientMessage($"- [color cyan]/instakoall[/color] Activa el modo destruir TODO (¡Ten cuidado!).");
+                pl.SendClientMessage($"- [color cyan]/darmelider[/color] Ingresas como lider de un clan.");
                 pl.SendClientMessage($"- [color cyan]/saveloc[/color] Guarda una ubicación en la base de datos.");
             }
             if (user.AdminLevel >= 6)

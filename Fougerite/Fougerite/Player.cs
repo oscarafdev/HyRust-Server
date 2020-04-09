@@ -1520,6 +1520,10 @@ namespace Fougerite
             {
                     return this.ourPlayer;
             }
+            set
+            {
+                this.ourPlayer = value;
+            }
         }
 
         /// <summary>

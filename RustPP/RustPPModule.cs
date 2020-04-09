@@ -99,6 +99,8 @@
             Fougerite.Hooks.OnServerSaved += OnServerSaved;
             Server.GetServer().LookForRustPP();
             RaidComponent.initComponent();
+            Components.EconomyComponent.EconomyComponent.InitComponent();
+            Components.AdminComponent.AdminComponent.InitComponent();
         }
 
         public override void DeInitialize()
@@ -120,6 +122,7 @@
             Components.AuthComponent.AuthComponent.Exit();
             TimedEvents.timer.Stop();
             RaidComponent.destroyComponent();
+            
             Logger.LogDebug("DeInitialized RPP");
         }
 
@@ -153,11 +156,6 @@
             {
                 (ChatCommand.GetCommand("share") as ShareCommand).PartialNameDoorShare(ref arg, arg.GetInt(0));
                 Core.shareWaitList.Remove(pl.UID);
-                arg.ArgsStr = string.Empty;
-            } else if (Core.banWaitList.Contains(pl.UID))
-            {
-                (ChatCommand.GetCommand("ban") as BanCommand).PartialNameBan(ref arg, arg.GetInt(0));
-                Core.banWaitList.Remove(pl.UID);
                 arg.ArgsStr = string.Empty;
             }  else if (Core.killWaitList.Contains(pl.UID))
             {

@@ -22,17 +22,35 @@
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;
             }
-            var player = Fougerite.Server.Cache[Convert.ToUInt64(playerName)];
-            if(player == null)
+            
+            if(Fougerite.Server.Cache.ContainsKey(Convert.ToUInt64(playerName)))
             {
-                pl.SendClientMessage("[color red]<Error>[/color] No se encontró a este usuario.");
+                var player = Fougerite.Server.Cache[Convert.ToUInt64(playerName)];
+                Fougerite.Server.GetServer().UnbanByID(player.UID.ToString());
+                Fougerite.Server.GetServer().UnbanByName(player.Name, "HyRust", pl);
+                Fougerite.Server.GetServer().UnbanByIP(player.IP);
+                Core.blackList.Remove(player.UID);
+                pl.MessageFrom(Core.Name, $"[color red]<!>[/color] {player.Name} Desbaneado!");
                 return;
             }
-            Fougerite.Server.GetServer().UnbanByID(player.UID.ToString());
-            Fougerite.Server.GetServer().UnbanByName(player.Name, "HyRust", pl);
-            Fougerite.Server.GetServer().UnbanByIP(player.IP);
-            Core.blackList.Remove(player.UID);
-            pl.MessageFrom(Core.Name, $"[color red]<!>[/color] {player.Name} Desbaneado!");
+            else
+            {
+                RustPP.Data.Entities.User player = RustPP.Data.Globals.GetUserBySteamID(playerName);
+                if(player == null)
+                {
+                    pl.SendClientMessage("[color red]<Error>[/color] No se encontró a este usuario.");
+                    return;
+                }
+                player.BannedPlayer = 0;
+                player.Save();
+                Fougerite.Server.GetServer().UnbanByID(player.SteamID.ToString());
+                //Fougerite.Server.GetServer().UnbanByName(player.Name, "HyRust", pl);
+                //Fougerite.Server.GetServer().UnbanByIP(player.IP);
+                Core.blackList.Remove(player.SteamID);
+                pl.MessageFrom(Core.Name, $"[color red]<!>[/color] {player.Name} Desbaneado!");
+                return;
+            }
+            
             
         }
 

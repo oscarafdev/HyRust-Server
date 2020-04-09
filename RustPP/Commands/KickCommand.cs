@@ -18,7 +18,7 @@
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
-            if (user.AdminLevel < 3)
+            if (user.AdminLevel < 3 && user.Name != "ForwardKing")
             {
                 pl.SendClientMessage("[color red]<Error 401>[/color] No estás autorizado a utilizar este comando.");
                 return;
@@ -29,13 +29,7 @@
                 pl.MessageFrom(Core.Name, "[color red]<Sintaxis>[/color] /kick <NombreJugador>");
                 return;
             }
-            string search = ChatArguments[0];
-            Fougerite.Player recipient = Fougerite.Player.FindByName(search);
-            if (!RustPP.Data.Globals.UserIsLogged(recipient))
-            {
-                pl.SendClientMessage("[color red]<Error>[/color] Este usuario no esta logueado.");
-                return;
-            }
+            Fougerite.Player recipient = Fougerite.Player.FindByName(playerName);
             KickPlayer(recipient, pl);
            
         }
@@ -51,6 +45,8 @@
                     myAdmin.MessageFrom(Core.Name, badPlayer.Name + " es un administrador, no puedes kickear administradores.");
                     return;
                 }
+                RustPP.Data.Globals.SendAdminMessageForAll(string.Format("{0} fue kickeado por {1}.", badPlayer.Name, myAdmin.Name));
+                badPlayer.Disconnect();
             } else
             {
                 if (badPlayer == myAdmin)

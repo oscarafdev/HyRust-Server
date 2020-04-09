@@ -11,6 +11,7 @@ namespace RustPP.Data.Entities
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public string IP { get; set; }
         public ulong SteamID { get; set; }
         public int Muted { get; set; }
         public int Exp { get; set; }
@@ -42,10 +43,25 @@ namespace RustPP.Data.Entities
         public string LastKilled { get; set; }
         public int BannedPlayer { get; set; }
         public int InvitedClan { get; set; }
+        public string PrefabName { get; set; }
+        public bool SpawningPrefab { get; set; } = false;
+        public bool SpectingOwner { get; set; } = false;
+        public bool TiendaEnabled { get; set; } = true;
+        public bool InstaKO { get; set; } = false;
+        public bool InstaKOAll { get; set; } = false;
+        public bool GodMode { get; set; } = false;
         public string InternalInventory { get; set; }
         public bool FPS { get; set; } = false;
         public int TimeToDuda { get; set; } = 0;
         public int TimeToChat { get; set; } = 0;
+
+        public StoreItem SellingItem { get; set; } = null;
+        public enum Language
+        {
+            ES,
+            EN,
+            PT
+        }
 
         public void AddWoodExp(int quantity)
         {
@@ -53,7 +69,7 @@ namespace RustPP.Data.Entities
             {
                 this.WoodFarmed += quantity;
 
-                this.LumberjackExp += 1;
+                this.LumberjackExp += 1 * Globals.EventoExp;
                 if (this.LumberjackExp >= this.LumberjackLevel * 100)
                 {
                     char cha = '♜';
@@ -76,7 +92,7 @@ namespace RustPP.Data.Entities
             {
                 this.SulfureFarmed += quantity;
 
-                this.MinerExp += 1;
+                this.MinerExp += 1 * Globals.EventoExp;
                 if (this.MinerExp >= this.MinerLevel * 100)
                 {
                     char cha = '♜';
@@ -99,7 +115,7 @@ namespace RustPP.Data.Entities
             {
                 this.MetalFarmed += quantity;
 
-                this.MinerExp += 1;
+                this.MinerExp += 1 * Globals.EventoExp;
                 if (this.MinerExp >= this.MinerLevel * 100)
                 {
                     char cha = '♜';
@@ -122,7 +138,7 @@ namespace RustPP.Data.Entities
             {
                 //this.MetalFarmed += quantity;
 
-                this.HunterExp += 1;
+                this.HunterExp += 1 * Globals.EventoExp;
                 if (this.HunterExp >= this.HunterLevel * 30)
                 {
                     char cha = '♜';
@@ -142,7 +158,7 @@ namespace RustPP.Data.Entities
         }
         public void GiveExp(int experience)
         {
-            this.Exp += experience;
+            this.Exp += experience * Globals.EventoExp;
             if (this.Exp >= (this.Level * 8))
             {
                 this.Exp -= this.Level * 8;
@@ -185,7 +201,8 @@ namespace RustPP.Data.Entities
             {
                 connection.Open();
                 MySqlCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE users SET level = @playerLevel, " +
+                command.CommandText = "UPDATE users SET level = @playerLevel," +
+                    "ip = @ip, " +
                     "exp = @playerExp, " +
                     "kills = @playerKills, " +
                     "deaths = @playerDeaths, " +
@@ -215,6 +232,7 @@ namespace RustPP.Data.Entities
                     "clanRank = @clanRank" +
                     " WHERE username = @username";
                 command.Parameters.AddWithValue("@playerLevel", this.Level);
+                command.Parameters.AddWithValue("@ip", this.IP);
                 command.Parameters.AddWithValue("@playerExp", this.Exp);
                 command.Parameters.AddWithValue("@playerKills", this.Kills);
                 command.Parameters.AddWithValue("@playerDeaths", this.Deaths);
@@ -244,7 +262,7 @@ namespace RustPP.Data.Entities
                 command.Parameters.AddWithValue("@clanRank", this.ClanRank);
                 command.Parameters.AddWithValue("@username", this.Name);
                 MySqlDataReader reader = command.ExecuteReader();
-
+                Logger.LogDebug($"La cuenta {this.Name} fue guardada.");
                 connection.Close();
             }
         }

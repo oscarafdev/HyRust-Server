@@ -23,33 +23,35 @@
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;
             }
-            if (pl.CommandCancelList.Contains("god"))
+            if (user.GodMode)
             {
-                if (userIDs.Contains(pl.UID))
-                {
-                    userIDs.Remove(pl.UID);
-                    pl.PlayerClient.controllable.character.takeDamage.SetGodMode(false);
-                }
+                user.GodMode = false;
+                pl.SendClientMessage("¡Desactivaste el modo DIOS!");
+                pl.PlayerClient.controllable.character.takeDamage.SetGodMode(false);
                 return;
-            }
-            if (!this.userIDs.Contains(pl.UID))
-            {
-                this.userIDs.Add(pl.UID);
-                pl.PlayerClient.controllable.character.takeDamage.SetGodMode(true);
-                if (pl.FallDamage != null) { pl.FallDamage.ClearInjury();}
-                pl.SendClientMessage("¡Activaste el modo DIOS!");
             }
             else
             {
-                this.userIDs.Remove(pl.UID);
-                pl.PlayerClient.controllable.character.takeDamage.SetGodMode(false);
-                pl.SendClientMessage("¡Desactivaste el modo DIOS!");
+                user.GodMode = true;
+                pl.PlayerClient.controllable.character.takeDamage.SetGodMode(true);
+                if (pl.FallDamage != null) { pl.FallDamage.ClearInjury();}
+                pl.SendClientMessage("¡Activaste el modo DIOS!");
             }
         }
 
         public bool IsOn(ulong uid)
         {
-            return this.userIDs.Contains(uid);
+            if (Fougerite.Server.Cache.ContainsKey(uid))
+            {
+                var pl = Fougerite.Server.Cache[uid];
+                if (!RustPP.Data.Globals.UserIsLogged(pl))
+                {
+                    return false;
+                }
+                RustPP.Data.Entities.User user = RustPP.Data.Globals.usersOnline.FindLast(x => x.Name == pl.Name);
+                return user.GodMode;
+            }
+            return false;
         }
     }
 }

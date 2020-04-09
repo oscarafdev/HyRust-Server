@@ -679,6 +679,7 @@ namespace Fougerite
                 sw.Start();
             }
             Entity e = new Entity(entity);
+            Logger.LogError($"Creator: {e.Creator.Name} Owner: {e.OwnerName}");
             uLink.NetworkPlayer nplayer = info.sender;
             Fougerite.Player creator = e.Creator;
             var data = nplayer.GetLocalData();

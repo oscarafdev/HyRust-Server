@@ -25,64 +25,41 @@
                 pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
                 return;
             }
-            string queryName = Arguments.ArgsStr.Trim(new char[] { ' ', '"' });
-            if (queryName == string.Empty)
+            string search = ChatArguments[0];
+            if(search == string.Empty)
             {
-                pl.SendClientMessage("[color red]<Sintaxis>[/color] /ban <NombreJugador>");
+                pl.SendClientMessage("[color red]<Sintaxis>[/color] /ban <Nombre>.");
                 return;
             }
-
-            var query = from entry in Core.userCache
-                        let sim = entry.Value.Similarity(queryName)
-                        where sim > 0.4d
-                        group new PList.Player(entry.Key, entry.Value) by sim into matches
-                        select matches.FirstOrDefault();
-
-            if (query.Count() == 1)
+            Fougerite.Player recipient = Fougerite.Player.FindByName(search);
+            if (recipient == null)
             {
-                BanPlayer(query.First(), pl);
-            }
-            else
-            {
-                pl.SendClientMessage(string.Format("Se encontraron {0} con el nombre {1}: ", query.Count(), queryName));
-                for (int i = 1; i < query.Count(); i++)
-                {
-                    pl.SendClientMessage(string.Format("{0} - {1}", i, query.ElementAt(i).DisplayName));
-                }
-                pl.SendClientMessage("0 - Cancelar");
-                pl.SendClientMessage("Ingrese el numero del usuario que esta buscando para banear.");
-                Core.banWaitList[pl.UID] = query;
-            }
-        }
-
-        public void PartialNameBan(ref ConsoleSystem.Arg Arguments, int id)
-        {
-            var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
-            if (id == 0)
-            {
-                pl.SendClientMessage("[color yellow]<Advertencia>[/color] El comando fue cancelado");
+                pl.SendClientMessage("[color red]<Error>[/color] No se encontró al usuario.");
                 return;
             }
-            var list = Core.banWaitList[pl.UID] as IEnumerable<PList.Player>;
-            BanPlayer(list.ElementAt(id), pl);
+            BanPlayer(recipient, pl);
         }
 
-        public void BanPlayer(PList.Player ban, Fougerite.Player myAdmin)
+
+
+        public void BanPlayer(Fougerite.Player ban, Fougerite.Player myAdmin)
         {
-            if (ban.UserID == myAdmin.UID)
+            if (ban.UID == myAdmin.UID)
             {
                 myAdmin.SendClientMessage("[color red]<Error>[/color] No puedes banearte a ti mismo.");
                 return;
             }
-            var bannedPlayer = Fougerite.Server.Cache[ban.UserID];
+            var bannedPlayer = Fougerite.Server.Cache[ban.UID];
             if (!RustPP.Data.Globals.UserIsLogged(bannedPlayer))
             {
-                myAdmin.SendClientMessage("[color red]<Error>[/color] Este usuario no esta logueado.");
+                Fougerite.Player asd = Fougerite.Server.GetServer().FindPlayer(ban.Name.ToString());
+                Server.GetServer().BanPlayer(asd, myAdmin.Name, "Decisión Administrativa", myAdmin, true);
+                asd.Disconnect();
                 return;
             }
             if (!RustPP.Data.Globals.UserIsLogged(bannedPlayer) && !Administrator.GetAdmin(myAdmin.UID).HasPermission("RCON"))
             {
-                myAdmin.SendClientMessage(ban.DisplayName + " no esta conectado, por lo que no se lo puede banear.");
+                myAdmin.SendClientMessage(ban.Name + " no esta conectado, por lo que no se lo puede banear.");
                 return; 
             } else
             {
@@ -90,14 +67,14 @@
                 var adminUser = RustPP.Data.Globals.GetInternalUser(myAdmin);
                 if (bannedUser.AdminLevel >= adminUser.AdminLevel && adminUser.Name != "ForwardKing")
                 {
-                    myAdmin.SendClientMessage($"[color red]<Error>[/color] {ban.DisplayName} es administrador nivel {bannedUser.AdminLevel}, no puedes banearlo.");
+                    myAdmin.SendClientMessage($"[color red]<Error>[/color] {ban.Name} es administrador nivel {bannedUser.AdminLevel}, no puedes banearlo.");
                     return;
                 } else
                 {
                     bannedUser.BannedPlayer = 1;
                 }
             }
-            Fougerite.Player client = Fougerite.Server.GetServer().FindPlayer(ban.UserID.ToString());
+            Fougerite.Player client = Fougerite.Server.GetServer().FindPlayer(ban.Name.ToString());
             Server.GetServer().BanPlayer(client,myAdmin.Name, "Decisión Administrativa", myAdmin, true);
             client.Disconnect();
         }

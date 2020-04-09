@@ -37,8 +37,8 @@ namespace RustPP.Components.ClanComponent.Commands
                         string owner = reader.GetString("owner");
                         string name = reader.GetString("name");
                         pl.SendClientMessage($"#{puesto} [color blue]{name}[/color] | Nivel [color blue]{nivel.ToString()}[/color] - Lider: [color blue]{owner}[/color]");
+                        puesto++;
                     }
-                    puesto++;
                     reader.NextResult();
                 }
             }

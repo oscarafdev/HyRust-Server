@@ -30,22 +30,6 @@ namespace RustPP.Components.AuthComponent
             new KitItem { Item = "Bandage", Quantity = 5 },
             new KitItem { Item = "Cooked Chicken Breast", Quantity = 5 },
         }; 
-        private static readonly List<KitItem> Kit3 = new List<KitItem>() // Level 5
-        {
-            new KitItem { Item = "Hatchet", Quantity = 1 },
-            new KitItem { Item = "Hand Cannon", Quantity = 1 },
-            new KitItem { Item = "Handmade Shells", Quantity = 20 },
-            new KitItem { Item = "Small Medkit", Quantity = 2 },
-            new KitItem { Item = "Cooked Chicken Breast", Quantity = 5 },
-        };
-        private static readonly List<KitItem> Kit4 = new List<KitItem>() // Level 8
-        {
-            new KitItem { Item = "Hatchet", Quantity = 1 },
-            new KitItem { Item = "Hand Cannon", Quantity = 1 },
-            new KitItem { Item = "Handmade Shells", Quantity = 40 },
-            new KitItem { Item = "Small Medkit", Quantity = 4 },
-            new KitItem { Item = "Cooked Chicken Breast", Quantity = 10 },
-        };
         private static readonly List<KitItem> Kit5 = new List<KitItem>() // Level 10
         {
             new KitItem { Item = "Hatchet", Quantity = 1 },
@@ -183,7 +167,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 5 && user.Level < 8)
                 {
-                    foreach (KitItem item in Kit3)
+                    foreach (KitItem item in Kit5)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -191,7 +175,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 8 && user.Level < 10)
                 {
-                    foreach (KitItem item in Kit4)
+                    foreach (KitItem item in Kit6)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -199,7 +183,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 10 && user.Level < 13)
                 {
-                    foreach (KitItem item in Kit5)
+                    foreach (KitItem item in Kit7)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -207,7 +191,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 13 && user.Level < 15)
                 {
-                    foreach (KitItem item in Kit6)
+                    foreach (KitItem item in Kit8)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -215,7 +199,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 15 && user.Level < 18)
                 {
-                    foreach (KitItem item in Kit7)
+                    foreach (KitItem item in Kit9)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -223,7 +207,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 18 && user.Level < 20)
                 {
-                    foreach (KitItem item in Kit8)
+                    foreach (KitItem item in Kit10)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -239,7 +223,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 25 && user.Level < 30)
                 {
-                    foreach (KitItem item in Kit10)
+                    foreach (KitItem item in Kit11)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -247,7 +231,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 30 && user.Level < 35)
                 {
-                    foreach (KitItem item in Kit11)
+                    foreach (KitItem item in Kit12)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -255,7 +239,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 35 && user.Level < 40)
                 {
-                    foreach (KitItem item in Kit12)
+                    foreach (KitItem item in Kit13)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -263,7 +247,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 40 && user.Level < 45)
                 {
-                    foreach (KitItem item in Kit13)
+                    foreach (KitItem item in Kit14)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
@@ -271,7 +255,7 @@ namespace RustPP.Components.AuthComponent
                 }
                 if (user.Level >= 45 && user.Level < 50)
                 {
-                    foreach (KitItem item in Kit14)
+                    foreach (KitItem item in Kit15)
                     {
                         pl.Inventory.AddItem(item.Item, item.Quantity);
                         pl.SendClientMessage($"[color blue]<!>[/color] Recibiste {item.Quantity} {item.Item} de tu Kit.");
