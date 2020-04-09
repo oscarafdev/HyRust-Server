@@ -200,6 +200,73 @@ namespace RustPP.Data
                 }
             }
         }
+        public static RustPP.Data.Entities.User GetUserByName(string name)
+        {
+            if (Data.Globals.usersOnline.Count(x => x.Name == name) >= 1)
+            {
+                return usersOnline.Find(x => x.Name == name);
+            }
+            else
+            {
+                using (MySqlConnection connection = new MySqlConnection(Data.Database.Connection.GetConnectionString()))
+                {
+
+                    connection.Open();
+                    MySqlCommand command = connection.CreateCommand();
+                    command.CommandText = "SELECT * FROM users WHERE username LIKE '@username%' LIMIT 1";
+                    command.Parameters.AddWithValue("@username", name);
+                    MySqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        User newUser = new User
+                        {
+                            ID = reader.GetInt32("id"),
+                            Name = reader.GetString("username"),
+                            SteamID = Convert.ToUInt64(reader.GetString("steamId")),
+                            IP = reader.GetString("ip"),
+                            Level = reader.GetInt32("level"),
+                            Exp = reader.GetInt32("exp"),
+                            Kills = reader.GetInt32("kills"),
+                            Deaths = reader.GetInt32("deaths"),
+                            Cash = reader.GetInt32("cash"),
+                            LastKilled = reader.GetString("lastKilled"),
+                            MinerLevel = reader.GetInt32("minerLevel"),
+                            MinerExp = reader.GetInt32("minerExp"),
+                            LumberjackLevel = reader.GetInt32("lumberjackLevel"),
+                            LumberjackExp = reader.GetInt32("lumberjackExp"),
+                            WoodFarmed = reader.GetInt32("woodFarmed"),
+                            MetalFarmed = reader.GetInt32("metalFarmed"),
+                            SulfureFarmed = reader.GetInt32("sulfureFarmed"),
+                            HunterLevel = reader.GetInt32("hunterLevel"),
+                            HunterExp = reader.GetInt32("hunterExp"),
+                            AdminLevel = reader.GetInt32("adminLevel"),
+                            BannedPlayer = reader.GetInt32("banned"),
+                            InternalInventory = reader.GetString("inventoryItems"),
+                            XPos = reader.GetFloat("xPos"),
+                            YPos = reader.GetFloat("yPos"),
+                            ZPos = reader.GetFloat("zPos"),
+                            TimeToPayDay = reader.GetInt32("timeToPayDay"),
+                            TimeToKit = reader.GetInt32("timeToKit"),
+                            TimeToTP = reader.GetInt32("timeToTP"),
+                            Muted = reader.GetInt32("muted"),
+                            ClanID = reader.GetInt32("clan"),
+                            ClanRank = reader.GetInt32("clanRank"),
+                            Player = null
+                        };
+                        newUser.GetClan();
+                        connection.Close();
+                        return newUser;
+                    }
+                    else
+                    {
+                        connection.Close();
+                        return null;
+                    }
+                }
+            }
+            
+        }
         public static int GetClanID(string name, string owner)
         {
             using (MySqlConnection connection = new MySqlConnection(Data.Database.Connection.GetConnectionString()))

@@ -17,6 +17,7 @@ namespace RustPP.Components.FriendComponent.Commands
                 pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
                 return;
             }
+            RustPP.Data.Entities.User user = Data.Globals.GetInternalUser(pl);
             if(ChatArguments.Length < 1)
             {
                 pl.SendClientMessage($"[color red]<Sintaxis>[/color] /{Command} <Opcion>");
@@ -24,7 +25,7 @@ namespace RustPP.Components.FriendComponent.Commands
                 return;
             }
             string search = ChatArguments[0];
-            if(search == "agregar")
+            if (search == "agregar")
             {
                 if (ChatArguments.Length < 2)
                 {
@@ -33,6 +34,21 @@ namespace RustPP.Components.FriendComponent.Commands
                 }
                 string invite = ChatArguments[1];
                 Fougerite.Player recipient = Fougerite.Player.FindByName(invite);
+                RustPP.Data.Entities.User recipientUser = null;
+                if (recipient == null)
+                {
+                    recipientUser = Data.Globals.GetUserByName(invite);
+                }
+                else
+                {
+                    recipientUser = Data.Globals.GetUserByName(recipient.Name);
+                }
+                if (recipientUser == null)
+                {
+                    pl.SendClientMessage($"[color red]<Error>[/color] No se encontró un usuario llamado {invite}.");
+                    return;
+                }
+                FriendComponent.AddFriend(user, recipientUser);
             }
             else if (search == "eliminar")
             {
@@ -43,6 +59,21 @@ namespace RustPP.Components.FriendComponent.Commands
                 }
                 string invite = ChatArguments[1];
                 Fougerite.Player recipient = Fougerite.Player.FindByName(invite);
+                Data.Entities.User recipientUser;
+                if (recipient == null)
+                {
+                    recipientUser = Data.Globals.GetUserByName(invite);
+                }
+                else
+                {
+                    recipientUser = Data.Globals.GetUserByName(recipient.Name);
+                }
+                if (recipientUser == null)
+                {
+                    pl.SendClientMessage($"[color red]<Error>[/color] No se encontró un usuario llamado {invite}.");
+                    return;
+                }
+                FriendComponent.RemoveFriend(user, recipientUser);
             }
             else if (search == "editar")
             {
@@ -54,7 +85,122 @@ namespace RustPP.Components.FriendComponent.Commands
                 }
                 string invite = ChatArguments[1];
                 Fougerite.Player recipient = Fougerite.Player.FindByName(invite);
-                string option = ChatArguments[3];
+                Data.Entities.User recipientUser;
+                if (recipient == null)
+                {
+                    recipientUser = Data.Globals.GetUserByName(invite);
+                }
+                else
+                {
+                    recipientUser = Data.Globals.GetUserByName(recipient.Name);
+                }
+                if (recipientUser == null)
+                {
+                    pl.SendClientMessage($"[color red]<Error>[/color] No se encontró un usuario llamado {invite}.");
+                    return;
+                }
+                if(FriendComponent.IsFriendOf(user, recipientUser))
+                {
+                    RustPP.Data.Entities.Friend friend = FriendComponent.GetUserFriend(user, recipientUser);
+                    string perm = ChatArguments[2];
+                    if(perm == "loot")
+                    {
+                        if(friend.CanLoot)
+                        {
+                            friend.CanLoot = true;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te dio permisos para abrir sus cajas.");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le diste permisos a [color #fc038c]{recipientUser.Name}[/color] para abrir tus cajas.");
+                        } else
+                        {
+                            friend.CanLoot = false;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te quitó los permisos para abrir sus cajas.");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le quitaste permisos a [color #fc038c]{recipientUser.Name}[/color] para abrir tus cajas.");
+                        }
+                    }
+                    else if (perm == "puertas")
+                    {
+                        if (friend.CanOpenDoors)
+                        {
+                            friend.CanOpenDoors = true;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te dio permisos para abrir sus puertas.");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le diste permisos a [color #fc038c]{recipientUser.Name}[/color] para abrir tus puertas.");
+                        }
+                        else
+                        {
+                            friend.CanOpenDoors = false;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te quitó los permisos para abrir sus puertas.");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le quitaste permisos a [color #fc038c]{recipientUser.Name}[/color] para abrir tus puertas.");
+                        }
+                    }
+                    else if (perm == "home")
+                    {
+                        if (friend.CanSetHome)
+                        {
+                            friend.CanSetHome = true;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te dio permisos para guardar home en su casa.");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le diste permisos a [color #fc038c]{recipientUser.Name}[/color] para guardar home en tu casa.");
+                        }
+                        else
+                        {
+                            friend.CanSetHome = false;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te quitó los permisos para guardar home en su casa.");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le quitaste permisos a [color #fc038c]{recipientUser.Name}[/color] para guardar home en tu casa.");
+                        }
+                    }
+                    else if (perm == "construir")
+                    {
+                        if (friend.CanEditHome)
+                        {
+                            friend.CanEditHome = true;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te dio permisos para editar la estructura de su casa (construir, destruir).");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le diste permisos a [color #fc038c]{recipientUser.Name}[/color] para editar la estructura de tu casa (construir, destruir).");
+                        }
+                        else
+                        {
+                            friend.CanEditHome = false;
+                            friend.Save();
+                            if (recipientUser.Connected == 1)
+                            {
+                                recipientUser.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] {user.Name} te quitó los permisos para editar la estructura de su casa (construir, destruir).");
+                            }
+                            user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Le quitaste permisos a [color #fc038c]{recipientUser.Name}[/color] para editar la estructura de tu casa (construir, destruir).");
+                        }
+                    }
+                }
+                else
+                {
+                    user.Player.SendClientMessage($"[color #fc038c]<!>[/color] No eres amigo de {recipientUser.Name}.");
+                }
+                
+
             }
         }
     }

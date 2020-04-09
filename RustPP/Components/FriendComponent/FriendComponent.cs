@@ -31,7 +31,7 @@ namespace RustPP.Components.FriendComponent
                             UserID = reader.GetInt32("user_id"),
                             FriendID = reader.GetInt32("friend_id"),
                             CanEditHome = reader.GetBoolean("canEditHome"),
-                            CanLoot = reader.GetBoolean("canEditLoot"),
+                            CanLoot = reader.GetBoolean("canLoot"),
                             CanOpenDoors = reader.GetBoolean("canOpenDoors"),
                             CanSetHome = reader.GetBoolean("canSetHome")
                         };
@@ -92,6 +92,11 @@ namespace RustPP.Components.FriendComponent
         {
             List<Friend> userFriends = Friends.FindAll(x => x.UserID == user.ID);
             return userFriends;
+        }
+        public static Friend GetUserFriend(User user, User friend)
+        {
+            Friend userFriend = Friends.Find(x => x.UserID == user.ID && x.FriendID == friend.ID);
+            return userFriend;
         }
         public static bool IsFriendOf(User user, User friend)
         {
