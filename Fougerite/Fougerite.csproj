@@ -160,9 +160,9 @@
       <HintPath>References\FougeriteExtraReferences\Newtonsoft.Json.Schema.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="RustPP, Version=1.1.7.9, Culture=neutral, PublicKeyToken=null">
-      <HintPath>References\FougeriteExtraReferences\RustPP.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="RustPP, Version=1.1.7.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\modules\RustPP\RustPP.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>True</Private>

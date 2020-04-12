@@ -257,6 +257,7 @@ namespace RustPP.Components.RaidComponent
                     {
                         string OwnerName = Data.Globals.GetUserNameBySteamid(entity.OwnerID);
                         player.SendClientMessage($"Dueño: {entity.OwnerName} - {GetHouseOwner(entity.Location).ToString()}");
+                        SetMaterialOfHouse(entity.Location);
                         user.SpectingOwner = false;
                     }
                     if (entity.Name.ToLower().Contains("box") || entity.Name.ToLower().Contains("stash"))
@@ -275,6 +276,36 @@ namespace RustPP.Components.RaidComponent
                     }
                 }
             }
+        }
+        public static int GetMasterID(Vector3 entitypos)
+        {
+            RaycastHit cachedRaycast;
+            StructureComponent cachedStructure;
+            Collider cachedCollider;
+            StructureMaster cachedMaster;
+            Facepunch.MeshBatch.MeshBatchInstance cachedhitInstance;
+            bool cachedBoolean;
+            if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -1f, 0f)),
+                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+            {
+                return 0;
+            }
+            if (cachedhitInstance != null)
+            {
+                cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                if (cachedCollider == null)
+                {
+                    return 0;
+                }
+                cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                if (cachedStructure != null && cachedStructure._master != null)
+                {
+                    cachedMaster = cachedStructure._master;
+                    int id = cachedMaster.GetInstanceID();
+                    return id;
+                }
+            }
+            return 0;
         }
         public static ulong GetHouseOwner(Vector3 entitypos)
         {
@@ -303,9 +334,137 @@ namespace RustPP.Components.RaidComponent
                     var id = cachedMaster.ownerID;
                     return id;
                 }
+            } else
+            {
+                if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -2f, 0f)),
+                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+                {
+                    return 0;
+                }
+                if (cachedhitInstance != null)
+                {
+                    cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                    if (cachedCollider == null)
+                    {
+                        return 0;
+                    }
+                    cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                    if (cachedStructure != null && cachedStructure._master != null)
+                    {
+                        cachedMaster = cachedStructure._master;
+                        var id = cachedMaster.ownerID;
+                        return id;
+                    }
+                }
+                else
+                {
+                    if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(1f, 0f, 0f)),
+                    out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+                    {
+                        return 0;
+                    }
+                    if (cachedhitInstance != null)
+                    {
+                        cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                        if (cachedCollider == null)
+                        {
+                            return 0;
+                        }
+                        cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                        if (cachedStructure != null && cachedStructure._master != null)
+                        {
+                            cachedMaster = cachedStructure._master;
+                            var id = cachedMaster.ownerID;
+                            return id;
+                        }
+                    }
+                    else
+                    {
+                        if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, 0f, 1f)),
+                    out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+                        {
+                            return 0;
+                        }
+                        if (cachedhitInstance != null)
+                        {
+                            cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                            if (cachedCollider == null)
+                            {
+                                return 0;
+                            }
+                            cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                            if (cachedStructure != null && cachedStructure._master != null)
+                            {
+                                cachedMaster = cachedStructure._master;
+                                var id = cachedMaster.ownerID;
+                                return id;
+                            }
+                        }
+                    }
+                }
             }
             return 0;
         }
+        public static StructureMaster GetStructureMaster(Vector3 entitypos)
+        {
+            RaycastHit cachedRaycast;
+            StructureComponent cachedStructure;
+            Collider cachedCollider;
+            StructureMaster cachedMaster;
+            Facepunch.MeshBatch.MeshBatchInstance cachedhitInstance;
+            bool cachedBoolean;
+            if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -1f, 0f)),
+                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+            {
+                return null;
+            }
+            if (cachedhitInstance != null)
+            {
+                cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                if (cachedCollider == null)
+                {
+                    return null;
+                }
+                cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                if (cachedStructure != null && cachedStructure._master != null)
+                {
+                    cachedMaster = cachedStructure._master;
+                    var id = cachedMaster.ownerID;
+                    return cachedMaster;
+                }
+            }
+            return null;
+        }
+        public static void SetMaterialOfHouse(Vector3 entitypos)
+        {
+            RaycastHit cachedRaycast;
+            StructureComponent cachedStructure;
+            Collider cachedCollider;
+            StructureMaster cachedMaster;
+            Facepunch.MeshBatch.MeshBatchInstance cachedhitInstance;
+            bool cachedBoolean;
+            if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -1f, 0f)),
+                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+            {
+                return; 
+            }
+            if (cachedhitInstance != null)
+            {
+                cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                if (cachedCollider == null)
+                {
+                    return;
+                }
+                cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                if (cachedStructure != null && cachedStructure._master != null)
+                {
+                    cachedMaster = cachedStructure._master;
+                    cachedMaster.SetMaterialType(StructureMaster.StructureMaterialType.Brick);
+                    var id = cachedMaster.ownerID;
+                }
+            }
+        }
+
         public static void OnEntityDestroyed(DestroyEvent de)
         {
             if (de.Attacker != null && de.Entity != null && !de.IsDecay)
@@ -339,6 +498,48 @@ namespace RustPP.Components.RaidComponent
             }
         }
 
+        public static int GetMaster(Vector3 entitypos)
+        {
+            RaycastHit cachedRaycast;
+            StructureComponent cachedStructure;
+            Collider cachedCollider;
+            StructureMaster cachedMaster;
+            Facepunch.MeshBatch.MeshBatchInstance cachedhitInstance;
+            bool cachedBoolean;
+            if (!Facepunch.MeshBatch.MeshBatchPhysics.Raycast(new Ray(entitypos, new Vector3(0f, -1f, 0f)),
+                out cachedRaycast, out cachedBoolean, out cachedhitInstance))
+            {
+                Logger.LogError($"Retornando: 0, 1");
+                return 0;
+            }
+
+            if (cachedhitInstance != null)
+            {
+                cachedCollider = cachedhitInstance.physicalColliderReferenceOnly;
+                if (cachedCollider == null)
+                {
+                    Logger.LogError($"Retornando: 0, 2");
+                    return 0;
+                }
+                cachedStructure = cachedCollider.GetComponent<StructureComponent>();
+                if (cachedStructure != null && cachedStructure._master != null)
+                {
+                    cachedMaster = cachedStructure._master;
+                    Logger.LogError($"Foundation: {cachedMaster.GetMasterID()}");
+                    return cachedMaster.GetInstanceID();
+                }
+                Logger.LogError($"Retornando cachedStructure: null");
+                cachedMaster = cachedCollider.GetComponent<StructureMaster>();
+                if(cachedMaster != null)
+                {
+                    Logger.LogError($"Foundation: {cachedMaster.GetMasterID()}");
+                    return cachedMaster.GetInstanceID();
+                }
+                Logger.LogError($"Retornando cachedMaster: null");
+            }
+            Logger.LogError($"Retornando 0, cachedhitInstance = null");
+            return 0;
+        }
         public static void OnLootUse(LootStartEvent lootstartevent)
         {
             if (lootstartevent.Player == null)
@@ -347,8 +548,8 @@ namespace RustPP.Components.RaidComponent
             }
             if (!lootstartevent.IsObject || DataStore.GetInstance().ContainsKey("LegitRaidA", lootstartevent.Player.UID)
                 || DataStore.GetInstance().ContainsKey("HGIG", lootstartevent.Player.SteamID)) {
-                Logger.LogError("Incumple 1"); 
-                return; 
+                Logger.LogError("Incumple 1");
+                return;
             }
             if (DSNames.Any(table => DataStore.GetInstance().ContainsKey(table, lootstartevent.Player.SteamID) ||
                                      DataStore.GetInstance().ContainsKey(table, lootstartevent.Player.UID)))
@@ -356,19 +557,25 @@ namespace RustPP.Components.RaidComponent
                 Logger.LogError("Incumple 2");
                 return;
             }
-            if(!lootstartevent.Entity.IsStorage())
+            if (!lootstartevent.Entity.IsStorage())
             {
                 Logger.LogError("Incumple 3");
                 return;
             }
-            if (GetHouseOwner(lootstartevent.Entity.Location) == lootstartevent.Player.UID)
+            ulong owneruid = GetHouseOwner(lootstartevent.Entity.Location);
+            if(owneruid == 0UL)
+            {
+                Logger.LogError("No se encuentra al dueño");
+                return;
+            }
+            if (owneruid == lootstartevent.Player.UID)
             {
                 Logger.LogError("Cumple 4");
                 return;
             }
             if (CanOpenChestIfThereIsNoStructureClose)
             {
-                Logger.LogError("Cumple 5");
+                Logger.LogError("Esta abierta");
                 var objects = Physics.OverlapSphere(lootstartevent.Entity.Location, 3.8f);
                 var names = new List<string>();
                 foreach (var x in objects.Where(x => !names.Contains(x.name.ToLower())))
@@ -385,11 +592,18 @@ namespace RustPP.Components.RaidComponent
                     return;
                 }
             }
-            var id = GetHouseOwner(lootstartevent.Entity.Location);
-            Logger.LogError($"Comprobando si {id} es amigo de {lootstartevent.Player.UID}");
-            RustPP.Commands.FriendsCommand command = (RustPP.Commands.FriendsCommand)RustPP.Commands.ChatCommand.GetCommand("amigos");
-            FriendList friendsList = (FriendList)command.GetFriendsLists()[id];
-            if (friendsList.isFriendWith(lootstartevent.Player.UID))
+            StructureMaster structureMaster = GetStructureMaster(lootstartevent.Entity.Location);
+            Logger.LogError($"SM: InstanceID: {structureMaster.GetInstanceID()}");
+            ulong id = GetHouseOwner(lootstartevent.Entity.Location);
+            RustPP.Data.Entities.User owner = RustPP.Data.Globals.GetUserBySteamID(lootstartevent.Entity.OwnerName);
+            RustPP.Data.Entities.User player = RustPP.Data.Globals.GetUserByName(lootstartevent.Player.Name);
+
+            if(owner.ID == player.ID)
+            {
+                return;
+            }
+
+            if (FriendComponent.FriendComponent.IsFriendOf(owner, player))
             {
                 Logger.LogError("Es amigo");
                 return;
@@ -397,7 +611,7 @@ namespace RustPP.Components.RaidComponent
             
             if (OwnerTimeData.ContainsKey(id))
             {
-                Logger.LogError("Incumple 5");
+                Logger.LogError("Cumple 5");
                 var ticks = OwnerTimeData[id];
                 var calc = TimeSpan.FromTicks(DateTime.Now.Ticks).TotalSeconds - ticks;
                 int timeraid = RaidTime;
@@ -434,6 +648,7 @@ namespace RustPP.Components.RaidComponent
                     var done = Math.Round(calc);
                     lootstartevent.Player.Notice("¡Puedes lootear por " + ((timeraid * 60) - done) + " segundos!");
                 }
+                return;
             }
             else
             {

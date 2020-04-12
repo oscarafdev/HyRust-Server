@@ -33,6 +33,7 @@ namespace RustPP
         public static PList muteList = new PList();
         public static List<ulong> tempConnect = new List<ulong>();
         public static Dictionary<ulong, string> userCache;
+        public static Dictionary<int, string> structureCache;
         public static Hashtable banWaitList = new Hashtable();
         public static Hashtable unbanWaitList = new Hashtable();
         public static Hashtable kickWaitList = new Hashtable();
@@ -116,6 +117,29 @@ namespace RustPP
             {
                 userCache = new Dictionary<ulong, string>();
             }
+            success = false;
+            if (File.Exists(RustPPModule.GetAbsoluteFilePath("structureCache.xml")))
+            {
+                FileInfo fi = new FileInfo(RustPPModule.GetAbsoluteFilePath("structureCache.xml"));
+                float mega = (fi.Length / 1024f) / 1024f;
+                if (mega > 0.70)
+                {
+                    Logger.LogWarning("Rust++ structureCache.xml and Cache.rpp is getting big. Deletion is suggested.");
+                }
+                SerializableDictionary<int, string> userDict = Helper.ObjectFromXML<SerializableDictionary<int, string>>(RustPPModule.GetAbsoluteFilePath("structureCache.xml"));
+                structureCache = new Dictionary<int, string>(userDict);
+                success = true;
+            }
+            if (File.Exists(RustPPModule.GetAbsoluteFilePath("structureCache.rpp")) && !success)
+            {
+                structureCache = Helper.ObjectFromFile<Dictionary<int, string>>(RustPPModule.GetAbsoluteFilePath("structureCache.rpp"));
+                if (!File.Exists(RustPPModule.GetAbsoluteFilePath("structureCache.xml")))
+                    Helper.ObjectToXML<SerializableDictionary<int, string>>(new SerializableDictionary<int, string>(structureCache), RustPPModule.GetAbsoluteFilePath("structureCache.xml"));
+            }
+            else if (!success)
+            {
+                structureCache = new Dictionary<int, string>();
+            }
             if (File.Exists(RustPPModule.GetAbsoluteFilePath("whitelist.xml")))
             {
                 whiteList = new PList(Helper.ObjectFromXML<List<PList.Player>>(RustPPModule.GetAbsoluteFilePath("whitelist.xml")));
@@ -186,6 +210,7 @@ namespace RustPP
             ChatCommand.AddCommand("/kick", new KickCommand());
             ChatCommand.AddCommand("/spawner", new BuyCommand());
             ChatCommand.AddCommand("/evento", new SellCommand());
+            ChatCommand.AddCommand("/amg", new RustPP.Components.FriendComponent.Commands.FriendsCommand());
 
 
             // AuthComponent

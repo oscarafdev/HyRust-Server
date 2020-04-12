@@ -82,29 +82,6 @@ namespace Fougerite
             return new Administrator(userID, name);
         }
 
-        public void RemoveInstaKO(ulong userID)
-        {
-            InstaKOCommand command = (InstaKOCommand)ChatCommand.GetCommand("instako");
-            if (command.userIDs.Contains(userID))
-            {
-                command.userIDs.Remove(userID);
-            }
-        }
-
-        public void AddInstaKO(ulong userID)
-        {
-            InstaKOCommand command = (InstaKOCommand)ChatCommand.GetCommand("instako");
-            if (!command.userIDs.Contains(userID))
-            {
-                command.userIDs.Add(userID);
-            }
-        }
-
-        public bool HasInstaKO(ulong userID)
-        {
-            InstaKOCommand command = (InstaKOCommand)ChatCommand.GetCommand("instako");
-            return command.userIDs.Contains(userID);
-        }
 
         public void RemoveGod(ulong userID)
         {
@@ -170,6 +147,13 @@ namespace Fougerite
             get
             {
                 return RustPP.Core.userCache;
+            }
+        }
+        public Dictionary<int, string> StructureCache
+        {
+            get
+            {
+                return RustPP.Core.structureCache;
             }
         }
     }

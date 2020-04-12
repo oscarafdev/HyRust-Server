@@ -11,6 +11,7 @@ namespace RustPP.Commands
 
     internal class AddFriendCommand : ChatCommand
     {
+        /*DEPRECATED*/
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];

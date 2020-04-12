@@ -572,6 +572,10 @@ namespace Fougerite
         {
             get
             {
+                if (this.IsStructureMaster())
+                {
+                    return this.GetObject<StructureMaster>().GetInstanceID();
+                }
                 if (this.IsDeployableObject())
                 {
                     return this.GetObject<DeployableObject>().GetInstanceID();

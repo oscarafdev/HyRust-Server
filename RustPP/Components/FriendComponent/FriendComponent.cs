@@ -82,6 +82,11 @@ namespace RustPP.Components.FriendComponent
                 };
                 newFriend.Create();
                 Friends.Add(newFriend);
+                user.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] Agregaste a [color #ffb3dd]{friend.Name}[/color] a tu lista de amigos.");
+                if (friend.Connected == 1)
+                {
+                    friend.Player.SendClientMessage($"[color #fc038c]<Amigos>[/color] [color #ffb3dd]{user.Name}[/color] te agrego a su lista de amigos.");
+                }
             }
             else
             {
@@ -101,13 +106,15 @@ namespace RustPP.Components.FriendComponent
         public static bool IsFriendOf(User user, User friend)
         {
             List<Friend> userFriends = Friends.FindAll(x => x.UserID == user.ID && x.FriendID == friend.ID);
-
+            Logger.LogError($"Verificando si {user.ID} es amigo de {friend.ID}");
             if(userFriends.Count >= 1)
             {
+                Logger.LogError($"{user.ID} es amigo de {friend.ID}");
                 return true;
             }
             else
             {
+                Logger.LogError($"{user.ID} no es amigo de {friend.ID}");
                 return false;
             }
         }

@@ -19,15 +19,14 @@ namespace RustPP.Data.Entities
         public bool CanLoot { get; set; }
         public void Create()
         {
-            try
-            {
+
                 using (MySqlConnection connection = new MySqlConnection(Data.Database.Connection.GetConnectionString()))
                 {
                     connection.Open();
                     MySqlCommand command = connection.CreateCommand();
 
                     command.CommandText = $"INSERT INTO {tableName} (user_id, friend_id, canLoot, canOpenDoors, canSetHome, canEditHome) VALUES (@user_id, @friend_id, @canLoot, @canOpenDoors, @canSetHome, @canEditHome)";
-                    command.Parameters.AddWithValue("@userId", this.UserID);
+                    command.Parameters.AddWithValue("@user_id", this.UserID);
                     command.Parameters.AddWithValue("@friend_id", this.FriendID);
                     command.Parameters.AddWithValue("@canLoot", this.CanLoot);
                     command.Parameters.AddWithValue("@canOpenDoors", this.CanOpenDoors);
@@ -36,11 +35,7 @@ namespace RustPP.Data.Entities
                     MySqlDataReader reader = command.ExecuteReader();
                     connection.Close();
                 }
-            }
-            catch
-            {
-                Logger.LogError("Error al crear un UserFriend");
-            }
+
         }
         public void Save()
         {

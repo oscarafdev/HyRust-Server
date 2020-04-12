@@ -679,7 +679,7 @@ namespace Fougerite
                 sw.Start();
             }
             Entity e = new Entity(entity);
-            Logger.LogError($"Creator: {e.Creator.Name} Owner: {e.OwnerName}");
+           
             uLink.NetworkPlayer nplayer = info.sender;
             Fougerite.Player creator = e.Creator;
             var data = nplayer.GetLocalData();
@@ -3719,6 +3719,7 @@ namespace Fougerite
                         component.AddStructureComponent(component2);
                         #pragma warning restore 618
                         int count = 1;
+
                         Hooks.EntityDeployed(component2, ref info);
                         if (item.Consume(ref count))
                         {

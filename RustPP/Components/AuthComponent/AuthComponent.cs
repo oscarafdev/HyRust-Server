@@ -20,7 +20,7 @@ namespace RustPP.Components.AuthComponent
 {
     class AuthComponent
     {
-        public readonly System.Random Randomizer = new System.Random();
+        public static readonly System.Random Randomizer = new System.Random();
         static readonly Dictionary<int, string> RewardList = new Dictionary<int, string>()
         {
             {0, "Research Kit"},
@@ -677,12 +677,17 @@ namespace RustPP.Components.AuthComponent
                         MySqlCommand command = connection.CreateCommand();
                         string salt = BCrypt.Net.BCrypt.GenerateSalt();
                         string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, salt);
-                        command.CommandText = "INSERT INTO users (username, password, salt, ip, steamId) VALUES (@username, @password, @salt, @ip, @steamid)";
+                        long asd = Randomizer.Next(10000000, 99999999);
+                        long asd2 = Randomizer.Next(100, 999);
+                        string largeInt = asd.ToString() + asd2.ToString();
+                        player.NetUser.user.Userid = Convert.ToUInt64(largeInt);
+                        command.CommandText = "INSERT INTO users (username, password, salt, ip, steamId, asignedid) VALUES (@username, @password, @salt, @ip, @steamid, @asignedid)";
                         command.Parameters.AddWithValue("@username", player.Name);
                         command.Parameters.AddWithValue("@password", pEncrypt);
                         command.Parameters.AddWithValue("@salt", salt);
                         command.Parameters.AddWithValue("@ip", player.IP);
                         command.Parameters.AddWithValue("@steamid", player.UID);
+                        command.Parameters.AddWithValue("@asignedid", largeInt);
                         MySqlDataReader reader = command.ExecuteReader();
                         player.SendClientMessage("¡Bienvenido a HyAxe Rust! Este servidor es algo diferente a los demás.");
                         player.SendClientMessage("Para informarte utiliza el comando [color orange]/ayuda[color white] o [color orange]/duda[color]");

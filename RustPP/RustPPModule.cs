@@ -97,10 +97,12 @@
             Fougerite.Hooks.OnChat += Chat;
             Fougerite.Hooks.OnFallDamage += OnFallDamage;
             Fougerite.Hooks.OnServerSaved += OnServerSaved;
+            Fougerite.Hooks.OnEntityDeployedWithPlacer += OnEntityDeployedWithPlacer;
             Server.GetServer().LookForRustPP();
             RaidComponent.initComponent();
             Components.EconomyComponent.EconomyComponent.InitComponent();
             Components.AdminComponent.AdminComponent.InitComponent();
+            Components.FriendComponent.FriendComponent.InitComponent();
         }
 
         public override void DeInitialize()
@@ -109,6 +111,7 @@
 
             Fougerite.Hooks.OnDoorUse -= DoorUse;
             Fougerite.Hooks.OnEntityHurt -= EntityHurt;
+            Fougerite.Hooks.OnEntityDeployedWithPlacer -= OnEntityDeployedWithPlacer;
             Fougerite.Hooks.OnPlayerConnected -= PlayerConnect;
             Fougerite.Hooks.OnPlayerDisconnected -= PlayerDisconnect;
             Fougerite.Hooks.OnPlayerHurt -= PlayerHurt;
@@ -122,8 +125,14 @@
             Components.AuthComponent.AuthComponent.Exit();
             TimedEvents.timer.Stop();
             RaidComponent.destroyComponent();
-            
+            Components.FriendComponent.FriendComponent.DestroyComponent();
+
             Logger.LogDebug("DeInitialized RPP");
+        }
+        void OnEntityDeployedWithPlacer(Fougerite.Player player, Entity entity, Fougerite.Player placer)
+        {
+            Logger.LogError($"Guardando: {entity.InstanceID}");
+            RustPP.Core.structureCache.Add(entity.InstanceID,player.Name);
         }
 
         void OnServerSaved(int amount, double seconds)

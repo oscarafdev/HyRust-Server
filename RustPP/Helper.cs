@@ -72,6 +72,16 @@
             {
                 File.Delete(RustPPModule.GetAbsoluteFilePath("cache.rpp"));
             }
+            if (Core.structureCache.Count != 0)
+            {
+                Logger.Log("Saving structure cache.");
+                ObjectToXML<SerializableDictionary<int, string>>(new SerializableDictionary<int, string>(Core.structureCache), RustPPModule.GetAbsoluteFilePath("structureCache.xml"));
+                ObjectToFile<Dictionary<int, string>>(Core.structureCache, RustPPModule.GetAbsoluteFilePath("structureCache.rpp"));
+            }
+            else if (File.Exists(RustPPModule.GetAbsoluteFilePath("structureCache.rpp")))
+            {
+                File.Delete(RustPPModule.GetAbsoluteFilePath("structureCache.rpp"));
+            }
             if (Core.whiteList.Count != 0)
             {
                 Logger.Log("Saving whitelist.");

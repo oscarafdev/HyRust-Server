@@ -20,7 +20,7 @@ namespace RustPP.Components.FriendComponent.Commands
             RustPP.Data.Entities.User user = Data.Globals.GetInternalUser(pl);
             if(ChatArguments.Length < 1)
             {
-                pl.SendClientMessage($"[color red]<Sintaxis>[/color] /{Command} <Opcion>");
+                pl.SendClientMessage($"[color red]<Sintaxis>[/color] {Command} <Opcion>");
                 pl.SendClientMessage($"[color #fc038c]<Amigos>[/color] Opciones: [color $ffb3dd] agregar - eliminar - editar");
                 return;
             }
@@ -29,7 +29,7 @@ namespace RustPP.Components.FriendComponent.Commands
             {
                 if (ChatArguments.Length < 2)
                 {
-                    pl.SendClientMessage($"[color red]<Sintaxis>[/color] /{Command} [color $ffb3dd]agregar[/color] <NombreJugador>");
+                    pl.SendClientMessage($"[color red]<Sintaxis>[/color] {Command} [color $ffb3dd]agregar[/color] <NombreJugador>");
                     return;
                 }
                 string invite = ChatArguments[1];

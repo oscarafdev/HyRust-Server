@@ -69,7 +69,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\modules\GlitchFix\GlitchFix.dll" "C:\Users\OFernandez\Documents\Rust\Server\Modules\GlitchFix" /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\modules\GlitchFix\GlitchFix.dll" "C:\Users\OFernandez\Documents\Rust\Server\Modules\GlitchFix" /Y</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>del "C:\Users\OFernandez\Documents\Rust\Server\Modules\GlitchFix\GlitchFix.dll" /Q</PreBuildEvent>
