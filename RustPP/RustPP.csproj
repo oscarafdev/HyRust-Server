@@ -182,8 +182,9 @@
       <HintPath>..\Fougerite\References\PatchedRustDlls\Facepunch.MeshBatch.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Fougerite">
-      <HintPath>..\bin\Fougerite.dll</HintPath>
+    <Reference Include="Fougerite, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Server\rust_server_Data\Managed\Fougerite.dll</HintPath>
     </Reference>
     <Reference Include="Google.ProtocolBuffers, Version=2.4.1.521, Culture=neutral, PublicKeyToken=55f7125234beb589">
       <HintPath>..\Fougerite\References\OriginalRustDLLs\Google.ProtocolBuffers.dll</HintPath>

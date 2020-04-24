@@ -100,6 +100,7 @@
             Fougerite.Hooks.OnEntityDeployedWithPlacer += OnEntityDeployedWithPlacer;
             Server.GetServer().LookForRustPP();
             RaidComponent.initComponent();
+            Components.LanguageComponent.LanguageComponent.InitComponent();
             Components.EconomyComponent.EconomyComponent.InitComponent();
             Components.AdminComponent.AdminComponent.InitComponent();
             Components.FriendComponent.FriendComponent.InitComponent();
@@ -149,12 +150,25 @@
         {
 
             Fougerite.Player pl = Fougerite.Server.Cache[arg.argUser.userID];
+            if(!Core.userLang.ContainsKey(pl.UID)) {
+                if (arg.Args[0] != "ES" && arg.Args[0] != "PT")
+                {
+                    pl.SendClientMessage("[color red]<Error>[/color] Idioma Incorrecto, escriba ES o PT");
+                    arg.ArgsStr = string.Empty;
+                }
+                pl.SendClientMessage(Components.LanguageComponent.LanguageComponent.getMessage("warning_lang", arg.Args[0]));
+                Core.userLang[pl.UID] = arg.Args[0];
+                arg.ArgsStr = string.Empty;
+                AuthComponent.aTimer.Stop();
+                AuthComponent.aTimer.Dispose();
+                AuthComponent.ShowLoginMessages(pl);
+                //RustPP.Components.LanguageComponent.LanguageComponent.waitingLanguage.Remove(pl.UID);
+            }
             var command = ChatCommand.GetCommand("ir") as TeleportToCommand;
             if (IsSpam(arg.ArgsStr))
             {
                 pl.SendClientMessage("[color red]<!>[/color]El SPAM no esta permitido en este servidor");
                 arg.ArgsStr = string.Empty;
-                return;
             }
             if (command.GetTPWaitList().Contains(pl.UID))
             {
@@ -262,6 +276,7 @@
             if(user.TimeToChat >= 1)
             {
                 p.SendClientMessage($"[color red]<!>[/color]Espera {user.TimeToChat} para enviar otro mensaje.");
+                text.NewText = string.Empty;
                 return;
             }
             if (Core.IsEnabled() && Core.muteList.Contains(p.UID))

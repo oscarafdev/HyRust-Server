@@ -14,13 +14,16 @@ using System.Text.RegularExpressions;
 using RustPP.Commands;
 using static ResourceTarget;
 using RustPP.Social;
+using RustPP.Components.LanguageComponent;
 using uLink;
+using System.Timers;
 
 namespace RustPP.Components.AuthComponent
 {
     class AuthComponent
     {
         public static readonly System.Random Randomizer = new System.Random();
+        public static System.Timers.Timer aTimer;
         static readonly Dictionary<int, string> RewardList = new Dictionary<int, string>()
         {
             {0, "Research Kit"},
@@ -360,29 +363,62 @@ namespace RustPP.Components.AuthComponent
             if (!UserIsLogged(player))
             {
                 //player.Inventory.ClearAll();
-               
-                if (CheckIfUserIsRegistered(player))
+                FreezePlayer(player);
+                if(LanguageComponent.LanguageComponent.GetPlayerLang(player) == null)
                 {
-                    FreezePlayer(player);
-                    player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para ingresar utiliza [color blue]/login <Contraseña>");
-                }
+                    AskLanguageTimer(player);
+                } 
                 else
                 {
-                    FreezePlayer(player);
-                    player.SendClientMessage($"Bienvenido a [color orange]HyAxe Rust[color white], para registrarte utiliza [color blue]/registro <Contraseña> <Confirmar Contraseña>");
+                    ShowLoginMessages(player);
                 }
-                
             }
             else
             {
                 User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
                 if(user.SteamID != player.UID)
                 {
-                    player.Notice("Ya estás conectado al servidor.");
+                    player.Notice("Ya estás conectado al servidor / Você já está conectado ao servidor.");
                     player.Disconnect();
                 }
             }
 
+        }
+        public static void ShowLoginMessages(Fougerite.Player player)
+        {
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
+            if (CheckIfUserIsRegistered(player))
+            {
+                player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("welcome_login", lang));
+            }
+            else
+            {
+                player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("welcome_register", lang));
+            }
+        }
+        private static void AskLanguageTimer(Fougerite.Player player)
+        {
+            // Create a timer with a two second interval.
+            aTimer = new System.Timers.Timer(4000);
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += (sender, e) => OnTimedEvent(sender, e, player);
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
+        }
+
+        private static void OnTimedEvent(System.Object source, ElapsedEventArgs e, Fougerite.Player player)
+        {
+            if(!Core.userLang.ContainsKey(player.UID))
+            {
+                player.SendClientMessage("¿Con qué idioma deseas continuar? / Com que idioma você deseja continuar?");
+                player.SendClientMessage("[color red]PT[/color] = Português | [color red]ES[/color] = Español");
+            }
+            else
+            {
+                //ShowLoginMessages(player);
+                aTimer.Stop();
+                aTimer.Dispose();
+            }
         }
         static void LoadInventory(Fougerite.Player player)
         {
@@ -467,8 +503,8 @@ namespace RustPP.Components.AuthComponent
             {
                 connection.Open();
                 MySqlCommand command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM users WHERE username = @username";
-                command.Parameters.AddWithValue("@username", player.Name);
+                command.CommandText = "SELECT * FROM users WHERE steamId = @steamID";
+                command.Parameters.AddWithValue("@steamID", player.SteamID);
                 MySqlDataReader reader = command.ExecuteReader();
                 
                 if (reader.HasRows)
@@ -506,7 +542,7 @@ namespace RustPP.Components.AuthComponent
                 }
             }
         }
-        public static void LoginPlayer(Fougerite.Player player, string username, string password, Boolean firstLogin = false)
+        public static void LoginPlayer(Fougerite.Player player, string steamid, string password, Boolean firstLogin = false)
         {
             if(UserIsLogged(player))
             {
@@ -523,20 +559,24 @@ namespace RustPP.Components.AuthComponent
             {
 
                 connection.Open();
-                string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, GetUserSalt(player));
+                //string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, GetUserSalt(player));
+                string pEncrypt = BCrypt.Net.BCrypt.HashString(password);
+                
                 MySqlCommand command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM users WHERE username = @username AND password = @password";
-                command.Parameters.AddWithValue("@username", username);
-                command.Parameters.AddWithValue("@password", pEncrypt);
+                command.CommandText = "SELECT * FROM users WHERE steamId = @steamID";
+                command.Parameters.AddWithValue("@steamID", steamid);
                 MySqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
                     reader.Read();
-
+                    if (pEncrypt == reader.GetString("password"))
+                    {
+                        player.SendClientMessage($"Correcto!");
+                    }
                     User newUser = new User
                     {
                         ID = reader.GetInt32("id"),
-                        Name = player.Name,
+                        Name = reader.GetString("username"),
                         SteamID = player.UID,
                         IP = reader.GetString("ip"),
                         Level = reader.GetInt32("level"),
@@ -567,27 +607,35 @@ namespace RustPP.Components.AuthComponent
                         Muted = reader.GetInt32("muted"),
                         ClanID = reader.GetInt32("clan"),
                         ClanRank = reader.GetInt32("clanRank"),
+                        Language = reader.GetString("lang"),
                         Player = player
                     };
                     newUser.GetClan();
-                    if(firstLogin)
+                    if (firstLogin)
                     {
                         newUser.XPos = player.Location.x;
                         newUser.YPos = player.Location.y;
                         newUser.ZPos = player.Location.z;
-                        
+
                     }
                     Data.Globals.usersOnline.Add(newUser);
                     newUser.Connect();
-                    player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
-                    player.SendClientMessage($"Si tienes dudas utiliza [color blue]/ayuda[color white] o escribe tu duda por el canal [color blue]/duda");
+                    string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
+                    player.SendClientMessage(string.Format(LanguageComponent.LanguageComponent.getMessage("login_message", lang), player.Name, newUser.Level));
+                    //player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
+                    player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("welcome_text_2", lang));
                     if (newUser.AdminLevel >= 1)
                     {
-                        player.SendClientMessage($"[color orange]Eres administrador nivel[/color] {newUser.AdminLevel}");
+                        player.SendClientMessage($"- [color orange]Eres administrador nivel[/color] {newUser.AdminLevel}");
                     }
                     if(newUser.ClanID != -1)
                     {
                         player.SendClientMessage($"[color orange]<{newUser.Clan.Name}>[/color] {newUser.Clan.MOTD}");
+                        player.Name = $"[{newUser.Clan.Tag}] {newUser.Name}";
+                    }
+                    else
+                    {
+                        player.Name = newUser.Name;
                     }
                     connection.Close();
                     LoadPlayer(player, firstLogin);
@@ -603,7 +651,7 @@ namespace RustPP.Components.AuthComponent
         }
         public static void LoadPlayer(Fougerite.Player player, bool firstLogin)
         {
-            
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
             User user = Data.Globals.usersOnline.Find(x => x.Name == player.Name);
             
             if (user != null)
@@ -657,14 +705,15 @@ namespace RustPP.Components.AuthComponent
         }
         public static void RegisterPlayer(Fougerite.Player player, string password, string confirmpassword)
         {
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
             if (UserIsLogged(player))
             {
-                player.SendClientMessage("[color red]<Error>[color white] Ya te encuentras logueado.");
+                player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_logged", lang));
                 return;
             }
             if(CheckIfUserIsRegistered(player))
             {
-                player.SendClientMessage("[color red]<Error>[color white] Este usuario ya esta registrado en la base de datos, intenta cambiando tu nombre de usuario.");
+                player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_registered", lang));
             }
             else
             {
@@ -676,27 +725,24 @@ namespace RustPP.Components.AuthComponent
                         connection.Open();
                         MySqlCommand command = connection.CreateCommand();
                         string salt = BCrypt.Net.BCrypt.GenerateSalt();
-                        string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, salt);
-                        long asd = Randomizer.Next(10000000, 99999999);
-                        long asd2 = Randomizer.Next(100, 999);
-                        string largeInt = asd.ToString() + asd2.ToString();
-                        player.NetUser.user.Userid = Convert.ToUInt64(largeInt);
-                        command.CommandText = "INSERT INTO users (username, password, salt, ip, steamId, asignedid) VALUES (@username, @password, @salt, @ip, @steamid, @asignedid)";
+                        //string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, salt);
+                        string pEncrypt = BCrypt.Net.BCrypt.HashString("password");
+                        command.CommandText = "INSERT INTO users (username, password, salt, ip, steamId) VALUES (@username, @password, @salt, @ip, @steamid)";
                         command.Parameters.AddWithValue("@username", player.Name);
                         command.Parameters.AddWithValue("@password", pEncrypt);
                         command.Parameters.AddWithValue("@salt", salt);
                         command.Parameters.AddWithValue("@ip", player.IP);
                         command.Parameters.AddWithValue("@steamid", player.UID);
-                        command.Parameters.AddWithValue("@asignedid", largeInt);
                         MySqlDataReader reader = command.ExecuteReader();
-                        player.SendClientMessage("¡Bienvenido a HyAxe Rust! Este servidor es algo diferente a los demás.");
-                        player.SendClientMessage("Para informarte utiliza el comando [color orange]/ayuda[color white] o [color orange]/duda[color]");
-                        LoginPlayer(player, player.Name, password, true);
+
+                        player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("welcome_text", lang));
+                        player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("welcome_text_2", lang));
+                        LoginPlayer(player, player.SteamID, password, true);
                     }
                 }
                 else
                 {
-                    player.SendClientMessage("[color red]<Error>[color white] Las contraseñas no coinciden, intentalo nuevamente.");
+                    player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_incorrect_password", lang));
                 }
             }
             

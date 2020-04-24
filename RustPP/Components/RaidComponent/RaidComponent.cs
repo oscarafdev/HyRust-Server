@@ -596,7 +596,7 @@ namespace RustPP.Components.RaidComponent
             Logger.LogError($"SM: InstanceID: {structureMaster.GetInstanceID()}");
             ulong id = GetHouseOwner(lootstartevent.Entity.Location);
             RustPP.Data.Entities.User owner = RustPP.Data.Globals.GetUserBySteamID(lootstartevent.Entity.OwnerName);
-            RustPP.Data.Entities.User player = RustPP.Data.Globals.GetUserByName(lootstartevent.Player.Name);
+            RustPP.Data.Entities.User player = RustPP.Data.Globals.GetUserBySteamID(lootstartevent.Player.SteamID);
 
             if(owner.ID == player.ID)
             {

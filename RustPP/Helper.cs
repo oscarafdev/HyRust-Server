@@ -82,6 +82,16 @@
             {
                 File.Delete(RustPPModule.GetAbsoluteFilePath("structureCache.rpp"));
             }
+            if (Core.userLang.Count != 0)
+            {
+                Logger.Log("Guardando preferencias de lenguaje.");
+                ObjectToXML<SerializableDictionary<ulong, string>>(new SerializableDictionary<ulong, string>(Core.userLang), RustPPModule.GetAbsoluteFilePath("userLang.xml"));
+                ObjectToFile<Dictionary<ulong, string>>(Core.userLang, RustPPModule.GetAbsoluteFilePath("userLang.rpp"));
+            }
+            else if (File.Exists(RustPPModule.GetAbsoluteFilePath("userLang.rpp")))
+            {
+                File.Delete(RustPPModule.GetAbsoluteFilePath("userLang.rpp"));
+            }
             if (Core.whiteList.Count != 0)
             {
                 Logger.Log("Saving whitelist.");

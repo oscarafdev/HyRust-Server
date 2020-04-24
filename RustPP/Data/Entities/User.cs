@@ -56,12 +56,7 @@ namespace RustPP.Data.Entities
         public int TimeToChat { get; set; } = 0;
 
         public StoreItem SellingItem { get; set; } = null;
-        public enum Language
-        {
-            ES,
-            EN,
-            PT
-        }
+        public string Language { get; set; } = "ES";
 
         public void AddWoodExp(int quantity)
         {
@@ -229,7 +224,8 @@ namespace RustPP.Data.Entities
                     "zPos = @zPos," +
                     "muted = @muted," +
                     "clan = @clan," +
-                    "clanRank = @clanRank" +
+                    "clanRank = @clanRank," +
+                    "lang = @lang" +
                     " WHERE username = @username";
                 command.Parameters.AddWithValue("@playerLevel", this.Level);
                 command.Parameters.AddWithValue("@ip", this.IP);
@@ -260,6 +256,7 @@ namespace RustPP.Data.Entities
                 command.Parameters.AddWithValue("@muted", this.Muted);
                 command.Parameters.AddWithValue("@clan", this.ClanID);
                 command.Parameters.AddWithValue("@clanRank", this.ClanRank);
+                command.Parameters.AddWithValue("@lang", this.Language);
                 command.Parameters.AddWithValue("@username", this.Name);
                 MySqlDataReader reader = command.ExecuteReader();
                 Logger.LogDebug($"La cuenta {this.Name} fue guardada.");

@@ -19,7 +19,7 @@ namespace RustPP.Components.AuthComponent
             {
                 pl.SendClientMessage("[color red]<Sintaxis> [color white]/login <Contraseña>");
             }
-            AuthComponent.LoginPlayer(pl, pl.Name, strText);
+            AuthComponent.LoginPlayer(pl, pl.SteamID, strText);
 
         }
     }

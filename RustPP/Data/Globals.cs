@@ -11,6 +11,7 @@ namespace RustPP.Data
 {
     class Globals
     {
+        public static int ServerRate = 1;
         public static int EventoExp = 1;
         public static int EventoExpClan = 1;
         public static List<User> usersOnline = new List<User>();

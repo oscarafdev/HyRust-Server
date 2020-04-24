@@ -33,6 +33,7 @@ namespace RustPP
         public static PList muteList = new PList();
         public static List<ulong> tempConnect = new List<ulong>();
         public static Dictionary<ulong, string> userCache;
+        public static Dictionary<ulong, string> userLang;
         public static Dictionary<int, string> structureCache;
         public static Hashtable banWaitList = new Hashtable();
         public static Hashtable unbanWaitList = new Hashtable();
@@ -116,6 +117,29 @@ namespace RustPP
             else if (!success)
             {
                 userCache = new Dictionary<ulong, string>();
+            }
+            success = false;
+            if (File.Exists(RustPPModule.GetAbsoluteFilePath("userLang.xml")))
+            {
+                FileInfo fi = new FileInfo(RustPPModule.GetAbsoluteFilePath("userLang.xml"));
+                float mega = (fi.Length / 1024f) / 1024f;
+                if (mega > 0.70)
+                {
+                    Logger.LogWarning("Rust++ userLang.xml and userLang.rpp is getting big. Deletion is suggested.");
+                }
+                SerializableDictionary<ulong, string> userDict = Helper.ObjectFromXML<SerializableDictionary<ulong, string>>(RustPPModule.GetAbsoluteFilePath("userLang.xml"));
+                userLang = new Dictionary<ulong, string>(userDict);
+                success = true;
+            }
+            if (File.Exists(RustPPModule.GetAbsoluteFilePath("userLang.rpp")) && !success)
+            {
+                userLang = Helper.ObjectFromFile<Dictionary<ulong, string>>(RustPPModule.GetAbsoluteFilePath("userLang.rpp"));
+                if (!File.Exists(RustPPModule.GetAbsoluteFilePath("userLang.xml")))
+                    Helper.ObjectToXML<SerializableDictionary<ulong, string>>(new SerializableDictionary<ulong, string>(userLang), RustPPModule.GetAbsoluteFilePath("userLang.xml"));
+            }
+            else if (!success)
+            {
+                userLang = new Dictionary<ulong, string>();
             }
             success = false;
             if (File.Exists(RustPPModule.GetAbsoluteFilePath("structureCache.xml")))
