@@ -8,7 +8,7 @@ namespace RustPP.Components.LanguageComponent
 {
     class LanguageComponent
     {
-        List<RustPP.Data.Entities.MessageString> LangMessages = new List<RustPP.Data.Entities.MessageString>();
+        List<RustPP.Data.Entities.LangMessage> LangMessages = new List<RustPP.Data.Entities.LangMessage>();
 
         public static void initComponent()
         {
