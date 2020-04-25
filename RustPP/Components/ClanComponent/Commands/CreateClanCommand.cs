@@ -64,7 +64,7 @@ namespace RustPP.Components.ClanComponent.Commands
                 {
                     Name = message,
                     Owner = pl.Name,
-                    Tag = "ST",
+                    Tag = "",
                     Level = 1,
                     Exp = 0,
                     Kills = 0,

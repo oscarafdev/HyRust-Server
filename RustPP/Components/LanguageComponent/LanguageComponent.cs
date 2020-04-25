@@ -75,6 +75,61 @@ namespace RustPP.Components.LanguageComponent
             }
             
         }
+        public static void SendLangMessageForAll(string slug)
+        {
+            foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
+            {
+                if (player.IsOnline)
+                {
+                    string lang = LanguageComponent.GetPlayerLangOrDefault(player);
+                    player.SendClientMessage(LanguageComponent.getMessage(slug, lang));
+                }
+            }
+        }
+        public static void SendLangMessageForAll(string slug, string param)
+        {
+            foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
+            {
+                if (player.IsOnline)
+                {
+                    string lang = LanguageComponent.GetPlayerLangOrDefault(player);
+                    player.SendClientMessage(string.Format(LanguageComponent.getMessage(slug, lang), param));
+                }
+            }
+        }
+        public static void SendLangMessageForAll(string slug, string param, string param2)
+        {
+            foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
+            {
+                if (player.IsOnline)
+                {
+                    string lang = LanguageComponent.GetPlayerLangOrDefault(player);
+                    player.SendClientMessage(string.Format(LanguageComponent.getMessage(slug, lang), param, param2));
+                }
+            }
+        }
+        public static void SendLangMessageForAll(string slug, string param, string param2, string param3)
+        {
+            foreach (Fougerite.Player player in Fougerite.Server.GetServer().Players)
+            {
+                if (player.IsOnline)
+                {
+                    string lang = LanguageComponent.GetPlayerLangOrDefault(player);
+                    player.SendClientMessage(string.Format(LanguageComponent.getMessage(slug, lang), param, param2, param3));
+                }
+            }
+        }
+        public static void SendSyntaxError(Fougerite.Player pl, string langES, string langPT)
+        {
+            string lang = LanguageComponent.GetPlayerLangOrDefault(pl);
+            if(lang == "ES")
+            {
+                pl.SendClientMessage(string.Format(LanguageComponent.getMessage("error_syntax", lang), langES));
+            }
+            else if (lang == "PT") {
+                pl.SendClientMessage(string.Format(LanguageComponent.getMessage("error_syntax", lang), langPT));
+            }
+        }
         public static void ReloadMessages()
         {
             LangMessages.RemoveAll(x => x.Slug != null);

@@ -17,21 +17,21 @@ namespace RustPP.Components.AdminComponent.Commands
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(pl);
             if (!Globals.UserIsLogged(pl))
             {
-                char ch = '☢';
-                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_logged", lang));
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
             if(user.AdminLevel < 6 && user.Name != "ForwardKing")
             {
-                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_permissions", lang));
                 return;
             }
             if (ChatArguments.Length < 2)
             {
-                pl.SendClientMessage("[color red]<Sintaxis>[/color] /daradmin <NombreJugador> <Nivel 1-6>");
+                LanguageComponent.LanguageComponent.SendSyntaxError(pl, "/daradmin <NombreJugador> <Nivel 1-6>", "/daradmin <PlayerName> <Nível 1-6>");
                 return;
             }
             string search = ChatArguments[0];
@@ -57,7 +57,7 @@ namespace RustPP.Components.AdminComponent.Commands
             recipientUser.AdminLevel = admin;
             recipientUser.Save();
             pl.SendClientMessage($"[color #34ebde]Le diste a {recipientUser.Name} el rango Admin {admin}.");
-            recipient.SendClientMessage($"[color #34ebde]El administrador {user.Name} dio rango Admin {admin}.");
+            recipient.SendClientMessage($"[color #34ebde]El administrador {user.Name} te dio el rango Admin {admin}.");
 
         }
     }

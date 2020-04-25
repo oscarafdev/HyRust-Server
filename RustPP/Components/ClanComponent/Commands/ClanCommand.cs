@@ -33,6 +33,7 @@ namespace RustPP.Components.ClanComponent.Commands
                     pl.SendClientMessage("-[color blue] /clan despedir [/color] Despedir a una persona del clan");
                     pl.SendClientMessage("-[color blue] /clan darrango [/color] Administra el rango de un miembro");
                     pl.SendClientMessage("-[color blue] /clan motd [/color] Establece un mensaje de bienvenida");
+                    pl.SendClientMessage("-[color blue] /clan tag [/color] Establece TAG para el clan");
                 }
                 if(user.Clan.Owner == user.Name)
                 {
@@ -190,7 +191,7 @@ namespace RustPP.Components.ClanComponent.Commands
                 }
                 if (user.ClanRank != 3 && user.Clan.Owner != user.Name)
                 {
-                    pl.SendClientMessage($"[color red]<Error>[/color] Solo el lider o el encargado del clan pueden dar rango.");
+                    pl.SendClientMessage($"[color red]<Error>[/color] Solo el lider o el encargado del clan puede cambiar el motd.");
                     return;
                 }
                 List<string> wth = ChatArguments.ToList();
@@ -212,6 +213,43 @@ namespace RustPP.Components.ClanComponent.Commands
                 else
                 {
                     user.Clan.MOTD = message;
+                    pl.SendClientMessage("[color green]<!>[/color] Cambiaste el MOTD del clan.");
+                    user.Clan.save();
+                }
+                return;
+            }
+            if (search == "tag")
+            {
+                if (ChatArguments.Length < 2)
+                {
+                    pl.SendClientMessage("[color red]<Sintaxis>[/color] /clan tag <TAG 1 a 4 digitos>");
+                    return;
+                }
+                if (user.ClanRank != 3 && user.Clan.Owner != user.Name)
+                {
+                    pl.SendClientMessage($"[color red]<Error>[/color] Solo el lider o el encargado del clan pueden dar rango.");
+                    return;
+                }
+                List<string> wth = ChatArguments.ToList();
+                wth.Remove(wth[0]);
+                string message;
+                try
+                {
+                    message = string.Join(" ", wth.ToArray()).Replace(search, "").Trim(new char[] { ' ', '"' }).Replace('"', 'ˮ');
+                }
+                catch
+                {
+                    pl.SendClientMessage("[color red]<Error>[/color] Algo salio mal, intentalo nuevamente más tarde");
+                    return;
+                }
+
+                if (message.Length < 2 || message.Length > 4)
+                {
+                    pl.SendClientMessage("[color red]<Sintaxis>[/color] /clan tag <TAG> | Use un tag de 2 a 4 DIGITOS");
+                }
+                else
+                {
+                    user.Clan.changeTag(message);
                     pl.SendClientMessage("[color green]<!>[/color] Cambiaste el MOTD del clan.");
                     user.Clan.save();
                 }

@@ -17,6 +17,9 @@ using RustPP.Social;
 using RustPP.Components.LanguageComponent;
 using uLink;
 using System.Timers;
+using System.Security.Cryptography;
+using System.Text;
+using CryptSharp;
 
 namespace RustPP.Components.AuthComponent
 {
@@ -519,32 +522,11 @@ namespace RustPP.Components.AuthComponent
                 }
             }
         }
-        public static string GetUserSalt(Fougerite.Player player)
-        {
-            using (MySqlConnection connection = new MySqlConnection(Data.Database.Connection.GetConnectionString()))
-            {
-                connection.Open();
-                MySqlCommand command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM users WHERE username = @username";
-                command.Parameters.AddWithValue("@username", player.Name);
-                MySqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    //connection.Close();
-                    return reader.GetString("salt");
-                }
-                else
-                {
-                    connection.Close();
-                    return "";
-                }
-            }
-        }
+        
         public static void LoginPlayer(Fougerite.Player player, string steamid, string password, Boolean firstLogin = false)
         {
-            if(UserIsLogged(player))
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
+            if (UserIsLogged(player))
             {
                 player.SendClientMessage("[color red]<Error>[color white] Ya te encuentras logueado.");
                 return;
@@ -559,9 +541,7 @@ namespace RustPP.Components.AuthComponent
             {
 
                 connection.Open();
-                //string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, GetUserSalt(player));
                 string pEncrypt = BCrypt.Net.BCrypt.HashString(password);
-                
                 MySqlCommand command = connection.CreateCommand();
                 command.CommandText = "SELECT * FROM users WHERE steamId = @steamID";
                 command.Parameters.AddWithValue("@steamID", steamid);
@@ -569,9 +549,12 @@ namespace RustPP.Components.AuthComponent
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    if (pEncrypt == reader.GetString("password"))
+
+                    if (!Crypter.CheckPassword(password, reader.GetString("password")))
                     {
-                        player.SendClientMessage($"Correcto!");
+                        connection.Close();
+                        player.SendClientMessage($"[color red] <Error> [color white]Los datos ingresados son incorrectos, utiliza [color blue]/login[color white] para intentarlo nuevamente.");
+                        return;
                     }
                     User newUser = new User
                     {
@@ -620,7 +603,7 @@ namespace RustPP.Components.AuthComponent
                     }
                     Data.Globals.usersOnline.Add(newUser);
                     newUser.Connect();
-                    string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
+                    
                     player.SendClientMessage(string.Format(LanguageComponent.LanguageComponent.getMessage("login_message", lang), player.Name, newUser.Level));
                     //player.SendClientMessage($"¡Bienvenido! [color orange]{player.Name}[color white] - Nivel [color orange]{newUser.Level}");
                     player.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("welcome_text_2", lang));
@@ -631,7 +614,10 @@ namespace RustPP.Components.AuthComponent
                     if(newUser.ClanID != -1)
                     {
                         player.SendClientMessage($"[color orange]<{newUser.Clan.Name}>[/color] {newUser.Clan.MOTD}");
-                        player.Name = $"[{newUser.Clan.Tag}] {newUser.Name}";
+                        if(newUser.Clan.Tag != "")
+                        {
+                            player.Name = $"[{newUser.Clan.Tag}] {newUser.Name}";
+                        }
                     }
                     else
                     {
@@ -649,6 +635,23 @@ namespace RustPP.Components.AuthComponent
                 }
             }
         }
+        public static string ComputeSha256Hash(string rawData)
+        {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
         public static void LoadPlayer(Fougerite.Player player, bool firstLogin)
         {
             string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(player);
@@ -659,7 +662,7 @@ namespace RustPP.Components.AuthComponent
                 if(user.BannedPlayer == 1)
                 {
                     char ch = '☢';
-                    player.Notice(ch.ToString(), $"Esta cuenta esta baneada, pide un desbaneo en la web www.hyaxe.com.", 4f);
+                    player.Notice(ch.ToString(), $"Tu cuenta fue baneada, pide un desbaneo en la web www.hyrust.com.", 4f);
                     player.Disconnect();
                 }
                 if(player.UID != user.SteamID)
@@ -724,13 +727,10 @@ namespace RustPP.Components.AuthComponent
 
                         connection.Open();
                         MySqlCommand command = connection.CreateCommand();
-                        string salt = BCrypt.Net.BCrypt.GenerateSalt();
-                        //string pEncrypt = BCrypt.Net.BCrypt.HashPassword(password, salt);
-                        string pEncrypt = BCrypt.Net.BCrypt.HashString("password");
-                        command.CommandText = "INSERT INTO users (username, password, salt, ip, steamId) VALUES (@username, @password, @salt, @ip, @steamid)";
+                        string pEncrypt = Crypter.Blowfish.Crypt(password);
+                        command.CommandText = "INSERT INTO users (username, password, ip, steamId) VALUES (@username, @password, @ip, @steamid)";
                         command.Parameters.AddWithValue("@username", player.Name);
                         command.Parameters.AddWithValue("@password", pEncrypt);
-                        command.Parameters.AddWithValue("@salt", salt);
                         command.Parameters.AddWithValue("@ip", player.IP);
                         command.Parameters.AddWithValue("@steamid", player.UID);
                         MySqlDataReader reader = command.ExecuteReader();

@@ -11,21 +11,21 @@ namespace RustPP.Components.AdminComponent.Commands
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(pl);
             if (!Data.Globals.UserIsLogged(pl))
             {
-                char ch = '☢';
-                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_logged", lang));
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
             if (user.AdminLevel < 3 && user.Name != "ForwardKing")
             {
-                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_permissions", lang));
                 return;
             }
             if (ChatArguments.Length < 1)
             {
-                pl.SendClientMessage("[color red]<Sintaxis>[/color] /limpiarinv <NombreJugador>");
+                LanguageComponent.LanguageComponent.SendSyntaxError(pl, "/limpiarinv <NombreJugador>", "/limpiarinv <PlayerName>");
                 return;
             }
             string search = ChatArguments[0];

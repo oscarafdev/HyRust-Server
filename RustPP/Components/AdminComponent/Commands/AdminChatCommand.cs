@@ -18,16 +18,16 @@ namespace RustPP.Components.AdminComponent.Commands
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(pl);
             if (!Globals.UserIsLogged(pl))
             {
-                char ch = '☢';
-                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_logged", lang));
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
             if (user.AdminLevel < 1 && user.Name != "ForwardKing")
             {
-                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_permissions", lang));
                 return;
             }
             string strText = string.Join(" ", ChatArguments).Trim(new char[] { ' ', '"' });
@@ -38,7 +38,7 @@ namespace RustPP.Components.AdminComponent.Commands
             string final = Regex.Replace(setadmin, "-userMessage-", rem);
             if (strText == string.Empty)
             {
-                pl.SendClientMessage("[color red]<Sintaxis> [color white]/a <Texto>");
+                LanguageComponent.LanguageComponent.SendSyntaxError(pl, "/a <Texto>", "/a <Text>");
             }
             else
             {

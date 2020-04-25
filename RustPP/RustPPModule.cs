@@ -11,6 +11,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Timers;
     using UnityEngine;
 
@@ -150,10 +151,11 @@
         {
 
             Fougerite.Player pl = Fougerite.Server.Cache[arg.argUser.userID];
-            if(!Core.userLang.ContainsKey(pl.UID)) {
+            
+            if (!Core.userLang.ContainsKey(pl.UID)) {
                 if (arg.Args[0] != "ES" && arg.Args[0] != "PT")
                 {
-                    pl.SendClientMessage("[color red]<Error>[/color] Idioma Incorrecto, escriba ES o PT");
+                    pl.SendClientMessage("[color red]<Error>[/color] Idioma Incorrecto, escriba ES o PT.");
                     arg.ArgsStr = string.Empty;
                 }
                 pl.SendClientMessage(Components.LanguageComponent.LanguageComponent.getMessage("warning_lang", arg.Args[0]));
@@ -164,10 +166,11 @@
                 AuthComponent.ShowLoginMessages(pl);
                 //RustPP.Components.LanguageComponent.LanguageComponent.waitingLanguage.Remove(pl.UID);
             }
+            string lang = Components.LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(pl);
             var command = ChatCommand.GetCommand("ir") as TeleportToCommand;
             if (IsSpam(arg.ArgsStr))
             {
-                pl.SendClientMessage("[color red]<!>[/color]El SPAM no esta permitido en este servidor");
+                pl.SendClientMessage(Components.LanguageComponent.LanguageComponent.getMessage("spam_not_allowed", lang));
                 arg.ArgsStr = string.Empty;
             }
             if (command.GetTPWaitList().Contains(pl.UID))
@@ -266,26 +269,77 @@
         }
         void Chat(Fougerite.Player p, ref ChatString text)
         {
+            string lang = Components.LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(p);
             if (IsSpam(text))
             {
-                p.SendClientMessage("[color red]<!>[/color]El SPAM no esta permitido en este servidor");
+                p.SendClientMessage(Components.LanguageComponent.LanguageComponent.getMessage("spam_not_allowed", lang));
                 text.NewText = string.Empty;
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(p);
             if(user.TimeToChat >= 1)
             {
-                p.SendClientMessage($"[color red]<!>[/color]Espera {user.TimeToChat} para enviar otro mensaje.");
+                p.SendClientMessage(string.Format(Components.LanguageComponent.LanguageComponent.getMessage("time_to_chat_wait", lang), user.TimeToChat));
                 text.NewText = string.Empty;
                 return;
             }
             if (Core.IsEnabled() && Core.muteList.Contains(p.UID))
             {
                 text.NewText = "";
-                p.MessageFrom(Core.Name, "Estás Muteado.");
+                p.MessageFrom(Core.Name, Components.LanguageComponent.LanguageComponent.getMessage("you_are_muted", lang));
                 return;
             }
             user.TimeToChat += 5;
+            var quotedName = Facepunch.Utility.String.QuoteSafe(p.Name);
+            var quotedMessage = Facepunch.Utility.String.QuoteSafe(text);
+            var chatstr = new ChatString(quotedMessage);
+            string newchat = Facepunch.Utility.String.QuoteSafe(text.NewText.Substring(1, text.NewText.Length - 2)).Replace("\\\"", "" + '\u0022');
+
+            if (string.IsNullOrEmpty(newchat) || newchat.Length == 0) { return; }
+            string initText = Regex.Replace(text, @"\[/?color\b.*?\]", string.Empty);
+            string remplaze = Regex.Replace(initText, "\"", string.Empty);
+            if (remplaze.Length <= 100)
+            {
+                string template = "-userName- dice: -userMessage-";
+                if (lang == "ES")
+                {
+                    template = "-userName- dice: -userMessage-";
+                }
+                else if (lang == "PT")
+                {
+                    template = "-userName- diz: -userMessage-";
+                }
+                string setname = Regex.Replace(template, "-userName-", p.Name);
+                string final = Regex.Replace(setname, "-userMessage-", remplaze);
+
+                Fougerite.Data.GetData().chat_history.Add(chatstr);
+                Fougerite.Data.GetData().chat_history_username.Add(quotedName);
+                p.SendMessageToNearUsers(final.Replace("\\", ""), 30.0f);
+                //ConsoleNetworker.Broadcast(final);
+                return;
+            }
+            string[] ns = Util.GetUtil().SplitInParts(newchat, 100).ToArray();
+
+            foreach (var x in ns)
+            {
+                Fougerite.Data.GetData().chat_history.Add(x);
+                Fougerite.Data.GetData().chat_history_username.Add(quotedName);
+                string rem = Regex.Replace(x, @"\[/?color\b.*?\]", string.Empty);
+                string template = "chat.add \\n\\n \"-userName- dice: -userMessage-\"";
+                if (lang == "ES")
+                {
+                    template = "chat.add \\n\\n \"-userName- dice: -userMessage-\"";
+                }
+                else if (lang == "PT")
+                {
+                    template = "chat.add \\n\\n \"-userName- diz: -userMessage-\"";
+                }
+                
+                string setname = Regex.Replace(template, "-userName-", p.Name);
+                string final = Regex.Replace(setname, "-userMessage-", rem);
+                string message = Facepunch.Utility.String.QuoteSafe(final);
+                ConsoleNetworker.Broadcast(message);
+            }
         }
 
         void OnFallDamage(FallDamageEvent falldamageevent)

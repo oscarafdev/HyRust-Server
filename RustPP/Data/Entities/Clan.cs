@@ -65,7 +65,7 @@ namespace RustPP.Data.Entities
         {
             if (this != null)
             {
-                if (TAG.Length > 1 && TAG.Length < 4)
+                if (TAG.Length > 1 && TAG.Length < 5)
                 {
 
                     Data.Globals.SendMessageForClan(this.ID, $"El clan {this.Name} cambio de TAG a {TAG}.");

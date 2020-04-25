@@ -17,16 +17,16 @@ namespace RustPP.Components.AdminComponent.Commands
         public override void Execute(ref ConsoleSystem.Arg Arguments, ref string[] ChatArguments)
         {
             var pl = Fougerite.Server.Cache[Arguments.argUser.userID];
+            string lang = LanguageComponent.LanguageComponent.GetPlayerLangOrDefault(pl);
             if (!Globals.UserIsLogged(pl))
             {
-                char ch = '☢';
-                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_logged", lang));
                 return;
             }
             RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
             if (user.AdminLevel < 1 && user.Name != "ForwardKing")
             {
-                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_permissions", lang));
                 return;
             }
             pl.Inventory.RemoveItem(30);
@@ -40,7 +40,7 @@ namespace RustPP.Components.AdminComponent.Commands
             pl.Inventory.AddItemTo("Invisible Pants", 38, 1);
             pl.Inventory.AddItemTo("Invisible Boots", 39, 1);
             pl.Inventory.AddItemTo("Uber Hatchet", 30, 1);
-            Server.GetServer().SendMessageForAll($"[color green]El {Globals.getAdminName(user)} {user.Name} esta en servicio y atendiendo dudas.");
+            LanguageComponent.LanguageComponent.SendLangMessageForAll("admin_on_duty", Globals.getAdminName(user), user.Name);
         }
     }
 }

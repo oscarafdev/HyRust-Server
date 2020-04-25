@@ -369,11 +369,12 @@ namespace Fougerite
                 string[] args = Facepunch.Utility.String.SplitQuotesStrings(quotedMessage.Trim('"'));
                 var command = args[0].TrimStart('/');
                 Fougerite.Player player = Fougerite.Server.GetServer().FindPlayer(arg.argUser.playerClient.userID);
-                if (command == "rainbow")
+                if (command == "hyrust")
                 {
                     player.Message("[color #00FFFF]HyRust v[color yellow]" + Bootstrap.Version);
                     player.Message("[color green]Comunidad Hyaxe: www.hyaxe.com");
-                    player.Message("[color #0C86AE]HyRust Server: www.rainbowrust.com");
+                    player.Message("[color green]Comunidad Hyaxe: www.hyaxe.com");
+                    player.Message("[color #0C86AE]HyRust Server: www.hyrust.com");
                 }
                 var cargs = new string[args.Length - 1];
                 Array.Copy(args, 1, cargs, 0, cargs.Length);
@@ -412,38 +413,7 @@ namespace Fougerite
                 }
                 if (string.IsNullOrEmpty(chatstr.NewText) || chatstr.NewText.Length == 0) { return; }
 
-                string newchat = Facepunch.Utility.String.QuoteSafe(chatstr.NewText.Substring(1, chatstr.NewText.Length - 2)).Replace("\\\"", "" + '\u0022');
-
-                if (string.IsNullOrEmpty(newchat) || newchat.Length == 0) { return; }
-                string remplaze = Regex.Replace(arg.GetString(0), @"\[/?color\b.*?\]", string.Empty);
-                Fougerite.Player player = Fougerite.Server.GetServer().FindPlayer(arg.argUser.playerClient.userID);
-
-                if (remplaze.Length <= 100)
-                {
-                    
-                    string template = "-userName- dice: -userMessage-";
-                    string setname = Regex.Replace(template, "-userName-", arg.argUser.displayName);
-                    string final = Regex.Replace(setname, "-userMessage-", remplaze);
-                    
-                    Fougerite.Data.GetData().chat_history.Add(chatstr);
-                    Fougerite.Data.GetData().chat_history_username.Add(quotedName);
-                    player.SendMessageToNearUsers(final.Replace("\\", ""), 30.0f);
-                    //ConsoleNetworker.Broadcast(final);
-                    return;
-                }
-                string[] ns = Util.GetUtil().SplitInParts(newchat, 100).ToArray();
                 
-                foreach (var x in ns)
-                {
-                    Fougerite.Data.GetData().chat_history.Add(x);
-                    Fougerite.Data.GetData().chat_history_username.Add(quotedName);
-                    string rem = Regex.Replace(x, @"\[/?color\b.*?\]", string.Empty);
-                    string template = "chat.add \\n\\n \"-userName- dice: -userMessage-\"";
-                    string setname = Regex.Replace(template, "-userName-", arg.argUser.displayName);
-                    string final = Regex.Replace(setname, "-userMessage-", rem);
-                    string message = Facepunch.Utility.String.QuoteSafe(final);
-                    ConsoleNetworker.Broadcast(message);
-                }
             }
             if (sw == null) return;
             sw.Stop();
