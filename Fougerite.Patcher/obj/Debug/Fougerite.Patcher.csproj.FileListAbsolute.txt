@@ -1,0 +1,14 @@
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.csprojAssemblyReference.cache
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\Fougerite.Patcher.exe
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\Fougerite.Patcher.pdb
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.csproj.CopyComplete
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.exe
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.pdb
+C:\Users\OFernandez\Documents\Rust\Fougerite-master\bin\Fougerite.Patcher.exe.config
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\Fougerite.Patcher.exe.config
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\Fougerite.Patcher.exe
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\bin\Fougerite.Patcher.pdb
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.csprojAssemblyReference.cache
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.csproj.CopyComplete
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.exe
+C:\Users\OFernandez\Documents\Rust\RainbowRust-API\Fougerite.Patcher\obj\Debug\Fougerite.Patcher.pdb
