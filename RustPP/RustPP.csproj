@@ -133,6 +133,7 @@
     <Compile Include="Data\Entities\Friend.cs" />
     <Compile Include="Data\Entities\KitItem.cs" />
     <Compile Include="Data\Entities\LangMessage.cs" />
+    <Compile Include="Data\Entities\MessageString.cs" />
     <Compile Include="Data\Entities\StoreItem.cs" />
     <Compile Include="Data\Entities\User.cs" />
     <Compile Include="Data\Entities\UserInventoryItem.cs" />
@@ -188,6 +189,9 @@
     <Reference Include="Fougerite, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Server\rust_server_Data\Managed\Fougerite.dll</HintPath>
+    <Reference Include="Fougerite, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\bin\Fougerite.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Google.ProtocolBuffers, Version=2.4.1.521, Culture=neutral, PublicKeyToken=55f7125234beb589">
       <HintPath>..\Fougerite\References\OriginalRustDLLs\Google.ProtocolBuffers.dll</HintPath>

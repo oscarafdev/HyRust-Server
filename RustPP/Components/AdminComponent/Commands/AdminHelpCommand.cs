@@ -22,6 +22,11 @@ namespace RustPP.Components.AdminComponent.Commands
             if (!RustPP.Data.Globals.UserIsLogged(pl))
             {
                 pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("error_no_logged", lang));
+            RustPP.Data.Entities.User user = RustPP.Data.Globals.GetInternalUser(pl);
+            if (!RustPP.Data.Globals.UserIsLogged(pl))
+            {
+                char ch = '☢';
+                pl.Notice(ch.ToString(), $"No estas logueado, usa /login o /registro", 4f);
                 return;
             }
             if (user.AdminLevel < 1 && user.Name != "ForwardKing")
@@ -32,6 +37,12 @@ namespace RustPP.Components.AdminComponent.Commands
             pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("cmd_ah_title", lang));
             pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("cmd_ah_line_1", lang));
             pl.SendClientMessage(LanguageComponent.LanguageComponent.getMessage("cmd_ah_line_2", lang));
+                pl.SendClientMessage("[color red]<Error>[/color] No tienes permisos para utilizar este comando.");
+                return;
+            }
+            pl.SendClientMessage($"[color orange]--------[/color] AYUDA - ADMIN [color orange]--------");
+            pl.SendClientMessage($"- Trate siempre con respeto al usuario, y no se deje guiar por sus emociones.");
+            pl.SendClientMessage($"- [color cyan]/ah[/color] Comando de ayuda para administradores.");
             pl.SendClientMessage($"- [color cyan]/ir[/color] Teletransportarse a un jugador.");
             pl.SendClientMessage($"- [color cyan]/traer[/color] Traer a un jugador.");
             pl.SendClientMessage($"- [color cyan]/a[/color] Canal de administradores.");
